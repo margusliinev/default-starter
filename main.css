@@ -1,0 +1,78 @@
+/* GLOBAL STYLES & IMPORTS */
+/* ==================================================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;700&family=Roboto:wght@300;400;500;700&display=swap');
+
+:root {
+    --colorPrimary: #e50914;
+    --colorSecondary: #222;
+    --ffPrimary: 'Roboto', sans-serif;
+    --ffSecondary: 'Open Sans', sans-serif;
+    --transition: all 0.2s linear;
+    --spacing: 0.2rem;
+    --radius: 0.5rem;
+    --shadowLight: 0 0 15px rgba(0, 0, 0, 0.1);
+    --shadowDark: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--ffPrimary);
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+ol,
+ul {
+    list-style-type: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    text-transform: capitalize;
+}
+
+h1 {
+    font-size: 4rem;
+}
+h2 {
+    font-size: 3.5rem;
+}
+h3 {
+    font-size: 3rem;
+}
+h4 {
+    font-size: 2.5rem;
+}
+h5 {
+    font-size: 2rem;
+}
+h6 {
+    font-size: 1.5rem;
+}
+
+/*END */
+/* ==================================================================================================== */
