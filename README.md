@@ -2,8 +2,9 @@
 
 ## FEATURES
 
-- Basic HTML Structure
-- Meta tags for Search Engine Optimization
-- Comments to organize code
-- Imported Fonts: Roboto, Open Sans
-- Global Styles
+-   Basic HTML Structure
+-   Meta tags for Search Engine Optimization
+-   Comments to organize code
+-   Imported Font: Poppins
+-   Custom Color Palette
+-   Global Styles
