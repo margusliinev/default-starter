@@ -4,14 +4,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --colorBlue: #3466aa;
-    --colorDarkBlue: #114084;
-    --colorLightBlue: #82b7dc;
-    --colorWhite: #f1f1f1;
-    --colorGrey: #808080;
-    --colorBlack: #1c1c1c;
-    --colorRed: #dc3545;
-    --colorGreen: #28a745;
     --fontPrimary: 'Poppins', sans-serif;
     --letterSpacing: 1px;
     --borderRadius: 0.25rem;

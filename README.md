@@ -1,12 +1,5 @@
 # Default Starter
 
-## FEATURES
+## Description
 
--   Basic HTML Structure
--   Meta tags for Search Engine Optimization
--   Linked Main CSS and JS files
--   Javascript parsing (defer)
--   Comments to organize code
--   Imported Font: Poppins
--   Custom Color Palette
--   Global Styles
+This is a repository for my default starter files that I use to setup a new project.
