@@ -16,7 +16,7 @@ This is a repository that provides a complete guide and all the necessary files 
 2. Add project name or . to create project in the working directory
 3. Select React as the framework
 4. Select Javascript + SWC as the variant
-5. Run comand "npm install" to install all the necessary node modules
+5. Run command "npm install" to install all the necessary node modules
 
 ### Install Tailwind CSS
 
