@@ -11,6 +11,15 @@ This is a repository that provides a complete guide and all the necessary files 
 -   Node.js version 14.18+, 16+
 -   PostgreSQL version 12+
 
+### Tech Stack
+
+-   Javascript
+-   Node.js
+-   Express
+-   PostgreSQL
+-   React
+-   Styled-Components
+
 ### Server
 
 1. Run command "npm init -y" to generate package.json
