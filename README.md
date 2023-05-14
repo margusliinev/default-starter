@@ -11,7 +11,7 @@ This is a repository that provides a complete guide and all the necessary files 
 -   Node.js version 14.18+, 16+
 -   PostgreSQL version 12+
 
-### Tech Stack
+### Technologies
 
 -   Javascript
 -   Node.js
