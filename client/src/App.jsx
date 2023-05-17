@@ -1,8 +1,8 @@
-// import Wrapper from './assets/wrappers/home.js';
+import Wrapper from './assets/wrappers/home.js';
 
 function App() {
     return (
-        <div>
+        <Wrapper>
             <div className='container'>
                 <h1>Default Starter</h1>
                 <p>
@@ -12,7 +12,7 @@ function App() {
                 </p>
                 <button className='btn'>Get Started</button>
             </div>
-        </div>
+        </Wrapper>
     );
 }
 
