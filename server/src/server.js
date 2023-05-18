@@ -3,7 +3,7 @@ import cors from 'cors';
 import 'express-async-errors';
 import { errorHandler } from './middleware/errorHandler.js';
 import { notFound } from './middleware/notFound.js';
-import users from './routes/index.js';
+import router from './routes/index.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -12,7 +12,7 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors());
-app.use('/', users);
+app.use('/', router);
 app.use(errorHandler);
 app.use(notFound);
 

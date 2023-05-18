@@ -28,7 +28,7 @@ Default Starter includes all the necessary components to get you up and running,
 2. Add project name or . to create project in the working directory
 3. Select React as the framework
 4. Select Javascript + SWC as the variant
-5. Run command "npm install axios react-icons react-router-dom styled-components@5.3.10"
+5. Run command "npm install react-icons react-is react-router-dom styled-components@5.3.10"
 6. Delete all unnecessary files
 7. Add \_redirects file to "public" folder to fix routing
 8. Add Clean HTML Boilerplate & CSS Global Styles to index.css
@@ -44,6 +44,6 @@ Default Starter includes all the necessary components to get you up and running,
 5. Add "dev": "nodemon src/server.js" under "scripts" in package.json
 6. Run command "npm install cors dotenv express express-async-errors pg"
 7. Setup .gitignore and .env files
-8. Add folders 'Controllers', 'db', 'middleware', 'routes'
-9. Connect to the database and setup basic routes to check connection
-10. Add necessary imports, middleware to server.js and spin up the server
+8. Add folders 'Controllers', 'db', 'middleware', 'routes' to src folder
+9. Connect to the database and setup a single route to check connection
+10. Add necessary imports/middleware to server.js and spin up node server
