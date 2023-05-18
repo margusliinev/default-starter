@@ -264,18 +264,12 @@ h6 {
     width: 100%;
 }
 
-.form-input-alert {
+.form-input-error {
     outline: 1px solid var(--colorRed1);
 }
 
-.form-input-alert:focus {
+.form-input-error:focus {
     outline: 1px solid var(--colorRed1);
-}
-
-.form-alert {
-    margin-top: 0.5rem;
-    color: var(--colorRed2);
-    font-size: 14px;
 }
 
 .form-input-success {
@@ -286,10 +280,17 @@ h6 {
     outline: 1px solid var(--colorGreen1);
 }
 
-.form-success {
+.form-alert {
     margin-top: 0.5rem;
-    color: var(--colorGreen2);
     font-size: 14px;
+}
+
+.form-alert-error {
+    color: var(--colorRed2);
+}
+
+.form-alert-success {
+    color: var(--colorGreen2);
 }
 
 /* END */
