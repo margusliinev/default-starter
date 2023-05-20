@@ -151,6 +151,7 @@ input[type='radio'] {
     width: 80px;
     height: 80px;
 }
+
 .loading div {
     box-sizing: border-box;
     display: block;
@@ -163,15 +164,19 @@ input[type='radio'] {
     animation: loading 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
     border-color: var(--colorPrimary5) transparent transparent transparent;
 }
+
 .loading div:nth-child(1) {
     animation-delay: -0.45s;
 }
+
 .loading div:nth-child(2) {
     animation-delay: -0.3s;
 }
+
 .loading div:nth-child(3) {
     animation-delay: -0.15s;
 }
+
 @keyframes loading {
     0% {
         transform: rotate(0deg);
@@ -192,6 +197,12 @@ input[type='radio'] {
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-md);
     transition: var(--transition);
+}
+
+@media screen and (max-width: 400px) {
+    .form {
+        padding: 2rem 1.5rem;
+    }
 }
 
 .form-row-title {
@@ -307,20 +318,6 @@ input[type='radio'] {
 
 .form-alert-success {
     color: var(--colorGreen2);
-}
-
-/* TABLES */
-
-table th {
-    text-align: left;
-    background-color: var(--colorPrimary5);
-    color: white;
-}
-
-table th,
-table td {
-    border: 1px solid var(--colorGray3);
-    padding: 0.5rem;
 }
 
 /* END */
