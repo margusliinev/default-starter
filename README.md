@@ -15,7 +15,7 @@ Default Starter includes all the necessary components to get you up and running,
 
 ### Technologies
 
--   Javascript
+-   Typescript
 -   Node.js
 -   Express
 -   PostgreSQL
@@ -26,9 +26,9 @@ Default Starter includes all the necessary components to get you up and running,
 
 1. Run command "npm create vite@latest"
 2. Add project name or . to create project in the working directory
-3. Select React as the framework
-4. Select Javascript + SWC as the variant
-5. Run command "npm install react-icons react-is react-router-dom styled-components@5.3.10"
+3. Select React as the framework and Typescript + SWC as the variant
+4. Run command "npm install react-icons react-is react-router-dom styled-components@5.3.10"
+5. Run command "npm install -D typescript @types/styled-components"
 6. Delete all unnecessary files
 7. Add \_redirects file to "public" folder to fix routing
 8. Add Clean HTML Boilerplate & CSS Global Styles to index.css
@@ -38,12 +38,12 @@ Default Starter includes all the necessary components to get you up and running,
 ### Server
 
 1. Run command "npm init -y" to generate package.json
-2. Set "main": "server.js", Add "Type": "module"
-3. Create a "src" folder and create a file server.js
-4. Run command "npm install -D nodemon"
-5. Add "dev": "nodemon src/server.js" under "scripts" in package.json
-6. Run command "npm install cors dotenv express express-async-errors pg"
-7. Setup .gitignore and .env files
-8. Add folders 'Controllers', 'db', 'middleware', 'routes' to src folder
-9. Connect to the database and setup a single route to check connection
-10. Add necessary imports/middleware to server.js and spin up node server
+2. Run command "npm install cors dotenv express express-async-errors pg"
+3. Run command "npm install -D typescript nodemon ts-node @types/node @types/express @types/pg @types/cors"
+4. Set "main": "server.ts" and add scripts for development and deployment
+5. Setup .gitignore and .env files
+6. Create a src folder with server.ts, import packages, set up a basic express server
+7. Create Middleware folder with ErrorHandler and NotFound middleware
+8. Create 'Controllers', 'db', 'routes' folders in src folder
+9. Connect to the database and set up a single route to check connection
+10. Add rest of the imports/middleware to server.ts and spin up node server
