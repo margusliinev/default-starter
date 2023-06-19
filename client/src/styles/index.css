@@ -2,8 +2,14 @@
 /* ==================================================================================================== */
 
 @import url('https://rsms.me/inter/inter.css');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 :root {
+    --colorFontPrimary: #f3f4f6;
+    --colorFontSecondary: #d1d5db;
+    --colorBackgroundPrimary: #333;
+    --colorBackgroundSecondary: #3f3f3f;
+    --colorInputBackground: #4f4f4f;
     --colorPrimary1: #dbeafe;
     --colorPrimary2: #bfdbfe;
     --colorPrimary3: #93c5fd;
@@ -22,10 +28,18 @@
     --colorGray7: #374151;
     --colorGray8: #1f2937;
     --colorGray9: #111827;
-    --colorGreen1: #22c55e;
-    --colorGreen2: #16a34a;
     --colorRed1: #fca5a5;
-    --colorRed2: #dc2626;
+    --colorRed2: #f87171;
+    --colorRed3: #ef4444;
+    --colorRed4: #dc2626;
+    --colorYellow1: #fde047;
+    --colorYellow2: #facc15;
+    --colorYellow3: #eab308;
+    --colorYellow4: #ca8a04;
+    --colorGreen1: #86efac;
+    --colorGreen2: #4ade80;
+    --colorGreen3: #22c55e;
+    --colorGreen4: #16a34a;
     --colorBlack: #000000;
     --colorWhite: #ffffff;
     --fontPrimary: 'Inter var', sans-serif;
@@ -60,6 +74,8 @@ html {
 }
 
 body {
+    color: var(--colorFontPrimary);
+    background-color: var(--colorBackgroundPrimary);
     font-family: var(--fontPrimary);
     line-height: 1.5;
 }
@@ -89,26 +105,32 @@ a {
 h1 {
     font-size: 3.75rem;
     line-height: 1;
+    font-weight: 600;
 }
 h2 {
     font-size: 3rem;
     line-height: 1;
+    font-weight: 600;
 }
 h3 {
     font-size: 2.25rem;
     line-height: 2.5rem;
+    font-weight: 600;
 }
 h4 {
     font-size: 1.875rem;
     line-height: 2.25rem;
+    font-weight: 600;
 }
 h5 {
     font-size: 1.5rem;
     line-height: 2rem;
+    font-weight: 600;
 }
 h6 {
     font-size: 1.25rem;
     line-height: 1.75rem;
+    font-weight: 600;
 }
 
 /* CONTAINER */
@@ -130,7 +152,7 @@ h6 {
     transition: var(--transition);
     border-radius: var(--radius-md);
     background-color: var(--colorPrimary5);
-    color: var(--colorWhite);
+    color: var(--colorFontPrimary);
 }
 
 .btn:hover {
@@ -197,18 +219,13 @@ input[type='radio'] {
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-md);
     transition: var(--transition);
+    background-color: var(--colorBackgroundSecondary);
 }
 
 @media screen and (max-width: 400px) {
     .form {
         padding: 2rem 1.5rem;
     }
-}
-
-.form-row-title {
-    color: var(--colorGray9);
-    font-weight: 500;
-    margin-bottom: 1rem;
 }
 
 .form-row {
@@ -225,7 +242,6 @@ input[type='radio'] {
 .form-label {
     display: block;
     text-transform: capitalize;
-    color: var(--colorGray7);
     margin-bottom: 0.5rem;
     letter-spacing: -0.01rem;
 }
@@ -235,7 +251,6 @@ input[type='radio'] {
     align-items: center;
     justify-content: space-between;
     text-transform: capitalize;
-    color: var(--colorGray7);
     margin-bottom: 0.5rem;
     letter-spacing: -0.01rem;
 }
@@ -243,9 +258,8 @@ input[type='radio'] {
 .form-input,
 .form-textarea,
 .form-select {
-    background-color: var(--colorWhite);
-    color: var(--colorGray9);
-    outline: 1px solid var(--colorGray3);
+    background-color: var(--colorInputBackground);
+    color: var(--colorFontPrimary);
     border-radius: var(--radius-md);
     border: none;
     font-family: inherit;
@@ -265,7 +279,7 @@ input[type='radio'] {
     align-items: center;
     gap: 0.5rem;
     font-size: 0.875rem;
-    color: var(--colorGray7);
+    color: var(--colorFontPrimary);
 }
 
 .form-textarea {
@@ -286,7 +300,7 @@ input[type='radio'] {
 .form-forgot-password {
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--colorPrimary5);
+    color: var(--colorPrimary4);
     letter-spacing: -0.01rem;
     text-transform: none;
 }
@@ -309,15 +323,27 @@ input[type='radio'] {
 
 .form-alert {
     margin-top: 0.5rem;
-    font-size: 14px;
+    font-size: 0.875rem;
 }
 
 .form-alert-error {
-    color: var(--colorRed2);
+    color: var(--colorRed1);
 }
 
 .form-alert-success {
-    color: var(--colorGreen2);
+    color: var(--colorGreen1);
+}
+
+.server-message {
+    margin: 0.5rem 0;
+    font-weight: 400;
+    letter-spacing: -0.01rem;
+}
+.server-message-error {
+    color: var(--colorRed1);
+}
+.server-message-success {
+    color: var(--colorGreen1);
 }
 
 /* END */
