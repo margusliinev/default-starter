@@ -1,4 +1,5 @@
 import { useGetUsersQuery } from './features/api/apiSlice';
+import { User } from './features/api/apiSlice';
 import { toggleData } from './features/data/dataSlice';
 import { useAppDispatch, useAppSelector } from './hooks';
 import Wrapper from './styles/styled_components/App';
@@ -35,27 +36,29 @@ function App() {
                 </div>
                 {showData ? (
                     <div className='users visible'>
-                        {data.slice(0, 5).map((user: any, index: number) => {
-                            return (
-                                <article key={index}>
-                                    <p>{user.name}</p>
-                                    <p>{user.email}</p>
-                                    <p>{user.phone}</p>
-                                </article>
-                            );
-                        })}
+                        {data &&
+                            data.slice(0, 5).map((user: User, index: number) => {
+                                return (
+                                    <article key={index}>
+                                        <p>{user.name}</p>
+                                        <p>{user.email}</p>
+                                        <p>{user.phone}</p>
+                                    </article>
+                                );
+                            })}
                     </div>
                 ) : (
                     <div className='users hidden'>
-                        {data.slice(0, 5).map((user: any, index: number) => {
-                            return (
-                                <article key={index}>
-                                    <p>{user.name}</p>
-                                    <p>{user.email}</p>
-                                    <p>{user.phone}</p>
-                                </article>
-                            );
-                        })}
+                        {data &&
+                            data.slice(0, 5).map((user: User, index: number) => {
+                                return (
+                                    <article key={index}>
+                                        <p>{user.name}</p>
+                                        <p>{user.email}</p>
+                                        <p>{user.phone}</p>
+                                    </article>
+                                );
+                            })}
                     </div>
                 )}
             </div>

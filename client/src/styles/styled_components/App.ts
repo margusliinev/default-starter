@@ -1,8 +1,6 @@
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-    color: var(--colorFontPrimary);
-    background-color: var(--colorBackgroundPrimary);
     display: grid;
     place-items: center;
     min-height: 100vh;
