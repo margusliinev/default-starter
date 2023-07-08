@@ -7,7 +7,7 @@ import { NotFoundError, UnauthorizedError } from '../../errors';
 import { UnauthenticatedError } from '../../errors';
 import { AuthenticatedRequest } from '../../utils/types';
 
-export const createSingleUser = async (req: AuthenticatedRequest, res: Response) => {
+export const updateSingleUser = async (req: AuthenticatedRequest, res: Response) => {
     if (!req.user) throw new UnauthenticatedError('Authentication Invalid');
 
     if (req.user.role !== 'admin') throw new UnauthorizedError('You are not authorized to access this route');

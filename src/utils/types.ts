@@ -16,10 +16,21 @@ export interface AuthenticatedRequest extends Request {
     };
 }
 
-export interface updateUserProfile {
+export interface UpdateUserProfile {
     username: string;
     email: string;
     password: string;
     newPassword: string;
     confirmNewPassword: string;
+}
+
+export interface Register {
+    username: string;
+    email: string;
+    password: string;
+}
+
+export interface Login {
+    email: string;
+    password: string;
 }

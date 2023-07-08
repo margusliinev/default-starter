@@ -37,11 +37,10 @@ export const validatePassword = (password: string) => {
 };
 export const validateUniqueEmail = async (email: string) => {
     const result = await db
-        .selectDistinct({ email: users.email })
+        .select()
         .from(users)
         .where(and(eq(users.email, email)));
-    const uniqueEmail = result[0].email;
-    if (uniqueEmail) {
+    if (result.length >= 1) {
         throw new BadRequestError('Email address is already in use');
     } else {
         return;
@@ -56,6 +55,6 @@ export const validateUniqueEmailOnUpdate = async (email: string, userId: number)
     if (uniqueEmail) {
         throw new BadRequestError('Email address is already in use');
     } else {
-        return;
+        return email;
     }
 };

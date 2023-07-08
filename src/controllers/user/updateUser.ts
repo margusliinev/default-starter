@@ -5,13 +5,13 @@ import { db } from '../../db/index';
 import { users } from '../../db/schema';
 import { BadRequestError, UnauthenticatedError } from '../../errors';
 import { comparePassword, hashPassword } from '../../utils/bcrypt';
-import { AuthenticatedRequest, updateUserProfile } from '../../utils/types';
+import { AuthenticatedRequest, UpdateUserProfile } from '../../utils/types';
 import { validateEmail, validatePassword, validateUniqueEmailOnUpdate, validateUsername } from '../../utils/validate';
 
 export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
     if (!req.user) throw new UnauthenticatedError('Authentication Invalid');
 
-    const { username, email, password, newPassword, confirmNewPassword } = req.body as updateUserProfile;
+    const { username, email, password, newPassword, confirmNewPassword } = req.body as UpdateUserProfile;
 
     if (!username || !email) {
         throw new BadRequestError('Missing email or password');
@@ -25,7 +25,7 @@ export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
     validateEmail(email);
     await validateUniqueEmailOnUpdate(email, req.user.userId);
 
-    const updateData: Partial<updateUserProfile> = { username, email };
+    const updateData: Partial<UpdateUserProfile> = { username, email };
 
     if (password && newPassword && confirmNewPassword) {
         validatePassword(newPassword);

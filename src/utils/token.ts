@@ -8,11 +8,11 @@ export interface DecodedJwtPayload extends JwtPayload {
 }
 
 export const createJWT = (payload: JwtPayload) => {
-    if (!process.env.JWT_SECRET || !process.env.JWT_EXPIRES_IN) {
+    if (!process.env.JWT_SECRET || !process.env.JWT_LIFETIME) {
         throw new Error('JWT_SECRET or JWT_EXPIRES_IN environment variable is not defined');
     }
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRES_IN,
+        expiresIn: process.env.JWT_LIFETIME,
     });
 
     return token;
