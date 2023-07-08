@@ -1,0 +1,50 @@
+{
+    "name": "default-starter",
+    "version": "1.0.0",
+    "description": "This is a repository that provides a complete guide and all the necessary files to set up a new full-stack project. This is perfect for developers who want to get started with building web applications quickly, without having to worry about setting up the basic structure every time.",
+    "main": "dist/server.js",
+    "scripts": {
+        "dev": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules src/server.ts",
+        "build": "npx tsc",
+        "preview": "node dist/server.js",
+        "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
+        "app": "concurrently \"npm run dev\" \"cd client && npm run dev\"",
+        "setup-production": "cd client && npm install && npm run build && cd .. && npm install && npm run build"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "compression": "^1.7.4",
+        "cookie-parser": "^1.4.6",
+        "dotenv": "^16.3.1",
+        "drizzle-orm": "^0.27.0",
+        "express": "^4.18.2",
+        "express-async-errors": "^3.1.1",
+        "express-rate-limit": "^6.7.1",
+        "helmet": "^7.0.0",
+        "jsonwebtoken": "^9.0.1",
+        "morgan": "^1.10.0",
+        "pg": "^8.11.1"
+    },
+    "devDependencies": {
+        "@types/bcryptjs": "^2.4.2",
+        "@types/compression": "^1.7.2",
+        "@types/cookie-parser": "^1.4.3",
+        "@types/express": "^4.17.17",
+        "@types/jsonwebtoken": "^9.0.2",
+        "@types/morgan": "^1.9.4",
+        "@types/node": "^20.4.0",
+        "@types/pg": "^8.10.2",
+        "@typescript-eslint/eslint-plugin": "^5.61.0",
+        "@typescript-eslint/parser": "^5.61.0",
+        "concurrently": "^8.2.0",
+        "drizzle-kit": "^0.19.3",
+        "eslint": "^8.44.0",
+        "eslint-plugin-simple-import-sort": "^10.0.0",
+        "ts-node": "^10.9.1",
+        "ts-node-dev": "^2.0.0",
+        "typescript": "^5.1.6"
+    }
+}
