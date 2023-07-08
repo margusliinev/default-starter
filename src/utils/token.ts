@@ -1,7 +1,10 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
+import { Role } from './types';
+
 export interface DecodedJwtPayload extends JwtPayload {
     userId: number;
+    role: Role;
 }
 
 export const createJWT = (payload: JwtPayload) => {
@@ -16,7 +19,7 @@ export const createJWT = (payload: JwtPayload) => {
 };
 
 export const verifyJWT = (token: string) => {
-    if (!process.env.JWT_SECRET || !process.env.JWT_EXPIRES_IN) {
+    if (!process.env.JWT_SECRET) {
         throw new Error('JWT_SECRET environment variable is not defined');
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET) as DecodedJwtPayload;

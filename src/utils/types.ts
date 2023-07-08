@@ -1,7 +1,16 @@
 import { Request } from 'express';
 
+export enum Role {
+    ADMIN = 'admin',
+    USER = 'user',
+    TEST = 'test',
+}
+
 export interface AuthenticatedRequest extends Request {
-    userId?: number;
+    user?: {
+        userId: number;
+        role: Role;
+    };
     cookies: {
         token: string;
     };
