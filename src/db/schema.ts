@@ -8,7 +8,7 @@ export const users = pgTable('users', {
     username: varchar('username', { length: 16 }).notNull(),
     email: varchar('email', { length: 50 }).notNull(),
     password: varchar('password', { length: 256 }).notNull(),
-    role: roleEnum('role').notNull().default('user'),
+    role: roleEnum('role').default('user').notNull(),
 });
 
 export type User = InferModel<typeof users, 'select'>;

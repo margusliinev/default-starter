@@ -27,9 +27,9 @@ if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
 
-app.use('/', authRoutes);
-app.use('/', userRoutes);
-app.use('/', usersRoutes);
+app.use('/api/v1/', authRoutes);
+app.use('/api/v1/users/me', userRoutes);
+app.use('/api/v1/users', usersRoutes);
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '../client/dist')));

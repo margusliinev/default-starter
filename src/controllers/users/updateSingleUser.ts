@@ -6,15 +6,19 @@ import { User, users } from '../../db/schema';
 import { NotFoundError, UnauthorizedError } from '../../errors';
 import { UnauthenticatedError } from '../../errors';
 import { AuthenticatedRequest } from '../../utils/types';
+import { validateEmail, validateUniqueEmail } from '../../utils/validate';
 
 export const updateSingleUser = async (req: AuthenticatedRequest, res: Response) => {
     if (!req.user) throw new UnauthenticatedError('Authentication Invalid');
 
     if (req.user.role !== 'admin') throw new UnauthorizedError('You are not authorized to access this route');
 
-    const user = req.body as User;
+    const { id, username, email, role } = req.body as User;
 
-    const result = await db.update(users).set(user).where(eq(users.id, req.user.userId)).returning();
+    validateEmail(email);
+    await validateUniqueEmail(email);
+
+    const result = await db.update(users).set({ username: username, email: email.toLowerCase().trim(), role: role }).where(eq(users.id, id)).returning();
     if (!result[0]) throw new NotFoundError('Failed to update user');
     const updatedUser = {
         id: result[0].id,

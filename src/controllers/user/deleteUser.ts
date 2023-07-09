@@ -13,5 +13,10 @@ export const deleteUser = async (req: AuthenticatedRequest, res: Response) => {
     const user = result[0];
     if (!user) throw new NotFoundError('Failed to delete user');
 
+    res.cookie('token', 'delete', {
+        httpOnly: true,
+        expires: new Date(Date.now()),
+    });
+
     res.status(204).json({ success: true, msg: 'User has been deleted' });
 };

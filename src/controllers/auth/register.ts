@@ -24,7 +24,7 @@ export const register = async (req: Request, res: Response) => {
 
     const hash = await hashPassword(password);
 
-    const result = await db.insert(users).values({ username: username, email: email, password: hash }).returning();
+    const result = await db.insert(users).values({ username: username, email: email.toLowerCase().trim(), password: hash }).returning();
     const newUser = result[0];
     if (!newUser) throw new BadRequestError('Failed to create user');
 

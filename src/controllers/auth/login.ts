@@ -31,7 +31,7 @@ export const login = async (req: Request, res: Response) => {
         throw new UnauthenticatedError('Incorrect email or password');
     }
 
-    const token = createJWT({ userId: user.id, role: 'user' });
+    const token = createJWT({ userId: user.id, role: user.role });
 
     createCookie({ res, token });
 

@@ -12,7 +12,12 @@ export const getSingleUser = async (req: AuthenticatedRequest, res: Response) =>
 
     if (req.user.role !== 'admin') throw new UnauthorizedError('You are not authorized to access this route');
 
-    const result = await db.select().from(users).where(eq(users.id, req.user.userId));
+    const { id } = req.params;
+
+    const result = await db
+        .select({ id: users.id, username: users.username, email: users.email, role: users.role })
+        .from(users)
+        .where(eq(users.id, Number(id)));
     const user = result[0];
     if (!user) throw new NotFoundError('No user found');
 

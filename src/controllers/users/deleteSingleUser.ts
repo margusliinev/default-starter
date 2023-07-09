@@ -12,7 +12,9 @@ export const deleteSingleUser = async (req: AuthenticatedRequest, res: Response)
 
     if (req.user.role !== 'admin') throw new UnauthorizedError('You are not authorized to access this route');
 
-    const result = await db.delete(users).where(eq(users.id, req.user.userId)).returning();
+    const { id } = req.body as { id: number };
+
+    const result = await db.delete(users).where(eq(users.id, id)).returning();
     const user = result[0];
     if (!user) throw new NotFoundError('Failed to delete user');
 

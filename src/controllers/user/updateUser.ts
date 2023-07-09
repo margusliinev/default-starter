@@ -25,7 +25,7 @@ export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
     validateEmail(email);
     await validateUniqueEmailOnUpdate(email, req.user.userId);
 
-    const updateData: Partial<UpdateUserProfile> = { username, email };
+    const updateData: Partial<UpdateUserProfile> = { username: username, email: email.toLowerCase().trim() };
 
     if (password && newPassword && confirmNewPassword) {
         validatePassword(newPassword);
