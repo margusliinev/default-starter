@@ -1,8 +1,6 @@
 import { NextFunction, Response } from 'express';
 
-import { UnauthenticatedError } from '../errors';
-import { verifyJWT } from '../utils/token';
-import { AuthenticatedRequest } from '../utils/types';
+import { AuthenticatedRequest, UnauthenticatedError, verifyToken } from '../utils';
 
 export const auth = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const token = req.cookies.token;
@@ -10,7 +8,7 @@ export const auth = (req: AuthenticatedRequest, res: Response, next: NextFunctio
         throw new UnauthenticatedError('Authentication Invalid');
     }
     try {
-        const { userId, role } = verifyJWT(token);
+        const { userId, role } = verifyToken(token);
         req.user = { userId, role };
         next();
     } catch (error) {

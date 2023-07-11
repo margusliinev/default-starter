@@ -2,21 +2,20 @@ import { eq } from 'drizzle-orm';
 import { Request, Response } from 'express';
 
 import { db } from '../../db';
-import { users } from '../../db/schema';
-import { BadRequestError, UnauthenticatedError } from '../../errors';
-import { comparePassword } from '../../utils/bcrypt';
-import { createCookie } from '../../utils/cookie';
-import { createJWT } from '../../utils/token';
-import { Login } from '../../utils/types';
+import { User,users } from '../../db/schema';
+import { BadRequestError, comparePassword,createCookie, createToken, normalizeEmail, UnauthenticatedError } from '../../utils';
 
 export const login = async (req: Request, res: Response) => {
-    const { email, password } = req.body as Login;
+    const { email, password } = req.body as User;
 
     if (!email || !password) {
         throw new BadRequestError('Missing email or password');
     }
 
-    const result = await db.select().from(users).where(eq(users.email, email));
+    const normalizedEmail = normalizeEmail(email);
+
+    const result = await db.select().from(users).where(eq(users.email, normalizedEmail));
+    if (result.length < 1) throw new UnauthenticatedError('Incorrect email or password');
     const user = result[0];
 
     if (!user) {
@@ -31,12 +30,9 @@ export const login = async (req: Request, res: Response) => {
         throw new UnauthenticatedError('Incorrect email or password');
     }
 
-    const token = createJWT({ userId: user.id, role: user.role });
+    const token = createToken({ userId: user.id, role: 'user' });
 
     createCookie({ res, token });
 
-    res.status(200).json({
-        success: true,
-        msg: 'Login successful',
-    });
+    res.status(200).json({ success: true, msg: 'Login successful' });
 };

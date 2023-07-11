@@ -9,9 +9,8 @@ import morgan from 'morgan';
 import path from 'path';
 
 import { globalErrorHandler, notFoundHandler } from './middleware/errorHandlerMiddleware';
-import authRoutes from './routes/authRoutes';
-import userRoutes from './routes/userRoutes';
-import usersRoutes from './routes/usersRoutes';
+import authRoutes from './routes/auth';
+import userRoutes from './routes/user';
 import { limiter } from './utils/limiter';
 
 dotenv.config();
@@ -27,9 +26,8 @@ if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
 
-app.use('/api/v1/', authRoutes);
+app.use('/api/v1', authRoutes);
 app.use('/api/v1/users/me', userRoutes);
-app.use('/api/v1/users', usersRoutes);
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '../client/dist')));

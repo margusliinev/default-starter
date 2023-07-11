@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express from 'express';
 
-import { login, logout, register } from '../controllers/auth';
+import { login, logout, register } from '../../controllers/auth';
 
 const router = express.Router();
 

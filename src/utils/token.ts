@@ -1,13 +1,13 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-import { Role } from './types';
+import { Role } from '../db/schema';
 
 export interface DecodedJwtPayload extends JwtPayload {
     userId: number;
     role: Role;
 }
 
-export const createJWT = (payload: JwtPayload) => {
+export const createToken = (payload: JwtPayload) => {
     if (!process.env.JWT_SECRET || !process.env.JWT_LIFETIME) {
         throw new Error('JWT_SECRET or JWT_EXPIRES_IN environment variable is not defined');
     }
@@ -18,7 +18,7 @@ export const createJWT = (payload: JwtPayload) => {
     return token;
 };
 
-export const verifyJWT = (token: string) => {
+export const verifyToken = (token: string) => {
     if (!process.env.JWT_SECRET) {
         throw new Error('JWT_SECRET environment variable is not defined');
     }
