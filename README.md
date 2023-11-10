@@ -1,5 +1,12 @@
 # Default Starter
 
+Note: I no longer use this starter for new projects:
+
+I am now using NestJS with Prisma ORM on the backend for most projects. <br>
+On the client side I mainly use React with Redux and serve that up with NestJS.
+
+---
+
 Default Starter is a basic NodeJS & Express server that provides a solid boilerplate for new projects. It includes a basic authentication flow and CRUD operations for managing user information such as profile and passwords. This repository serves as a starting point for building robust applications with a strong foundation.
 
 ## Technologies
