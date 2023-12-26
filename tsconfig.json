@@ -8,6 +8,7 @@
         "emitDecoratorMetadata": true,
         "resolveJsonModule": true,
         "esModuleInterop": true,
+        "skipLibCheck": true,
         "incremental": true,
         "declaration": true,
         "sourceMap": true,
@@ -15,7 +16,10 @@
         "target": "ES2022",
         "module": "CommonJS",
         "outDir": "./dist",
-        "baseUrl": "./"
+        "baseUrl": "./",
+        "paths": {
+            "src/*": ["src/*"]
+        }
     },
     "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }

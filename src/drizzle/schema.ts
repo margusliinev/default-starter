@@ -36,6 +36,11 @@ export const comments = pgTable('comments', {
     post_id: integer('post_id').references(() => posts.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
 });
 
+// INFERRED TYPES
+
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+
 // RELATIONS
 
 export const usersRelations = relations(users, ({ many }) => ({
