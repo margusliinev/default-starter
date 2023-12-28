@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "forceConsistentCasingInFileNames": true,
-        "strictPropertyInitialization": true,
+        "strictPropertyInitialization": false,
         "allowSyntheticDefaultImports": true,
         "noUncheckedIndexedAccess": true,
         "experimentalDecorators": true,

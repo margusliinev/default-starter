@@ -1,19 +1,35 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, InternalServerErrorException, ConflictException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { DATA_SOURCE, DATA_SOURCE_TYPE } from 'src/drizzle/drizzle.module';
+import { usersTable } from 'src/drizzle/schema';
+import { eq } from 'drizzle-orm';
+import bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
     constructor(@Inject(DATA_SOURCE) private db: DATA_SOURCE_TYPE) {}
 
-    create(createUserDto: CreateUserDto) {
-        console.log(createUserDto);
-        return 'This action adds a new user';
+    async create(createUserDto: CreateUserDto) {
+        const existingUsername = await this.db.query.usersTable.findFirst({ where: eq(usersTable.username, createUserDto.username) });
+        if (existingUsername) throw new ConflictException();
+
+        const existingEmail = await this.db.query.usersTable.findFirst({ where: eq(usersTable.email, createUserDto.email) });
+        if (existingEmail) throw new ConflictException();
+
+        const hash = await bcrypt.hash(createUserDto.password, 10);
+
+        const newUser = await this.db
+            .insert(usersTable)
+            .values({ ...createUserDto, password: hash })
+            .returning();
+        if (!newUser[0]) throw new InternalServerErrorException();
+
+        return { newUser };
     }
 
     async findAll() {
-        const users = await this.db.query.users.findMany();
+        const users = await this.db.query.usersTable.findMany();
         return { users };
     }
 

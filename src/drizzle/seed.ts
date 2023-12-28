@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Client } from 'pg';
-import { users } from './schema';
+import { usersTable } from './schema';
 import mockUsers from './users.json';
 import bcrypt from 'bcryptjs';
 import * as schema from './schema';
@@ -18,11 +18,11 @@ const db = drizzle(client, { schema });
 
 async function seed() {
     await client.connect();
-    await db.delete(users);
+    await db.delete(usersTable);
     for (const user of mockUsers) {
         const hashedPassword = await bcrypt.hash(user.password, 10);
         await db
-            .insert(users)
+            .insert(usersTable)
             .values({
                 username: user.username,
                 email: user.email,
