@@ -1,4 +1,4 @@
-import { Injectable, Inject, InternalServerErrorException, ConflictException } from '@nestjs/common';
+import { Injectable, Inject, InternalServerErrorException, ConflictException, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { DATA_SOURCE, DATA_SOURCE_TYPE } from 'src/drizzle/drizzle.module';
@@ -19,30 +19,45 @@ export class UsersService {
 
         const hash = await bcrypt.hash(createUserDto.password, 10);
 
-        const newUser = await this.db
+        const [user] = await this.db
             .insert(usersTable)
             .values({ ...createUserDto, password: hash })
             .returning();
-        if (!newUser[0]) throw new InternalServerErrorException();
 
-        return newUser[0];
+        if (!user) throw new InternalServerErrorException('Failed to create new user');
+
+        return user;
     }
 
     async findAll() {
         const users = await this.db.query.usersTable.findMany();
+
+        if (!users) throw new NotFoundException('No users found');
+
         return users;
     }
 
-    findOne(id: number) {
-        return `This action returns a #${id} user`;
+    async findOne(id: number) {
+        const user = await this.db.query.usersTable.findFirst({ where: eq(usersTable.id, id) });
+
+        if (!user) throw new NotFoundException('No user found');
+
+        return user;
     }
 
-    update(id: number, updateUserDto: UpdateUserDto) {
-        console.log(updateUserDto);
-        return `This action updates a #${id} user`;
+    async update(id: number, updateUserDto: UpdateUserDto) {
+        const user = await this.db.update(usersTable).set(updateUserDto).where(eq(usersTable.id, id)).returning();
+
+        if (!user) throw new InternalServerErrorException('Failed to update the user');
+
+        return user;
     }
 
-    remove(id: number) {
-        return `This action removes a #${id} user`;
+    async remove(id: number) {
+        const user = await this.db.delete(usersTable).where(eq(usersTable.id, id)).returning();
+
+        if (!user) throw new InternalServerErrorException('Failed to delete the user');
+
+        return null;
     }
 }
