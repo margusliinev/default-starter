@@ -12,10 +12,10 @@ export class UsersService {
 
     async create(createUserDto: CreateUserDto) {
         const existingUsername = await this.db.query.usersTable.findFirst({ where: eq(usersTable.username, createUserDto.username) });
-        if (existingUsername) throw new ConflictException();
+        if (existingUsername) throw new ConflictException('Username is already in use');
 
         const existingEmail = await this.db.query.usersTable.findFirst({ where: eq(usersTable.email, createUserDto.email) });
-        if (existingEmail) throw new ConflictException();
+        if (existingEmail) throw new ConflictException('Email is already in use');
 
         const hash = await bcrypt.hash(createUserDto.password, 10);
 
@@ -25,12 +25,12 @@ export class UsersService {
             .returning();
         if (!newUser[0]) throw new InternalServerErrorException();
 
-        return { newUser };
+        return newUser[0];
     }
 
     async findAll() {
         const users = await this.db.query.usersTable.findMany();
-        return { users };
+        return users;
     }
 
     findOne(id: number) {

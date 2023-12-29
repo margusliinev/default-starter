@@ -1,4 +1,6 @@
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import { ResponseInterceptor } from './utils/interceptors/response.interceptor';
+import { HttpExceptionFilter } from './utils/filters/http-exception.filter';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
@@ -50,6 +52,8 @@ async function bootstrap() {
             },
         }),
     );
+    app.useGlobalFilters(new HttpExceptionFilter());
+    app.useGlobalInterceptors(new ResponseInterceptor());
     await app.listen(5000);
 }
 void bootstrap();
