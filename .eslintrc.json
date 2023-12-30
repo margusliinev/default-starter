@@ -1,7 +1,6 @@
 {
     "env": {
-        "node": true,
-        "jest": true
+        "node": true
     },
     "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:@typescript-eslint/recommended-requiring-type-checking"],
     "parser": "@typescript-eslint/parser",
@@ -10,5 +9,5 @@
     },
     "plugins": ["@typescript-eslint"],
     "root": true,
-    "ignorePatterns": ["node_modules", "test", "dist", "**/*spec.ts", "client"]
+    "ignorePatterns": ["node_modules", "dist", "client"]
 }

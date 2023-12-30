@@ -1,7 +1,7 @@
 import { Injectable, Inject, InternalServerErrorException, ConflictException, NotFoundException } from '@nestjs/common';
+import { DATA_SOURCE, DATA_SOURCE_TYPE } from 'src/drizzle/drizzle.module';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { DATA_SOURCE, DATA_SOURCE_TYPE } from 'src/drizzle/drizzle.module';
 import { usersTable } from 'src/drizzle/schema';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
@@ -37,7 +37,7 @@ export class UsersService {
         return users;
     }
 
-    async findOne(id: number) {
+    async findOne(id: string) {
         const user = await this.db.query.usersTable.findFirst({ where: eq(usersTable.id, id) });
 
         if (!user) throw new NotFoundException('No user found');
@@ -45,16 +45,16 @@ export class UsersService {
         return user;
     }
 
-    async update(id: number, updateUserDto: UpdateUserDto) {
-        const user = await this.db.update(usersTable).set(updateUserDto).where(eq(usersTable.id, id)).returning();
+    async update(id: string, updateUserDto: UpdateUserDto) {
+        const [user] = await this.db.update(usersTable).set(updateUserDto).where(eq(usersTable.id, id)).returning();
 
         if (!user) throw new InternalServerErrorException('Failed to update the user');
 
         return user;
     }
 
-    async remove(id: number) {
-        const user = await this.db.delete(usersTable).where(eq(usersTable.id, id)).returning();
+    async remove(id: string) {
+        const [user] = await this.db.delete(usersTable).where(eq(usersTable.id, id)).returning();
 
         if (!user) throw new InternalServerErrorException('Failed to delete the user');
 
