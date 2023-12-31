@@ -1,10 +1,12 @@
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { ResponseInterceptor } from './utils/interceptors/response.interceptor';
 import { HttpExceptionFilter } from './utils/filters/http-exception.filter';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
 import compression from 'compression';
+import metadata from './metadata';
 import helmet from 'helmet';
 
 async function bootstrap() {
@@ -54,6 +56,10 @@ async function bootstrap() {
     );
     app.useGlobalFilters(new HttpExceptionFilter());
     app.useGlobalInterceptors(new ResponseInterceptor());
+    const config = new DocumentBuilder().setTitle('Default Starter API').setVersion('1.0').build();
+    await SwaggerModule.loadPluginMetadata(metadata);
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('docs', app, document);
     await app.listen(5000);
 }
 void bootstrap();
