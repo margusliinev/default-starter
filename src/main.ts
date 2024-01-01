@@ -60,6 +60,6 @@ async function bootstrap() {
     await SwaggerModule.loadPluginMetadata(metadata);
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('docs', app, document);
-    await app.listen(5000);
+    await app.listen(process.env.PORT || 5000);
 }
 void bootstrap();
