@@ -16,7 +16,7 @@ export class AuthService {
         const [session] = await this.db
             .insert(sessionsTable)
             .values({
-                id: userId,
+                user_id: userId,
                 expires_at: new Date(Date.now() + this.SESSION_EXPIRATION_TIME),
             })
             .returning();
@@ -59,7 +59,7 @@ export class AuthService {
 
     async revoke(userId: string) {
         try {
-            await this.db.delete(sessionsTable).where(eq(sessionsTable.id, userId));
+            await this.db.delete(sessionsTable).where(eq(sessionsTable.user_id, userId));
         } catch (error) {
             throw new InternalServerErrorException('Failed to revoke sessions');
         }

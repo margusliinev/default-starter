@@ -30,21 +30,21 @@ export class UsersService {
         return users;
     }
 
-    async getCurrentUser(id: string) {
-        const user = await this.db.query.usersTable.findFirst({ where: eq(usersTable.id, id) });
+    async getCurrentUser(userId: string) {
+        const user = await this.db.query.usersTable.findFirst({ where: eq(usersTable.id, userId) });
 
         if (!user) throw new NotFoundException('No user found');
 
         return user;
     }
 
-    async updateUserProfile(id: string, updateUserProfileDto: UpdateUserProfileDto) {
+    async updateUserProfile(userId: string, updateUserProfileDto: UpdateUserProfileDto) {
         const { username, email, photo } = updateUserProfileDto;
 
-        const existingUsername = await this.db.query.usersTable.findFirst({ where: and(eq(usersTable.username, username.toLowerCase()), not(eq(usersTable.id, id))) });
+        const existingUsername = await this.db.query.usersTable.findFirst({ where: and(eq(usersTable.username, username.toLowerCase()), not(eq(usersTable.id, userId))) });
         if (existingUsername) throw new ConflictException('Username is already in use');
 
-        const existingEmail = await this.db.query.usersTable.findFirst({ where: and(eq(usersTable.email, email.toLowerCase()), not(eq(usersTable.id, id))) });
+        const existingEmail = await this.db.query.usersTable.findFirst({ where: and(eq(usersTable.email, email.toLowerCase()), not(eq(usersTable.id, userId))) });
         if (existingEmail) throw new ConflictException('Email is already in use');
 
         const updateData: Partial<User> = { username: username.toLowerCase(), email: email.toLowerCase() };
@@ -54,16 +54,16 @@ export class UsersService {
             updateData.photo = url;
         }
 
-        const [user] = await this.db.update(usersTable).set(updateData).where(eq(usersTable.id, id)).returning();
+        const [user] = await this.db.update(usersTable).set(updateData).where(eq(usersTable.id, userId)).returning();
         if (!user) throw new InternalServerErrorException('Failed to update user profile');
 
         return user;
     }
 
-    async updateUserPassword(id: string, updateUserPasswordDto: UpdateUserPasswordDto) {
+    async updateUserPassword(userId: string, updateUserPasswordDto: UpdateUserPasswordDto) {
         const { currentPassword, newPassword, confirmNewPassword } = updateUserPasswordDto;
 
-        const user = await this.db.query.usersTable.findFirst({ where: eq(usersTable.id, id) });
+        const user = await this.db.query.usersTable.findFirst({ where: eq(usersTable.id, userId) });
         if (!user) throw new NotFoundException('No user found');
 
         const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
@@ -73,14 +73,14 @@ export class UsersService {
 
         const hash = await bcrypt.hash(newPassword, 10);
 
-        const updatedUser = await this.db.update(usersTable).set({ password: hash }).where(eq(usersTable.id, id)).returning();
+        const updatedUser = await this.db.update(usersTable).set({ password: hash }).where(eq(usersTable.id, userId)).returning();
         if (!updatedUser) throw new InternalServerErrorException('Failed to update user password');
 
         return null;
     }
 
-    async deleteUser(id: string) {
-        const [user] = await this.db.delete(usersTable).where(eq(usersTable.id, id)).returning();
+    async deleteUser(userId: string) {
+        const [user] = await this.db.delete(usersTable).where(eq(usersTable.id, userId)).returning();
 
         if (!user) throw new InternalServerErrorException('Failed to delete the user');
 
