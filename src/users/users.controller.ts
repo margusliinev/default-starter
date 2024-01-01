@@ -1,8 +1,8 @@
+import type { AuthenticatedRequest } from 'src/types';
 import { Controller, Req, Body, Get, Patch, Put, Delete } from '@nestjs/common';
 import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
-import { AuthenticatedRequest } from 'src/types';
 import { UsersService } from './users.service';
 import { ApiTags } from '@nestjs/swagger';
 

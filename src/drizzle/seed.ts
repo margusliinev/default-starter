@@ -27,6 +27,7 @@ async function seed() {
                 username: user.username,
                 email: user.email,
                 password: hashedPassword,
+                photo: user.photo,
             })
             .returning();
     }

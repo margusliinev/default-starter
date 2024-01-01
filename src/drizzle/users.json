@@ -2,101 +2,121 @@
     {
         "username": "johndoe",
         "email": "johndoe@gmail.com",
-        "password": "johndoe123"
+        "password": "johndoe123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774935/Profiles/thconr32kzyg2nwv4gy4_bph7w9.jpg"
     },
     {
         "username": "mariaglenn",
         "email": "mariaglenn@gmail.com",
-        "password": "mariaglenn123"
+        "password": "mariaglenn123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774933/Profiles/nmvtpdfjrsa02dxxgrmw_gwu7cc.jpg"
     },
     {
         "username": "shawntray",
         "email": "shawntray@gmail.com",
-        "password": "shawntray123"
+        "password": "shawntray123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774936/Profiles/vaoxagyw0prvrv9bp5w4_sppycq.jpg"
     },
     {
         "username": "mikebrown",
         "email": "mikebrown@gmail.com",
-        "password": "mikebrown123"
+        "password": "mikebrown123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774932/Profiles/jf1bmqvh9gvowbaasomd_ua1rkh.jpg"
     },
     {
         "username": "larrysmith",
         "email": "larrysmith@gmail.com",
-        "password": "larrysmith123"
+        "password": "larrysmith123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774934/Profiles/ogpvgu2yzsuyfijh4lzz_bcyag4.jpg"
     },
     {
         "username": "joeduffy",
         "email": "joeduffy@gmail.com",
-        "password": "joeduffy123"
+        "password": "joeduffy123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774932/Profiles/jb3hpmihc7c4mnthy6ys_kq2oww.jpg"
     },
     {
         "username": "chrismiller",
         "email": "chrismiller@gmail.com",
-        "password": "chrismiller123"
+        "password": "chrismiller123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774933/Profiles/jwo6j5jfb7zcyuyhtn1p_mbvvdj.jpg"
     },
     {
         "username": "changlee",
         "email": "changlee@gmail.com",
-        "password": "changlee123"
+        "password": "changlee123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774934/Profiles/qh3gx3yqq3iyah6hiwja_sr3fue.jpg"
     },
     {
         "username": "andreamoore",
         "email": "andreamoore@gmail.com",
-        "password": "andreamoore123"
+        "password": "andreamoore123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774932/Profiles/e1fzj0zz9thump1iyw1k_tx3fig.jpg"
     },
     {
         "username": "davidcooper",
         "email": "davidcooper@gmail.com",
-        "password": "davidcooper123"
+        "password": "davidcooper123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774932/Profiles/e9hxdpanb0agkrzjf8ml_xtrtzx.jpg"
     },
     {
         "username": "juanmartinez",
         "email": "juanmartinez@gmail.com",
-        "password": "juanmartinez123"
+        "password": "juanmartinez123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774935/Profiles/t1yaou6bi67qzbfg3yxv_yyjtwo.jpg"
     },
     {
         "username": "jacobcrook",
         "email": "jacobcrook@gmail.com",
-        "password": "jacobcrook123"
+        "password": "jacobcrook123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774933/Profiles/lzge60tlsaholwwj6qdr_dwpnpv.jpg"
     },
     {
         "username": "dennisamber",
         "email": "dennisamber@gmail.com",
-        "password": "dennisamber123"
+        "password": "dennisamber123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774932/Profiles/ctdwkpnnq1ae3heixgyk_zuyliy.jpg"
     },
     {
         "username": "estherhoward",
         "email": "estherhoward@gmail.com",
-        "password": "estherhoward123"
+        "password": "estherhoward123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774935/Profiles/rfypu2saajh6ohyb1s8f_vg1hhc.jpg"
     },
     {
         "username": "courtneyhenry",
         "email": "courtneyhenry@gmail.com",
-        "password": "courtneyhenry123"
+        "password": "courtneyhenry123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774932/Profiles/gw2sezbrtehggbvmd8b2_zpj2p3.jpg"
     },
     {
         "username": "codyfisher",
         "email": "codyfisher@gmail.com",
-        "password": "codyfisher123"
+        "password": "codyfisher123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774936/Profiles/uc7xy4ob3evcxibyus9h_plncdu.jpg"
     },
     {
         "username": "cameronwill",
         "email": "cameronwill@gmail.com",
-        "password": "cameronwill123"
+        "password": "cameronwill123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774936/Profiles/vibzmjo5mifjoxicwocx_cwcevc.jpg"
     },
     {
         "username": "theresawebb",
         "email": "theresawebb@gmail.com",
-        "password": "theresawebb123"
+        "password": "theresawebb123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774935/Profiles/t7bkpeyzew4d7nwcfoan_ylbhz3.jpg"
     },
     {
         "username": "jennywilson",
         "email": "jennywilson@gmail.com",
-        "password": "jennywilson123"
+        "password": "jennywilson123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774936/Profiles/ufouyjjll2sooczozl46_ss9qy2.jpg"
     },
     {
         "username": "janecooper",
         "email": "janecooper@gmail.com",
-        "password": "janecooper123"
+        "password": "janecooper123",
+        "photo": "https://res.cloudinary.com/dwv94rkbl/image/upload/v1700774934/Profiles/ntyohizoo5hpdpz6nqvz_hzo70f.jpg"
     }
 ]

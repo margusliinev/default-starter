@@ -1,14 +1,18 @@
 import { Injectable, Inject, InternalServerErrorException, ConflictException, NotFoundException } from '@nestjs/common';
-import { DATA_SOURCE, DATA_SOURCE_TYPE } from 'src/drizzle/drizzle.module';
+import { DATA_SOURCE, DATA_SOURCE_TYPE } from 'src/drizzle/drizzle.provider';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { User, usersTable } from 'src/drizzle/schema';
 import { and, eq, not } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
-    constructor(@Inject(DATA_SOURCE) private db: DATA_SOURCE_TYPE) {}
+    constructor(
+        @Inject(DATA_SOURCE) private db: DATA_SOURCE_TYPE,
+        private cloudinary: CloudinaryService,
+    ) {}
 
     async getAllUsers() {
         const users = await this.db.query.usersTable.findMany();
@@ -35,7 +39,7 @@ export class UsersService {
     }
 
     async updateUserProfile(id: string, updateUserProfileDto: UpdateUserProfileDto) {
-        const { username, email } = updateUserProfileDto;
+        const { username, email, photo } = updateUserProfileDto;
 
         const existingUsername = await this.db.query.usersTable.findFirst({ where: and(eq(usersTable.username, username.toLowerCase()), not(eq(usersTable.id, id))) });
         if (existingUsername) throw new ConflictException('Username is already in use');
@@ -44,6 +48,11 @@ export class UsersService {
         if (existingEmail) throw new ConflictException('Email is already in use');
 
         const updateData: Partial<User> = { username: username.toLowerCase(), email: email.toLowerCase() };
+
+        if (photo) {
+            const url = await this.cloudinary.uploadPhoto(photo);
+            updateData.photo = url;
+        }
 
         const [user] = await this.db.update(usersTable).set(updateData).where(eq(usersTable.id, id)).returning();
         if (!user) throw new InternalServerErrorException('Failed to update user profile');
