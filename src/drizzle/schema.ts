@@ -1,4 +1,4 @@
-import { pgTable, varchar, pgEnum, boolean, timestamp, text, uuid } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, pgEnum, timestamp, uuid, index } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 // ENUMS
@@ -12,55 +12,41 @@ export const usersTable = pgTable('users', {
     username: varchar('username', { length: 255 }).unique().notNull(),
     email: varchar('email', { length: 255 }).unique().notNull(),
     password: varchar('password', { length: 255 }).notNull(),
+    photo: varchar('photo', { length: 255 }),
     created_at: timestamp('created_at', { mode: 'date', withTimezone: true, precision: 6 }).defaultNow().notNull(),
     updated_at: timestamp('updated_at', { mode: 'date', withTimezone: true, precision: 6 }).defaultNow().notNull(),
     role: userRoleEnum('role').default('USER').notNull(),
 });
 
-export const postsTable = pgTable('posts', {
-    id: uuid('id').primaryKey().defaultRandom(),
-    title: varchar('title', { length: 255 }).notNull(),
-    content: text('content').notNull(),
-    created_at: timestamp('created_at', { mode: 'date', withTimezone: true, precision: 6 }).defaultNow().notNull(),
-    updated_at: timestamp('updated_at', { mode: 'date', withTimezone: true, precision: 6 }).defaultNow().notNull(),
-    is_published: boolean('is_published').default(false).notNull(),
-    author_id: uuid('author_id').references(() => usersTable.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
-});
+export const sessionsTable = pgTable(
+    'sessions',
+    {
+        id: uuid('id').primaryKey().defaultRandom(),
+        expires_at: timestamp('expires_at', { mode: 'date', withTimezone: true, precision: 6 }).notNull(),
+        created_at: timestamp('created_at', { mode: 'date', withTimezone: true, precision: 6 }).defaultNow().notNull(),
+        updated_at: timestamp('updated_at', { mode: 'date', withTimezone: true, precision: 6 }).defaultNow().notNull(),
+        user_id: uuid('user_id').references(() => usersTable.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+    },
+    (table) => {
+        return { user_id_idx: index('user_id_idx').on(table.user_id) };
+    },
+);
 
-export const commentsTable = pgTable('comments', {
-    id: uuid('id').primaryKey().defaultRandom(),
-    content: varchar('content', { length: 255 }).notNull(),
-    created_at: timestamp('created_at', { mode: 'date', withTimezone: true, precision: 6 }).defaultNow().notNull(),
-    updated_at: timestamp('updated_at', { mode: 'date', withTimezone: true, precision: 6 }).defaultNow().notNull(),
-    user_id: uuid('user_id').references(() => usersTable.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
-    post_id: uuid('post_id').references(() => postsTable.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
-});
+// RELATIONS
+
+export const usersRelations = relations(usersTable, ({ many }) => ({
+    sessions: many(sessionsTable),
+}));
+
+export const sessionsRelations = relations(sessionsTable, ({ one }) => ({
+    user: one(usersTable, {
+        fields: [sessionsTable.user_id],
+        references: [usersTable.id],
+    }),
+}));
 
 // INFERRED TYPES
 
 export type User = typeof usersTable.$inferSelect;
 export type NewUser = typeof usersTable.$inferInsert;
-
-// RELATIONS
-
-export const usersRelations = relations(usersTable, ({ many }) => ({
-    posts: many(postsTable),
-}));
-
-export const postsRelations = relations(postsTable, ({ one }) => ({
-    author: one(usersTable, {
-        fields: [postsTable.author_id],
-        references: [usersTable.id],
-    }),
-}));
-
-export const commentsRelations = relations(commentsTable, ({ one }) => ({
-    user: one(usersTable, {
-        fields: [commentsTable.user_id],
-        references: [usersTable.id],
-    }),
-    post: one(postsTable, {
-        fields: [commentsTable.post_id],
-        references: [postsTable.id],
-    }),
-}));
+export type Session = typeof sessionsTable.$inferSelect;

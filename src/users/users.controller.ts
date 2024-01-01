@@ -1,6 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Controller, Req, Body, Get, Patch, Put, Delete } from '@nestjs/common';
+import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
+import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
+import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
+import { AuthenticatedRequest } from 'src/types';
 import { UsersService } from './users.service';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -9,28 +11,29 @@ import { ApiTags } from '@nestjs/swagger';
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
-    @Post()
-    create(@Body() createUserDto: CreateUserDto) {
-        return this.usersService.create(createUserDto);
-    }
-
     @Get()
-    findAll() {
-        return this.usersService.findAll();
+    getAllUsers() {
+        return this.usersService.getAllUsers();
     }
 
-    @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.usersService.findOne(id);
+    @Get('me')
+    getCurrentUser(@Req() req: AuthenticatedRequest) {
+        return this.usersService.getCurrentUser(req.user.id);
     }
 
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-        return this.usersService.update(id, updateUserDto);
+    @Patch('me')
+    @FormDataRequest({ storage: FileSystemStoredFile, fileSystemStoragePath: './uploads' })
+    updateUserProfile(@Req() req: AuthenticatedRequest, @Body() updateUserProfileDto: UpdateUserProfileDto) {
+        return this.usersService.updateUserProfile(req.user.id, updateUserProfileDto);
     }
 
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.usersService.remove(id);
+    @Put('me')
+    updateUserPassword(@Req() req: AuthenticatedRequest, @Body() updateUserPasswordDto: UpdateUserPasswordDto) {
+        return this.usersService.updateUserPassword(req.user.id, updateUserPasswordDto);
+    }
+
+    @Delete('me')
+    deleteUser(@Req() req: AuthenticatedRequest) {
+        return this.usersService.deleteUser(req.user.id);
     }
 }
