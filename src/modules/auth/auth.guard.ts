@@ -1,7 +1,7 @@
 import type { AuthenticatedRequest } from 'src/types';
 import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { DATA_SOURCE, DATA_SOURCE_TYPE } from 'src/drizzle/drizzle.provider';
-import { Session, sessionsTable, usersTable } from 'src/drizzle/schema';
+import { DATA_SOURCE, DATA_SOURCE_TYPE } from 'src/modules/drizzle/drizzle.provider';
+import { Session, sessionsTable, usersTable } from 'src/db/schema';
 import { and, eq, gt } from 'drizzle-orm';
 import { Reflector } from '@nestjs/core';
 import { Response } from 'express';

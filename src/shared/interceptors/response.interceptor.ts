@@ -4,7 +4,7 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { User } from 'src/drizzle/schema';
+import { User } from 'src/db/schema';
 
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {

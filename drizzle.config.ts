@@ -5,8 +5,8 @@ if (!process.env.DATABASE_URL) {
 }
 
 export default {
-    schema: './src/drizzle/schema.ts',
-    out: './src/drizzle/migrations',
+    schema: './src/db/schema.ts',
+    out: './src/db/migrations',
     driver: 'pg',
     dbCredentials: { connectionString: process.env.DATABASE_URL },
 } satisfies Config;

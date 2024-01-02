@@ -1,6 +1,6 @@
 import type { AuthenticatedRequest } from 'src/types';
 import { Controller, Post, Body, Res, Req, Delete } from '@nestjs/common';
-import { Public } from 'src/utils/decorators/public.decorator';
+import { Public } from 'src/shared/decorators/public.decorator';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';

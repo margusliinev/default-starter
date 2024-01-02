@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { DATA_SOURCE, DATA_SOURCE_TYPE } from 'src/modules/drizzle/drizzle.provider';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { DATA_SOURCE, DATA_SOURCE_TYPE } from 'src/drizzle/drizzle.provider';
-import { sessionsTable } from 'src/drizzle/schema';
+import { sessionsTable } from 'src/db/schema';
 import { lt } from 'drizzle-orm';
 
 @Injectable()

@@ -1,9 +1,9 @@
 import { Injectable, Inject, InternalServerErrorException, ConflictException, NotFoundException } from '@nestjs/common';
-import { DATA_SOURCE, DATA_SOURCE_TYPE } from 'src/drizzle/drizzle.provider';
+import { DATA_SOURCE, DATA_SOURCE_TYPE } from 'src/modules/drizzle/drizzle.provider';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
-import { User, usersTable } from 'src/drizzle/schema';
+import { CloudinaryService } from 'src/modules/cloudinary/cloudinary.service';
+import { User, usersTable } from 'src/db/schema';
 import { and, eq, not } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 

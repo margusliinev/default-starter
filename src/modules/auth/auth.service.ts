@@ -1,6 +1,6 @@
 import { ConflictException, Inject, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
-import { DATA_SOURCE, DATA_SOURCE_TYPE } from 'src/drizzle/drizzle.provider';
-import { User, usersTable, sessionsTable } from 'src/drizzle/schema';
+import { DATA_SOURCE, DATA_SOURCE_TYPE } from 'src/modules/drizzle/drizzle.provider';
+import { User, usersTable, sessionsTable } from 'src/db/schema';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { eq } from 'drizzle-orm';

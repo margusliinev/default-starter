@@ -1,9 +1,9 @@
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
-import { ResponseInterceptor } from './utils/interceptors/response.interceptor';
-import { HttpExceptionFilter } from './utils/filters/http-exception.filter';
+import { ResponseInterceptor } from './shared/interceptors/response.interceptor';
+import { HttpExceptionFilter } from './shared/filters/http-exception.filter';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './modules/app/app.module';
 import cookieParser from 'cookie-parser';
 import compression from 'compression';
 import metadata from './metadata';
