@@ -38,27 +38,22 @@ Default Starter is a modern app template for new projects and my preferred way t
 2. **Install Dependencies:**
    ```
    npm install
-   
    ```
 3. **Spin up Local PostgreSQL:**
    ```
    docker-compose up -d
-   
    ```
 4. **Push Database Schema**
    ```
    npm run push
-   
    ```
 5. **Seed The Database (Optional)**
    ```
    npm run seed
-   
    ```
 6. **Generate migrations and run them (When Deploying)**
    ```
    npm run generate && npm run migrate
-   
    ```
 ## License
 
