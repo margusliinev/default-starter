@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { ThemeToggle } from './components/theme-toggle';
 
 function App() {
     const [data, setData] = useState('');
@@ -15,7 +16,14 @@ function App() {
             .then((data) => setData(data));
     }, []);
 
-    return <h1>{data}</h1>;
+    return (
+        <main className='w-screen h-screen grid place-items-center'>
+            <span className='absolute top-8 right-8'>
+                <ThemeToggle />
+            </span>
+            <h1 className='text-xl font-medium'>{data}</h1>
+        </main>
+    );
 }
 
 export default App;

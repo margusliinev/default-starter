@@ -16,7 +16,7 @@ import { join } from 'path';
 @Module({
     imports: [
         ServeStaticModule.forRoot({
-            rootPath: join(__dirname, '../../../', 'ui', 'dist'),
+            rootPath: join(__dirname, '../../../', 'client', 'dist'),
         }),
         ConfigModule.forRoot({ isGlobal: true }),
         ScheduleModule.forRoot(),
