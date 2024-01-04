@@ -59,7 +59,7 @@
         position: absolute;
         z-index: -999;
         inset: 0;
-        background-image: url('background.png');
+        background-image: url('../background.png');
         opacity: var(--background-opacity);
     }
 
