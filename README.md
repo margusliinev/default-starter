@@ -16,17 +16,22 @@ Default Starter is a modern app template for new projects and my preferred way t
 - **NestJS**: Preferred over other NodeJS frameworks due to the out-of-the-box application architecture that makes building scalable server-side applications easy. 
 - **PostgreSQL**: Completely free-to-use license, has wide variety of hosting providers and adherence to SQL standards ensures data integrity and reliability.
 - **Drizzle ORM**: Chosen mainly because of its top of the class performence, ease-of-use and great migrations support.  
+- **React**: Very little framework specific syntax compared to others and offers best composability by allowing multiple components per file.
+- **Tailwind**: Helps to avoid most common css related bugs like naming collisons, different types of style hierarchy errors and much more. Works well with JSX.
+- **Shadcn**: Fully customizable and accessible components that are also beautifully designed. Has the most modern look out of all the options.
 
 ## Features
 
 - **Scalable folder structure**: Clear separation between application modules, shared utilities(decorators, interceptors, filters), cron jobs and database files(migrations, schema, seeds).
 - **Basic Authentication Flow**: Provides a basic authentication flow with sessions, allowing users to register, login and logout. Also added cron job to clear out expired sessions.
 - **Password Encryption and Verification**: Includes utilities for securely encrypting passwords and verifying them during authentication.
-- **Cookie/Token Creation And Parsing**: Utility functions are available for creating, parsing and managing cookies and tokens for authentication and authorization purposes.
+- **Cookie/Token Creation and Parsing**: Utility functions are available for creating, parsing and managing cookies and tokens for authentication and authorization purposes.
 - **Custom Input Validation Setup**: Includes a custom validation pipe that properly formats the errors and returns the correct fields which failed validation.
 - **Database Schema**: Includes an example database schema defined with Drizzle ORM, showing how to create database tables, enums and setup relations. Also shows how to infer types from database schema.
 - **Automatic Swagger Docs**: Project utilizes NestJS Cli Plugin to generate swagger documentation without any manual work besides adding tags for controllers for better grouping in the final result.
 - **Local Development with Docker**: Includes docker to spin up a local postgres container with a volume for easy local development. Automatically sets the database to UTC timezone.
+- **Theming and dark mode**: Project is already set up with global css variables for both light and dark mode. Also included toggle switch to sample app.
+- **Tailwind with Shadcn and Lucide**: Provides a solid style system out-of-the-box using tailwind, shadcn and lucide icons to create beautiful user interfaces.
 
 ## Usage
 
