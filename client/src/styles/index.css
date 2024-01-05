@@ -67,7 +67,5 @@
         color: hsl(var(--foreground));
         background-color: hsl(var(--background));
         font-family: 'Inter', 'Inter Fallback';
-        transition-duration: 300ms;
-        transition-property: background-color, color;
     }
 }
