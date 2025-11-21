@@ -1,0 +1,169 @@
+---
+description: NestJS Backend Standards & Conventions
+globs: **/*.ts
+alwaysApply: false
+---
+
+# NestJS Backend Conventions
+
+## Critical Implementation Guidelines
+
+These rules must be followed for all code changes:
+
+1.  **Naming Conventions**:
+    - **Files**: Kebab-case (e.g., `user-profile.service.ts`)
+    - **Classes**: PascalCase (e.g., `UserProfileService`)
+    - **Interfaces/Types**: PascalCase (e.g., `JwtPayload`)
+    - **Variables/Functions**: CamelCase (e.g., `findUserById`)
+2.  **No `any` Type**: The `any` type is strictly forbidden. Use `unknown` or specific types.
+3.  **No Return Types**: Do not add explicit return types to functions/methods unless absolutely necessary.
+4.  **Concise Comments**: Use short, concise comments only where logic is complex and explanation is strictly necessary.
+5.  **Concision**: Be extremely concise. Sacrifice grammar for the sake of concision in all communications and comments.
+
+## Tech Stack
+
+- **Framework**: NestJS 11
+- **Database**: PostgreSQL
+- **Language**: TypeScript
+- **Validation**: class-validator, class-transformer
+- **Testing**: Jest, SWC
+- **Package Manager**: npm
+
+## Project Structure
+
+### 1. Feature Modules (`src/features/`)
+
+Follow a vertical slice/feature-based architecture. Each feature is self-contained.
+
+```
+src/features/{feature}/
+├── dto/                     # Data Transfer Objects
+├── entities/                # TypeORM Entities
+├── {feature}.controller.ts  # HTTP Route Handlers
+├── {feature}.service.ts     # Business Logic
+├── {feature}.module.ts      # Module Definition
+├── {feature}.guard.ts       # Feature-specific Guards
+├── {feature}.tasks.ts       # Scheduled Tasks (Cron)
+└── {feature}.spec.ts        # Integration/Unit Tests
+```
+
+### 2. Common Shared Code (`src/common/`)
+
+Utilities shared across multiple features.
+
+```
+src/common/
+├── decorators/    # Custom decorators (@AuthUser, @Public)
+├── filters/       # Global Exception Filters
+├── interceptors/  # Global Interceptors
+├── enums/         # Shared Enums
+├── types/         # Shared Types
+└── testing/       # Test setup helpers
+```
+
+### 3. Configuration (`src/config/`)
+
+- `env.ts`: Environment variable validation.
+- `database.ts`: TypeORM configuration.
+
+### 4. Database Migrations (`migrations/`)
+
+- `migrations/`: TypeORM migration files (located at project root).
+
+## Core Principles & Responsibilities
+
+### Controllers (`*.controller.ts`)
+
+**Role**: Entry point for HTTP requests.
+
+- **DO**:
+    - Define routes and HTTP methods (`@Get`, `@Post`, etc.).
+    - Use DTOs for request bodies and query params.
+    - Delegate business logic to Services.
+    - Use `@AuthUser()` to get the current user.
+    - Use `@Public()` to bypass authentication.
+- **DON'T**:
+    - Write business logic.
+    - Access the database directly.
+    - Handle raw `req` or `res` objects unless absolutely necessary (e.g., cookies).
+
+### Services (`*.service.ts`)
+
+**Role**: Business logic container.
+
+- **DO**:
+    - Contain all business rules and validation logic.
+    - Interact with the database via Repositories.
+    - Throw standard NestJS Exceptions.
+- **DON'T**:
+    - Return HTTP-specific objects.
+
+### DTOs (`dto/*.dto.ts`)
+
+**Role**: Define data shape and validation rules.
+
+- **DO**:
+    - Use `class-validator` decorators (`@IsString()`, `@IsEmail()`, `@IsOptional()`).
+    - Use `class-transformer` decorators (`@Type()`, `@Transform()`) if needed.
+    - Strict typing.
+
+### Entities (`entities/*.entity.ts`)
+
+**Role**: Database schema definitions.
+
+- **DO**:
+    - Use TypeORM decorators (`@Entity()`, `@Column()`, `@PrimaryGeneratedColumn()`).
+    - Extend common base entities if available.
+
+## Global Application Setup (`src/main.ts`)
+
+The application is bootstrapped with the following global configurations:
+
+1.  **Global Prefix**: `/api`
+2.  **ValidationPipe**:
+    - `whitelist: true` (strips unknown properties)
+    - `transform: true` (auto-transforms payloads to DTO instances)
+    - `forbidNonWhitelisted: true`
+3.  **Interceptors**:
+    - `LoggingInterceptor`: Logs request/response duration.
+    - `TimeoutInterceptor`: 30s hard timeout.
+    - `TransformInterceptor`: Standardizes JSON responses `{ success: true, data: ... }`.
+    - `ClassSerializerInterceptor`: Respects `@Exclude()` in entities.
+4.  **Filters**:
+    - `CatchAllFilter`: Standardizes error responses `{ success: false, message: ... }`.
+5.  **Security**:
+    - `Helmet` enabled.
+    - `CORS` enabled.
+    - `CookieParser` enabled.
+
+## Global Guards (`src/app.module.ts`)
+
+The application registers the following global guards in `AppModule`:
+
+1.  **ThrottlerGuard**: Rate limiting.
+2.  **AuthGuard**: Global authentication.
+
+## Coding Workflow
+
+### Creating a Feature
+
+1.  Create directory `src/features/{name}`.
+2.  Define Entity and DTOs first.
+3.  Create Service to handle logic.
+4.  Create Controller to expose endpoints.
+5.  Register in Module.
+
+### Database Migrations
+
+Use the npm scripts for TypeORM migrations:
+
+- `npm run migration:create --name=CreateUsersTable`: Generate a new migration.
+- `npm run migration:revert`: Revert last migration.
+- `npm run migration:show`: Show migration files.
+- `npm run migration:run`: Run migrations.
+
+### Code Quality & Testing
+
+- **Formatting**: `npm run format` (Prettier)
+- **Linting**: `npm run lint` (ESLint).
+- **Testing**: `npm run test` (Jest).

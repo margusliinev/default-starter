@@ -1,0 +1,108 @@
+{
+    "name": "default-starter",
+    "description": "Default Starter is a template for new projects built with my preferred stack.",
+    "author": "Margus Liinev",
+    "version": "1.0.0",
+    "homepage": "https://github.com/margusliinev/default-starter",
+    "license": "MIT",
+    "sideEffects": false,
+    "private": true,
+    "keywords": [
+        "Margus Liinev",
+        "Default Starter"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/margusliinev/default-starter"
+    },
+    "scripts": {
+        "dev": "nest start --watch",
+        "build": "nest build",
+        "start": "node build/main",
+        "check:types": "tsc --noEmit",
+        "check:format": "prettier --check .",
+        "check:lint": "eslint . --fix",
+        "format": "prettier --write .",
+        "lint": "eslint . --fix",
+        "test": "jest --runInBand",
+        "migration:create": "typeorm-ts-node-commonjs migration:create migrations/$npm_config_name",
+        "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/config/database.ts",
+        "migration:show": "typeorm-ts-node-commonjs migration:show -d src/config/database.ts",
+        "migration:run": "typeorm-ts-node-commonjs migration:run -d src/config/database.ts"
+    },
+    "dependencies": {
+        "@nestjs/common": "11.1.9",
+        "@nestjs/config": "4.0.2",
+        "@nestjs/core": "11.1.9",
+        "@nestjs/mapped-types": "2.1.0",
+        "@nestjs/platform-express": "11.1.9",
+        "@nestjs/schedule": "6.0.1",
+        "@nestjs/terminus": "11.0.0",
+        "@nestjs/throttler": "6.4.0",
+        "@nestjs/typeorm": "11.0.0",
+        "bcrypt": "6.0.0",
+        "class-transformer": "0.5.1",
+        "class-validator": "0.14.2",
+        "compression": "1.8.1",
+        "cookie-parser": "1.4.7",
+        "dotenv": "17.2.3",
+        "helmet": "8.1.0",
+        "pg": "8.16.3",
+        "reflect-metadata": "0.2.2",
+        "rxjs": "7.8.2",
+        "typeorm": "0.3.27"
+    },
+    "devDependencies": {
+        "@eslint/eslintrc": "3.3.1",
+        "@eslint/js": "9.39.1",
+        "@nestjs/cli": "11.0.12",
+        "@nestjs/schematics": "11.0.9",
+        "@nestjs/testing": "11.1.9",
+        "@swc/cli": "0.7.9",
+        "@swc/core": "1.15.3",
+        "@swc/jest": "0.2.39",
+        "@types/bcrypt": "6.0.0",
+        "@types/compression": "1.8.1",
+        "@types/cookie-parser": "1.4.10",
+        "@types/express": "5.0.5",
+        "@types/jest": "30.0.0",
+        "@types/node": "24.10.1",
+        "@types/pg": "8.15.6",
+        "eslint": "9.39.1",
+        "eslint-config-prettier": "10.1.8",
+        "eslint-plugin-prettier": "5.5.4",
+        "globals": "16.5.0",
+        "jest": "30.2.0",
+        "prettier": "3.6.2",
+        "ts-node": "10.9.2",
+        "typescript": "5.9.3",
+        "typescript-eslint": "8.47.0"
+    },
+    "jest": {
+        "moduleFileExtensions": [
+            "js",
+            "ts",
+            "json"
+        ],
+        "rootDir": "src",
+        "testRegex": ".*\\.spec\\.ts$",
+        "transform": {
+            "^.+\\.(t|j)s?$": [
+                "@swc/jest"
+            ]
+        },
+        "collectCoverageFrom": [
+            "**/*.(t|j)s",
+            "!**/common/**",
+            "!**/config/**",
+            "!**/dto/**",
+            "!**/entities/**",
+            "!**/app.module.ts",
+            "!**/main.ts"
+        ],
+        "coverageDirectory": "../coverage",
+        "testEnvironment": "node",
+        "setupFilesAfterEnv": [],
+        "testTimeout": 30000
+    }
+}
