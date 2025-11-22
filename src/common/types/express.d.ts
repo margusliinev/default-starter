@@ -1,9 +1,9 @@
-import type { User } from '../users/entities/user.entity';
+import type { Session } from '../../features/sessions/entities/session.entity';
 
 declare global {
     namespace Express {
         interface Request {
-            user?: User;
+            session?: Session;
         }
     }
 }

@@ -1,125 +1,201 @@
-import { createTestModule, setupRepository } from '../../common/testing/setup.testing';
+import { createTestModule, getRepository, clearRepositories } from '../../common/testing/setup.testing';
 import { SessionsService } from './sessions.service';
-import { SessionsModule } from './sessions.module';
-import { Session } from './entities/session.entity';
 import { UsersService } from '../users/users.service';
-import { UsersModule } from '../users/users.module';
-import { User } from '../users/entities/user.entity';
+import { SessionsModule } from './sessions.module';
 import { TestingModule } from '@nestjs/testing';
+import { UsersModule } from '../users/users.module';
+import { Session } from './entities/session.entity';
+import { User } from '../users/entities/user.entity';
 import { Repository } from 'typeorm';
-import { randomUUID } from 'crypto';
 
 describe('SessionsService', () => {
-    let sessionRepository: Repository<Session>;
-    let userRepository: Repository<User>;
-    let sessionService: SessionsService;
-    let userService: UsersService;
     let module: TestingModule;
-
-    async function createUser(username = 'testuser', email = 'test@example.com') {
-        return await userService.create({ username, email, password: 'password123' });
-    }
+    let usersService: UsersService;
+    let sessionsService: SessionsService;
+    let userRepo: Repository<User>;
+    let sessionRepo: Repository<Session>;
 
     beforeEach(async () => {
         module = await createTestModule({ imports: [SessionsModule, UsersModule] });
-        sessionService = module.get<SessionsService>(SessionsService);
-        userService = module.get<UsersService>(UsersService);
-
-        const sessionSetup = setupRepository(module, Session);
-        sessionRepository = sessionSetup.repo;
-
-        const userSetup = setupRepository(module, User);
-        userRepository = userSetup.repo;
+        usersService = module.get<UsersService>(UsersService);
+        sessionsService = module.get<SessionsService>(SessionsService);
+        userRepo = getRepository(module, User);
+        sessionRepo = getRepository(module, Session);
     });
 
     afterEach(async () => {
-        await sessionRepository.deleteAll();
-        await userRepository.deleteAll();
+        await clearRepositories(sessionRepo, userRepo);
         await module.close();
     });
 
-    it('should return a session with user relation', async () => {
-        const user = await createUser();
-        const session = await sessionService.create(user.id, { expires_at: new Date(Date.now() + 3600000) });
+    describe('createSession', () => {
+        it('should create session', async () => {
+            const user = await usersService.createUser({
+                name: 'Test User',
+                email: 'test@example.com',
+            });
 
-        const found = await sessionService.findWithUser(session.id);
+            const result = await sessionsService.createSession(user.id);
 
-        expect(found!.id).toBe(session.id);
-        expect(found!.user_id).toBe(user.id);
-        expect(found!.user).toBeDefined();
-        expect(found!.user.id).toBe(user.id);
-        expect(found!.user.username).toBe(user.username);
+            expect(result.token).toBeDefined();
+            expect(result.expiresAt).toBeDefined();
+            expect(result.expiresAt.getTime()).toBeGreaterThan(Date.now());
+
+            const savedSession = await sessionRepo.findOne({
+                where: { user_id: user.id },
+            });
+
+            expect(savedSession).toBeDefined();
+            expect(savedSession?.user_id).toBe(user.id);
+            expect(savedSession?.token).toBeDefined();
+        });
     });
 
-    it('should return null when session does not exist', async () => {
-        const id = randomUUID();
-        const found = await sessionService.findWithUser(id);
+    describe('validateSessionToken', () => {
+        it('should validate and return session when valid', async () => {
+            const user = await usersService.createUser({
+                name: 'Test User',
+                email: 'test@example.com',
+            });
 
-        expect(found).toBeNull();
+            const { token } = await sessionsService.createSession(user.id);
+            const result = await sessionsService.validateSessionToken(token);
+
+            expect(result).toBeDefined();
+            expect(result?.user_id).toBe(user.id);
+        });
+
+        it('should return null when session not found', async () => {
+            const result = await sessionsService.validateSessionToken('invalid-token');
+
+            expect(result).toBeNull();
+        });
+
+        it('should delete and return null when session expired', async () => {
+            const user = await usersService.createUser({
+                name: 'Test User',
+                email: 'test@example.com',
+            });
+
+            const { token } = await sessionsService.createSession(user.id);
+            const session = await sessionRepo.findOne({
+                where: { user_id: user.id },
+            });
+
+            session!.expires_at = new Date(Date.now() - 1000);
+            await sessionRepo.save(session!);
+
+            const result = await sessionsService.validateSessionToken(token);
+
+            expect(result).toBeNull();
+
+            const deletedSession = await sessionRepo.findOne({ where: { id: session!.id } });
+            expect(deletedSession).toBeNull();
+        });
+
+        it('should renew session when near expiration', async () => {
+            const user = await usersService.createUser({
+                name: 'Test User',
+                email: 'test@example.com',
+            });
+
+            const { token } = await sessionsService.createSession(user.id);
+            const session = await sessionRepo.findOne({
+                where: { user_id: user.id },
+            });
+
+            session!.expires_at = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000);
+            await sessionRepo.save(session!);
+
+            const originalExpiresAt = session!.expires_at;
+            const result = await sessionsService.validateSessionToken(token);
+
+            expect(result).toBeDefined();
+            const updatedSession = await sessionRepo.findOne({ where: { id: session!.id } });
+            expect(updatedSession?.expires_at.getTime()).toBeGreaterThan(originalExpiresAt.getTime());
+        });
     });
 
-    it('should create a session', async () => {
-        const expiresAt = new Date(Date.now() + 3600000);
-        const user = await createUser();
-        const session = await sessionService.create(user.id, { expires_at: expiresAt });
+    describe('deleteSessionById', () => {
+        it('should delete session by id', async () => {
+            const user = await usersService.createUser({
+                name: 'Test User',
+                email: 'test@example.com',
+            });
 
-        expect(session.id).toBeDefined();
-        expect(session.user_id).toBe(user.id);
-        expect(session.expires_at).toEqual(expiresAt);
+            await sessionsService.createSession(user.id);
+            const session = await sessionRepo.findOne({
+                where: { user_id: user.id },
+            });
+
+            await sessionsService.deleteSessionById(session!.id);
+
+            const deletedSession = await sessionRepo.findOne({ where: { id: session!.id } });
+            expect(deletedSession).toBeNull();
+        });
     });
 
-    it('should update a session', async () => {
-        const user = await createUser();
-        const session = await sessionService.create(user.id, { expires_at: new Date(Date.now() + 3600000) });
+    describe('deleteExpiredSessions', () => {
+        it('should delete expired sessions', async () => {
+            const user = await usersService.createUser({
+                name: 'Test User',
+                email: 'test@example.com',
+            });
 
-        const newExpiresAt = new Date(Date.now() + 7200000);
-        await sessionService.update(session.id, { expires_at: newExpiresAt });
+            await sessionsService.createSession(user.id);
+            const session = await sessionRepo.findOne({
+                where: { user_id: user.id },
+            });
 
-        const found = await sessionRepository.findOne({ where: { id: session.id } });
-        expect(found).not.toBeNull();
-        expect(found!.expires_at).toEqual(newExpiresAt);
+            session!.expires_at = new Date(Date.now() - 1000);
+            await sessionRepo.save(session!);
+
+            const result = await sessionsService.deleteExpiredSessions();
+            expect(result).toBeGreaterThan(0);
+
+            const deletedSession = await sessionRepo.findOne({ where: { id: session!.id } });
+            expect(deletedSession).toBeNull();
+        });
+
+        it('should return 0 when no sessions deleted', async () => {
+            const user = await usersService.createUser({
+                name: 'Test User',
+                email: 'test@example.com',
+            });
+
+            await sessionsService.createSession(user.id);
+
+            const result = await sessionsService.deleteExpiredSessions();
+            expect(result).toBe(0);
+        });
     });
 
-    it('should remove a session', async () => {
-        const user = await createUser();
-        const session = await sessionService.create(user.id, { expires_at: new Date(Date.now() + 3600000) });
+    describe('deleteUserSessions', () => {
+        it('should delete all user sessions', async () => {
+            const user = await usersService.createUser({
+                name: 'Test User',
+                email: 'test@example.com',
+            });
 
-        await sessionService.remove(session.id);
+            await sessionsService.createSession(user.id);
+            await sessionsService.createSession(user.id);
 
-        const found = await sessionRepository.findOne({ where: { id: session.id } });
-        expect(found).toBeNull();
-    });
+            const result = await sessionsService.deleteUserSessions(user.id);
+            expect(result).toBe(2);
 
-    it('should delete only expired sessions', async () => {
-        const user = await createUser();
+            const sessions = await sessionRepo.find({ where: { user_id: user.id } });
+            expect(sessions.length).toBe(0);
+        });
 
-        await sessionService.create(user.id, { expires_at: new Date(Date.now() - 10000) });
-        const activeSession = await sessionService.create(user.id, { expires_at: new Date(Date.now() + 10000) });
+        it('should return 0 when no sessions deleted', async () => {
+            const user = await usersService.createUser({
+                name: 'Test User',
+                email: 'test@example.com',
+            });
 
-        const deletedCount = await sessionService.deleteExpiredSessions();
+            const result = await sessionsService.deleteUserSessions(user.id);
 
-        expect(deletedCount).toBe(1);
-
-        const allSessions = await sessionRepository.find();
-        expect(allSessions).toHaveLength(1);
-        expect(allSessions[0].id).toBe(activeSession.id);
-    });
-
-    it('should delete all sessions for a specific user', async () => {
-        const user1 = await createUser('user1', 'user1@example.com');
-        const user2 = await createUser('user2', 'user2@example.com');
-
-        await sessionService.create(user1.id, { expires_at: new Date(Date.now() + 10000) });
-        await sessionService.create(user1.id, { expires_at: new Date(Date.now() + 10000) });
-
-        const user2Session = await sessionService.create(user2.id, { expires_at: new Date(Date.now() + 10000) });
-
-        const deletedCount = await sessionService.deleteUserSessions(user1.id);
-
-        expect(deletedCount).toBe(2);
-
-        const allSessions = await sessionRepository.find();
-        expect(allSessions).toHaveLength(1);
-        expect(allSessions[0].id).toBe(user2Session.id);
+            expect(result).toBe(0);
+        });
     });
 });

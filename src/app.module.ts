@@ -1,6 +1,5 @@
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { SessionsModule } from './features/sessions/sessions.module';
-import { HealthModule } from './features/health/health.module';
 import { UsersModule } from './features/users/users.module';
 import { AuthModule } from './features/auth/auth.module';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -29,7 +28,6 @@ import { Module } from '@nestjs/common';
             }),
         }),
         UsersModule,
-        HealthModule,
         SessionsModule,
         AuthModule,
     ],

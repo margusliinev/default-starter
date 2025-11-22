@@ -1,69 +1,55 @@
-import { createSessionCookie, deleteSessionCookie, getSessionFromCookie } from './auth.helpers';
-import { Controller, Post, Body, Res, Req, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Res, HttpCode, HttpStatus } from '@nestjs/common';
+import { SessionsService } from '../sessions/sessions.service';
+import { AuthSession } from '../../common/decorators/auth-session';
 import { Public } from '../../common/decorators/public.decorator';
-import { AuthUser } from '../../common/decorators/auth-user';
-import { User } from '../users/entities/user.entity';
+import { Session } from '../sessions/entities/session.entity';
 import { RegisterDto } from './dto/register.dto';
-import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import type { Request, Response } from 'express';
+import type { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
     constructor(
         private readonly authService: AuthService,
-        private readonly configService: ConfigService,
+        private readonly sessionsService: SessionsService,
     ) {}
-
-    private getIsProduction() {
-        return this.configService.get('NODE_ENV') === 'production';
-    }
 
     @Public()
     @Post('register')
     @HttpCode(HttpStatus.CREATED)
     async register(@Body() registerDto: RegisterDto, @Res({ passthrough: true }) res: Response) {
-        const user = await this.authService.register(registerDto);
-        const session = await this.authService.createSession(user.id);
+        const { token, expiresAt } = await this.authService.register(registerDto);
 
-        const isProduction = this.getIsProduction();
-        createSessionCookie(res, session.id, session.expires_at, isProduction);
-
-        return user;
+        this.sessionsService.createSessionCookie(res, token, expiresAt);
+        return 'Registration successful';
     }
 
     @Public()
     @Post('login')
     @HttpCode(HttpStatus.OK)
     async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: Response) {
-        const user = await this.authService.login(loginDto);
-        const session = await this.authService.createSession(user.id);
+        const { token, expiresAt } = await this.authService.login(loginDto);
 
-        const isProduction = this.getIsProduction();
-        createSessionCookie(res, session.id, session.expires_at, isProduction);
-
-        return user;
+        this.sessionsService.createSessionCookie(res, token, expiresAt);
+        return 'Login successful';
     }
 
     @Post('logout')
-    @HttpCode(HttpStatus.NO_CONTENT)
-    async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-        const sessionId = getSessionFromCookie(req);
-        if (sessionId) {
-            await this.authService.logout(sessionId);
-        }
+    @HttpCode(HttpStatus.OK)
+    async logout(@AuthSession() session: Session, @Res({ passthrough: true }) res: Response) {
+        await this.authService.logout(session);
 
-        const isProduction = this.getIsProduction();
-        deleteSessionCookie(res, isProduction);
+        this.sessionsService.deleteSessionCookie(res);
+        return 'Logout successful';
     }
 
     @Post('logout-all')
-    @HttpCode(HttpStatus.NO_CONTENT)
-    async logoutAllDevices(@AuthUser() user: User, @Res({ passthrough: true }) res: Response) {
-        await this.authService.logoutAllDevices(user.id);
+    @HttpCode(HttpStatus.OK)
+    async logoutAll(@AuthSession() session: Session, @Res({ passthrough: true }) res: Response) {
+        await this.authService.logoutAll(session);
 
-        const isProduction = this.getIsProduction();
-        deleteSessionCookie(res, isProduction);
+        this.sessionsService.deleteSessionCookie(res);
+        return 'Logout all successful';
     }
 }

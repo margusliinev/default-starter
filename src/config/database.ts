@@ -1,5 +1,6 @@
 import { Session } from '../features/sessions/entities/session.entity';
 import { User } from '../features/users/entities/user.entity';
+import { Account } from '../features/accounts/entities/account.entity';
 import { config } from './env';
 import { DataSource } from 'typeorm';
 import * as dotenv from 'dotenv';
@@ -15,7 +16,7 @@ export default new DataSource({
     username: envConfig.database.username,
     password: envConfig.database.password,
     database: envConfig.database.database,
-    entities: [User, Session],
+    entities: [User, Account, Session],
     migrations: ['migrations/*.ts'],
     migrationsTableName: 'migrations',
 });

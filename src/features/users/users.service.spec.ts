@@ -1,115 +1,119 @@
-import { createTestModule, setupRepository } from '../../common/testing/setup.testing';
+import { TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { UsersModule } from './users.module';
+import { createTestModule, getRepository, clearRepositories } from '../../common/testing/setup.testing';
 import { User } from './entities/user.entity';
-import { NotFoundException } from '@nestjs/common';
-import { TestingModule } from '@nestjs/testing';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
-import { randomUUID } from 'crypto';
 
 describe('UsersService', () => {
-    let service: UsersService;
-    let repository: Repository<User>;
     let module: TestingModule;
+    let usersService: UsersService;
+    let userRepo: Repository<User>;
 
-    async function createUser(username = 'testuser', email = 'test@example.com') {
-        return await service.create({ username, email, password: 'password123' });
-    }
+    const createCreateUserDto = (overrides?: Partial<CreateUserDto>): CreateUserDto => ({
+        name: 'Test User',
+        email: 'test@example.com',
+        image: 'https://example.com/image.jpg',
+        ...overrides,
+    });
+
+    const createUpdateUserDto = (overrides?: Partial<UpdateUserDto>): UpdateUserDto => ({
+        name: 'Updated Name',
+        image: 'https://example.com/updated-image.jpg',
+        ...overrides,
+    });
 
     beforeEach(async () => {
         module = await createTestModule({ imports: [UsersModule] });
-        service = module.get<UsersService>(UsersService);
-
-        const setup = setupRepository(module, User);
-        repository = setup.repo;
+        usersService = module.get<UsersService>(UsersService);
+        userRepo = getRepository(module, User);
     });
 
     afterEach(async () => {
-        await repository.deleteAll();
+        await clearRepositories(userRepo);
         await module.close();
     });
 
-    it('should create a user', async () => {
-        const created = await createUser();
+    describe('findUserById', () => {
+        it('should find user by id', async () => {
+            const createUserDto = createCreateUserDto();
+            const createdUser = await usersService.createUser(createUserDto);
 
-        expect(created.id).toBeDefined();
-        expect(created.username).toBe('testuser');
-        expect(created.email).toBe('test@example.com');
+            const result = await usersService.findUserById(createdUser.id);
+
+            expect(result).toBeDefined();
+            expect(result?.id).toBe(createdUser.id);
+            expect(result?.name).toBe(createUserDto.name);
+            expect(result?.email).toBe(createUserDto.email);
+        });
+
+        it('should return null when user not found', async () => {
+            const nonExistentUserId = '00000000-0000-0000-0000-000000000000';
+            const result = await usersService.findUserById(nonExistentUserId);
+
+            expect(result).toBeNull();
+        });
     });
 
-    it('should return all users', async () => {
-        await createUser('testuser1', 'test1@example.com');
-        await createUser('testuser2', 'test2@example.com');
+    describe('findUserByEmail', () => {
+        it('should find user by email', async () => {
+            const createUserDto = createCreateUserDto();
+            const createdUser = await usersService.createUser(createUserDto);
 
-        const users = await service.findAll();
+            const result = await usersService.findUserByEmail(createUserDto.email);
 
-        expect(users).toHaveLength(2);
+            expect(result).toBeDefined();
+            expect(result?.id).toBe(createdUser.id);
+            expect(result?.email).toBe(createUserDto.email);
+        });
+
+        it('should return null when user not found', async () => {
+            const nonExistentEmail = 'nonexistent@example.com';
+            const result = await usersService.findUserByEmail(nonExistentEmail);
+
+            expect(result).toBeNull();
+        });
     });
 
-    it('should return empty array when no users exist', async () => {
-        const users = await service.findAll();
+    describe('createUser', () => {
+        it('should create user', async () => {
+            const createUserDto = createCreateUserDto();
 
-        expect(users).toHaveLength(0);
-        expect(users).toEqual([]);
+            const result = await usersService.createUser(createUserDto);
+
+            expect(result).toBeDefined();
+            expect(result.id).toBeDefined();
+            expect(result.name).toBe(createUserDto.name);
+            expect(result.email).toBe(createUserDto.email);
+            expect(result.created_at).toBeDefined();
+        });
     });
 
-    it('should return a user by id', async () => {
-        const created = await createUser();
+    describe('updateUser', () => {
+        it('should update user', async () => {
+            const createUserDto = createCreateUserDto();
+            const createdUser = await usersService.createUser(createUserDto);
+            const updateUserDto = createUpdateUserDto();
 
-        const found = await service.findById(created.id);
+            const result = await usersService.updateUser(createdUser.id, updateUserDto);
 
-        expect(found.id).toBe(created.id.toString());
-        expect(found.username).toBe('testuser');
-        expect(found.email).toBe('test@example.com');
+            expect(result).toBeDefined();
+            expect(result?.name).toBe(updateUserDto.name);
+            expect(result?.image).toBe(updateUserDto.image);
+        });
     });
 
-    it('should throw NotFoundException when user does not exist', async () => {
-        const id = randomUUID();
-        await expect(service.findById(id)).rejects.toThrow(NotFoundException);
-    });
+    describe('deleteUser', () => {
+        it('should delete user', async () => {
+            const createUserDto = createCreateUserDto();
+            const createdUser = await usersService.createUser(createUserDto);
 
-    it('should update a user', async () => {
-        const created = await createUser();
+            await usersService.deleteUser(createdUser.id);
 
-        await service.update(created.id, { username: 'updated', email: 'updated@example.com' });
-
-        const found = await service.findById(created.id);
-        expect(found.username).toBe('updated');
-        expect(found.email).toBe('updated@example.com');
-    });
-
-    it('should remove a user', async () => {
-        const created = await createUser();
-        await service.remove(created.id);
-
-        await expect(service.findById(created.id)).rejects.toThrow(NotFoundException);
-    });
-
-    it('should delete users soft-deleted more than 30 days ago', async () => {
-        const user1 = await createUser('active', 'active@example.com');
-        const user2 = await createUser('recent', 'recent@example.com');
-        const user3 = await createUser('old', 'old@example.com');
-
-        const dayMs = 24 * 60 * 60 * 1000;
-
-        await service.remove(user2.id);
-        await repository.update(user2.id, { deleted_at: new Date(Date.now() - dayMs) });
-
-        await repository.update(user3.id, { deleted_at: new Date(Date.now() - 31 * dayMs) });
-
-        const deletedCount = await service.deleteSoftDeletedUsers();
-
-        expect(deletedCount).toBe(1);
-
-        const found1 = await repository.findOne({ where: { id: user1.id }, withDeleted: true });
-        expect(found1).toBeDefined();
-        expect(found1?.deleted_at).toBeNull();
-
-        const found2 = await repository.findOne({ where: { id: user2.id }, withDeleted: true });
-        expect(found2).toBeDefined();
-        expect(found2?.deleted_at).not.toBeNull();
-
-        const found3 = await repository.findOne({ where: { id: user3.id }, withDeleted: true });
-        expect(found3).toBeNull();
+            const deletedUser = await userRepo.findOne({ where: { id: createdUser.id } });
+            expect(deletedUser).toBeNull();
+        });
     });
 });

@@ -9,6 +9,9 @@ export class Session {
     @Column({ name: 'user_id', type: 'uuid' })
     user_id: string;
 
+    @Column({ type: 'text', unique: true })
+    token: string;
+
     @Column({ name: 'expires_at', type: 'timestamptz' })
     expires_at: Date;
 

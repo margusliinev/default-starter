@@ -5,7 +5,7 @@ import { Repository, ObjectLiteral } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-export interface TestModuleOptions {
+interface TestModuleOptions {
     imports?: any[];
     controllers?: any[];
     providers?: any[];
@@ -42,8 +42,12 @@ export async function createTestModule(options: TestModuleOptions = {}): Promise
     return await builder.compile();
 }
 
-export function setupRepository<T extends ObjectLiteral>(module: TestingModule, entity: new () => T) {
-    const repo = module.get<Repository<T>>(getRepositoryToken(entity));
+export function getRepository<T extends ObjectLiteral>(module: TestingModule, entity: new () => T): Repository<T> {
+    return module.get<Repository<T>>(getRepositoryToken(entity));
+}
 
-    return { repo };
+export async function clearRepositories(...repositories: Repository<any>[]) {
+    for (const repo of repositories) {
+        await repo.deleteAll();
+    }
 }

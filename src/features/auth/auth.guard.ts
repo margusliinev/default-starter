@@ -1,10 +1,6 @@
-import { createSessionCookie, deleteSessionCookie, getSessionFromCookie } from './auth.helpers';
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { IS_PUBLIC_KEY } from '../../common/decorators/public.decorator';
-import { User } from '../users/entities/user.entity';
-import { plainToInstance } from 'class-transformer';
-import { ConfigService } from '@nestjs/config';
-import { AuthService } from './auth.service';
+import { SessionsService } from '../sessions/sessions.service';
 import { Reflector } from '@nestjs/core';
 import type { Request, Response } from 'express';
 
@@ -12,13 +8,8 @@ import type { Request, Response } from 'express';
 export class AuthGuard implements CanActivate {
     constructor(
         private readonly reflector: Reflector,
-        private readonly authService: AuthService,
-        private readonly configService: ConfigService,
+        private readonly sessionsService: SessionsService,
     ) {}
-
-    private getIsProduction() {
-        return this.configService.get('NODE_ENV') === 'production';
-    }
 
     async canActivate(context: ExecutionContext) {
         const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [context.getHandler(), context.getClass()]);
@@ -29,22 +20,20 @@ export class AuthGuard implements CanActivate {
 
         const request = context.switchToHttp().getRequest<Request>();
         const response = context.switchToHttp().getResponse<Response>();
-        const isProduction = this.getIsProduction();
 
-        const sessionId = getSessionFromCookie(request);
-        if (!sessionId) {
+        const token = this.sessionsService.getSessionTokenFromCookie(request);
+        if (!token) {
             return false;
         }
 
-        const session = await this.authService.validateSession(sessionId);
+        const session = await this.sessionsService.validateSessionToken(token);
         if (!session) {
-            deleteSessionCookie(response, isProduction);
+            this.sessionsService.deleteSessionCookie(response);
             return false;
         }
 
-        createSessionCookie(response, sessionId, session.expires_at, isProduction);
-
-        request.user = plainToInstance(User, session.user);
+        this.sessionsService.createSessionCookie(response, token, session.expires_at);
+        request.session = session;
 
         return true;
     }

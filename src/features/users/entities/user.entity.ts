@@ -1,27 +1,25 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { Exclude } from 'class-transformer';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('users')
 export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ unique: true, length: 50 })
-    username: string;
+    @Column({ type: 'varchar', length: 255 })
+    name: string;
 
-    @Column({ unique: true, length: 255 })
+    @Column({ unique: true, type: 'varchar', length: 255 })
     email: string;
 
-    @Exclude()
-    @Column({ length: 255 })
-    password: string;
+    @Column({ type: 'text', nullable: true })
+    image: string | null;
+
+    @Column({ name: 'email_verified_at', type: 'timestamptz', nullable: true })
+    email_verified_at: Date | null;
 
     @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
     created_at: Date;
 
     @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
     updated_at: Date;
-
-    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz' })
-    deleted_at: Date;
 }

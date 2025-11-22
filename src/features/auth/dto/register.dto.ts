@@ -1,11 +1,11 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength, MaxLength, Matches, IsLowercase } from 'class-validator';
 
 export class RegisterDto {
-    @MaxLength(50, { message: 'Username must be at most 50 characters' })
-    @MinLength(2, { message: 'Username must be at least 2 characters' })
-    @IsString({ message: 'Username is invalid' })
-    @IsNotEmpty({ message: 'Username is required' })
-    username: string;
+    @MaxLength(255, { message: 'Name must be at most 255 characters' })
+    @MinLength(2, { message: 'Name must be at least 2 characters' })
+    @IsString({ message: 'Name is invalid' })
+    @IsNotEmpty({ message: 'Name is required' })
+    name: string;
 
     @IsLowercase({ message: 'Email must be lowercase' })
     @IsEmail({}, { message: 'Email is invalid' })

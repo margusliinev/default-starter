@@ -1,8 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { LessThan, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable } from '@nestjs/common';
 import { User } from './entities/user.entity';
 
 @Injectable()
@@ -12,46 +12,34 @@ export class UsersService {
         private readonly userRepository: Repository<User>,
     ) {}
 
-    async findAll() {
-        return await this.userRepository.find();
+    private getRepository(manager?: EntityManager) {
+        return manager ? manager.getRepository(User) : this.userRepository;
     }
 
-    async findById(id: User['id']) {
-        const user = await this.userRepository.findOne({ where: { id } });
-        if (!user) {
-            throw new NotFoundException();
-        }
-        return user;
+    async findUserById(id: User['id'], manager?: EntityManager) {
+        const repo = this.getRepository(manager);
+        return await repo.findOne({ where: { id } });
     }
 
-    async findByEmail(email: User['email']) {
-        return await this.userRepository.findOne({ where: { email: email.toLowerCase().trim() } });
+    async findUserByEmail(email: User['email'], manager?: EntityManager) {
+        const repo = this.getRepository(manager);
+        return await repo.findOne({ where: { email } });
     }
 
-    async findByUsername(username: User['username']) {
-        return await this.userRepository.createQueryBuilder('user').where('LOWER(user.username) = LOWER(:username)', { username }).getOne();
+    async createUser(createUserDto: CreateUserDto, manager?: EntityManager) {
+        const repo = this.getRepository(manager);
+        const user = repo.create(createUserDto);
+        return await repo.save(user);
     }
 
-    async create(createUserDto: CreateUserDto) {
-        const user = this.userRepository.create(createUserDto);
-        return await this.userRepository.save(user);
+    async updateUser(id: User['id'], updateUserDto: UpdateUserDto, manager?: EntityManager) {
+        const repo = this.getRepository(manager);
+        await repo.update(id, updateUserDto);
+        return await repo.findOne({ where: { id } });
     }
 
-    async update(id: User['id'], updateUserDto: UpdateUserDto) {
-        return await this.userRepository.update(id, updateUserDto);
-    }
-
-    async remove(id: User['id']) {
-        await this.userRepository.softDelete(id);
-    }
-
-    async deleteSoftDeletedUsers() {
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-        const result = await this.userRepository.delete({
-            deleted_at: LessThan(thirtyDaysAgo),
-        });
-        return result.affected || 0;
+    async deleteUser(id: User['id'], manager?: EntityManager) {
+        const repo = this.getRepository(manager);
+        await repo.delete(id);
     }
 }
