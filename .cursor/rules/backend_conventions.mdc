@@ -85,7 +85,6 @@ src/common/
 - **DON'T**:
     - Write business logic.
     - Access the database directly.
-    - Handle raw `req` or `res` objects unless absolutely necessary (e.g., cookies).
 
 ### Services (`*.service.ts`)
 
@@ -105,15 +104,13 @@ src/common/
 - **DO**:
     - Use `class-validator` decorators (`@IsString()`, `@IsEmail()`, `@IsOptional()`).
     - Use `class-transformer` decorators (`@Type()`, `@Transform()`) if needed.
-    - Strict typing.
 
 ### Entities (`entities/*.entity.ts`)
 
 **Role**: Database schema definitions.
 
 - **DO**:
-    - Use TypeORM decorators (`@Entity()`, `@Column()`, `@PrimaryGeneratedColumn()`).
-    - Extend common base entities if available.
+    - Use TypeORM decorators (`@Entity()`, `@Column()`, `@CreateDateColumn`).
 
 ## Global Application Setup (`src/main.ts`)
 

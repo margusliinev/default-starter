@@ -1,12 +1,12 @@
-import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { SessionsService } from '../sessions/sessions.service';
 import { AccountsService } from '../accounts/accounts.service';
 import { UsersService } from '../users/users.service';
+import { Session } from '../sessions/entities/session.entity';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { Session } from '../sessions/entities/session.entity';
 
 @Injectable()
 export class AuthService {
@@ -23,13 +23,12 @@ export class AuthService {
         const normalizedEmail = email.toLowerCase().trim();
         const existingUser = await this.usersService.findUserByEmail(normalizedEmail);
         if (existingUser) {
-            throw new ConflictException();
+            throw new UnauthorizedException();
         }
 
         return await this.dataSource.transaction(async (em) => {
             const savedUser = await this.usersService.createUser({ name, email: normalizedEmail }, em);
             await this.accountsService.createAccountWithPassword(savedUser.id, password, em);
-
             return await this.sessionsService.createSession(savedUser.id, em);
         });
     }
