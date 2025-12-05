@@ -162,5 +162,4 @@ Use the npm scripts for TypeORM migrations:
 ### Code Quality & Testing
 
 - **Formatting**: `npm run format` (Prettier)
-- **Linting**: `npm run lint` (ESLint).
 - **Testing**: `npm run test` (Jest).

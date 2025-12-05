@@ -52,7 +52,13 @@ export class AuthController {
 
     @Public()
     @Get('google/callback')
-    async googleCallback(@Query('code') code: string, @Query('state') state: string, @Query('error') error: string, @Req() req: Request, @Res() res: Response) {
+    async googleCallback(
+        @Query('error') error: string,
+        @Query('state') state: string,
+        @Query('code') code: string,
+        @Req() req: Request,
+        @Res() res: Response,
+    ) {
         this.oauthService.clearStateCookie(res);
 
         if (error) {
@@ -77,7 +83,13 @@ export class AuthController {
 
     @Public()
     @Get('github/callback')
-    async githubCallback(@Query('code') code: string, @Query('state') state: string, @Query('error') error: string, @Req() req: Request, @Res() res: Response) {
+    async githubCallback(
+        @Query('error') error: string,
+        @Query('state') state: string,
+        @Query('code') code: string,
+        @Req() req: Request,
+        @Res() res: Response,
+    ) {
         this.oauthService.clearStateCookie(res);
 
         if (error) {

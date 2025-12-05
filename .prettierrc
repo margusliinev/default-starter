@@ -3,7 +3,7 @@
     "jsxSingleQuote": true,
     "singleQuote": true,
     "semi": true,
-    "printWidth": 200,
+    "printWidth": 140,
     "tabWidth": 4,
     "plugins": ["prettier-plugin-organize-imports"]
 }

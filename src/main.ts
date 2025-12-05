@@ -58,7 +58,12 @@ async function bootstrap() {
     );
 
     // Interceptors
-    app.useGlobalInterceptors(new LoggingInterceptor(), new TimeoutInterceptor(30000), new TransformInterceptor(), new ClassSerializerInterceptor(app.get(Reflector)));
+    app.useGlobalInterceptors(
+        new LoggingInterceptor(),
+        new TimeoutInterceptor(30000),
+        new TransformInterceptor(),
+        new ClassSerializerInterceptor(app.get(Reflector)),
+    );
 
     // Filters
     app.useGlobalFilters(new CatchAllFilter());
