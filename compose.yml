@@ -1,6 +1,6 @@
 services:
     db:
-        image: postgres:18
+        image: postgres:18.1
         container_name: db
         restart: always
         environment:
@@ -13,7 +13,7 @@ services:
         volumes:
             - postgres_data:/var/lib/postgresql
     db_test:
-        image: postgres:18
+        image: postgres:18.1
         container_name: db_test
         restart: always
         environment:

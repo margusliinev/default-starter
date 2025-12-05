@@ -1,9 +1,9 @@
+import * as dotenv from 'dotenv';
+import { DataSource } from 'typeorm';
+import { Account } from '../features/accounts/entities/account.entity';
 import { Session } from '../features/sessions/entities/session.entity';
 import { User } from '../features/users/entities/user.entity';
-import { Account } from '../features/accounts/entities/account.entity';
 import { config } from './env';
-import { DataSource } from 'typeorm';
-import * as dotenv from 'dotenv';
 
 dotenv.config();
 

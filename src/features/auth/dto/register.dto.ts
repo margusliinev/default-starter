@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength, MaxLength, Matches, IsLowercase } from 'class-validator';
+import { IsEmail, IsLowercase, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
 export class RegisterDto {
     @MaxLength(255, { message: 'Name must be at most 255 characters' })

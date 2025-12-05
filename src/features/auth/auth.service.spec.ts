@@ -1,26 +1,14 @@
+import { UnauthorizedException } from '@nestjs/common';
 import { TestingModule } from '@nestjs/testing';
-import { AuthService } from './auth.service';
-import { AuthModule } from './auth.module';
-import { createTestModule, getRepository, clearRepositories } from '../../common/testing/setup.testing';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { clearRepositories, createTestModule, getRepository } from '../../common/testing/setup.testing';
+import { Account } from '../accounts/entities/account.entity';
 import { Session } from '../sessions/entities/session.entity';
 import { User } from '../users/entities/user.entity';
-import { Account } from '../accounts/entities/account.entity';
-import * as crypto from 'crypto';
-import { Repository } from 'typeorm';
-
-jest.mock('@oslojs/encoding', () => ({
-    encodeBase64url: jest.fn((arr: Uint8Array) => Buffer.from(arr).toString('base64url')),
-    encodeHexLowerCase: jest.fn((arr: Uint8Array) => Buffer.from(arr).toString('hex').toLowerCase()),
-}));
-
-jest.mock('@oslojs/crypto/sha2', () => ({
-    sha256: jest.fn((data: Uint8Array) => {
-        return crypto.createHash('sha256').update(data).digest();
-    }),
-}));
+import { AuthModule } from './auth.module';
+import { AuthService } from './auth.service';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 
 describe('AuthService', () => {
     let module: TestingModule;
@@ -64,7 +52,7 @@ describe('AuthService', () => {
 
             await authService.register(registerDto);
 
-            await expect(authService.register(registerDto)).rejects.toThrow(ConflictException);
+            await expect(authService.register(registerDto)).rejects.toThrow(UnauthorizedException);
         });
 
         it('should normalize email to lowercase and trim', async () => {

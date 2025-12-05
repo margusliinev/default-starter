@@ -1,11 +1,11 @@
 import { TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
-import { UsersModule } from './users.module';
-import { createTestModule, getRepository, clearRepositories } from '../../common/testing/setup.testing';
-import { User } from './entities/user.entity';
+import { Repository } from 'typeorm';
+import { clearRepositories, createTestModule, getRepository } from '../../common/testing/setup.testing';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Repository } from 'typeorm';
+import { User } from './entities/user.entity';
+import { UsersModule } from './users.module';
+import { UsersService } from './users.service';
 
 describe('UsersService', () => {
     let module: TestingModule;

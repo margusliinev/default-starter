@@ -1,14 +1,15 @@
-import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { config, validate } from './config/env';
+import { AccountsModule } from './features/accounts/accounts.module';
+import { AuthGuard } from './features/auth/auth.guard';
+import { AuthModule } from './features/auth/auth.module';
 import { SessionsModule } from './features/sessions/sessions.module';
 import { UsersModule } from './features/users/users.module';
-import { AuthModule } from './features/auth/auth.module';
-import { ScheduleModule } from '@nestjs/schedule';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthGuard } from './features/auth/auth.guard';
-import { config, validate } from './config/env';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { APP_GUARD } from '@nestjs/core';
-import { Module } from '@nestjs/common';
 
 @Module({
     imports: [
@@ -29,6 +30,7 @@ import { Module } from '@nestjs/common';
         }),
         UsersModule,
         SessionsModule,
+        AccountsModule,
         AuthModule,
     ],
     controllers: [],

@@ -1,9 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
+import { ObjectLiteral, Repository } from 'typeorm';
 import { config, validate } from '../../config/env';
-import { Repository, ObjectLiteral } from 'typeorm';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 interface TestModuleOptions {
     imports?: any[];

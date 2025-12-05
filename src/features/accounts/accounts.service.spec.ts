@@ -1,14 +1,14 @@
 import { TestingModule } from '@nestjs/testing';
-import { AccountsService } from './accounts.service';
-import { AccountsModule } from './accounts.module';
-import { createTestModule, getRepository, clearRepositories } from '../../common/testing/setup.testing';
-import { Account } from './entities/account.entity';
-import { User } from '../users/entities/user.entity';
-import { Provider } from '../../common/enums/provider';
-import { UsersModule } from '../users/users.module';
-import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
+import { Provider } from '../../common/enums/provider';
+import { clearRepositories, createTestModule, getRepository } from '../../common/testing/setup.testing';
+import { User } from '../users/entities/user.entity';
+import { UsersModule } from '../users/users.module';
+import { UsersService } from '../users/users.service';
+import { AccountsModule } from './accounts.module';
+import { AccountsService } from './accounts.service';
+import { Account } from './entities/account.entity';
 
 describe('AccountsService', () => {
     let module: TestingModule;

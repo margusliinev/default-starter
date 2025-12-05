@@ -19,18 +19,6 @@ export class Account {
     @Column({ type: 'varchar', length: 255, nullable: true })
     password: string | null;
 
-    @Column({ name: 'access_token', type: 'text', nullable: true })
-    access_token: string | null;
-
-    @Column({ name: 'refresh_token', type: 'text', nullable: true })
-    refresh_token: string | null;
-
-    @Column({ name: 'access_token_expires_at', type: 'timestamptz', nullable: true })
-    access_token_expires_at: Date | null;
-
-    @Column({ name: 'refresh_token_expires_at', type: 'timestamptz', nullable: true })
-    refresh_token_expires_at: Date | null;
-
     @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
     created_at: Date;
 

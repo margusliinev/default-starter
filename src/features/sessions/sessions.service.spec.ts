@@ -1,12 +1,12 @@
-import { createTestModule, getRepository, clearRepositories } from '../../common/testing/setup.testing';
-import { SessionsService } from './sessions.service';
-import { UsersService } from '../users/users.service';
-import { SessionsModule } from './sessions.module';
 import { TestingModule } from '@nestjs/testing';
-import { UsersModule } from '../users/users.module';
-import { Session } from './entities/session.entity';
-import { User } from '../users/entities/user.entity';
 import { Repository } from 'typeorm';
+import { clearRepositories, createTestModule, getRepository } from '../../common/testing/setup.testing';
+import { User } from '../users/entities/user.entity';
+import { UsersModule } from '../users/users.module';
+import { UsersService } from '../users/users.service';
+import { Session } from './entities/session.entity';
+import { SessionsModule } from './sessions.module';
+import { SessionsService } from './sessions.service';
 
 describe('SessionsService', () => {
     let module: TestingModule;

@@ -1,4 +1,4 @@
-import { Controller, Body, Patch, Delete, Get, HttpCode, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Patch } from '@nestjs/common';
 import { AuthSession } from '../../common/decorators/auth-session';
 import { Session } from '../sessions/entities/session.entity';
 import { UpdateUserDto } from './dto/update-user.dto';

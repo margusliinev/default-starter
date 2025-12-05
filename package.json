@@ -37,13 +37,13 @@
         "@nestjs/mapped-types": "2.1.0",
         "@nestjs/platform-express": "11.1.9",
         "@nestjs/schedule": "6.0.1",
-        "@nestjs/throttler": "6.4.0",
+        "@nestjs/throttler": "6.5.0",
         "@nestjs/typeorm": "11.0.0",
         "@oslojs/crypto": "1.0.1",
         "@oslojs/encoding": "1.1.0",
         "bcrypt": "6.0.0",
         "class-transformer": "0.5.1",
-        "class-validator": "0.14.2",
+        "class-validator": "0.14.3",
         "compression": "1.8.1",
         "cookie-parser": "1.4.7",
         "dotenv": "17.2.3",
@@ -51,12 +51,12 @@
         "pg": "8.16.3",
         "reflect-metadata": "0.2.2",
         "rxjs": "7.8.2",
-        "typeorm": "0.3.27"
+        "typeorm": "0.3.28"
     },
     "devDependencies": {
-        "@eslint/eslintrc": "3.3.1",
+        "@eslint/eslintrc": "3.3.3",
         "@eslint/js": "9.39.1",
-        "@nestjs/cli": "11.0.12",
+        "@nestjs/cli": "11.0.14",
         "@nestjs/schematics": "11.0.9",
         "@nestjs/testing": "11.1.9",
         "@swc/cli": "0.7.9",
@@ -65,7 +65,7 @@
         "@types/bcrypt": "6.0.0",
         "@types/compression": "1.8.1",
         "@types/cookie-parser": "1.4.10",
-        "@types/express": "5.0.5",
+        "@types/express": "5.0.6",
         "@types/jest": "30.0.0",
         "@types/node": "24.10.1",
         "@types/pg": "8.15.6",
@@ -74,10 +74,11 @@
         "eslint-plugin-prettier": "5.5.4",
         "globals": "16.5.0",
         "jest": "30.2.0",
-        "prettier": "3.6.2",
+        "prettier": "3.7.4",
+        "prettier-plugin-organize-imports": "4.3.0",
         "ts-node": "10.9.2",
         "typescript": "5.9.3",
-        "typescript-eslint": "8.47.0"
+        "typescript-eslint": "8.48.1"
     },
     "jest": {
         "moduleFileExtensions": [

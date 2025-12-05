@@ -1,10 +1,10 @@
-import { EntityManager, Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
-import { Provider } from '../../common/enums/provider';
-import { Account } from './entities/account.entity';
-import { User } from '../users/entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
+import { EntityManager, Repository } from 'typeorm';
+import { Provider } from '../../common/enums/provider';
+import { User } from '../users/entities/user.entity';
+import { Account } from './entities/account.entity';
 
 @Injectable()
 export class AccountsService {

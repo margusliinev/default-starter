@@ -1,12 +1,12 @@
-import { Controller, Post, Body, Res, HttpCode, HttpStatus } from '@nestjs/common';
-import { SessionsService } from '../sessions/sessions.service';
+import { Body, Controller, HttpCode, HttpStatus, Post, Res } from '@nestjs/common';
+import type { Response } from 'express';
 import { AuthSession } from '../../common/decorators/auth-session';
 import { Public } from '../../common/decorators/public.decorator';
 import { Session } from '../sessions/entities/session.entity';
-import { RegisterDto } from './dto/register.dto';
+import { SessionsService } from '../sessions/sessions.service';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import type { Response } from 'express';
+import { RegisterDto } from './dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
