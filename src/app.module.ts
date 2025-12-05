@@ -25,9 +25,9 @@ import { UsersModule } from './features/users/users.module';
             }),
         }),
         UsersModule,
-        SessionsModule,
-        AccountsModule,
         AuthModule,
+        AccountsModule,
+        SessionsModule,
     ],
     controllers: [],
     providers: [

@@ -28,11 +28,11 @@ export class AuthGuard implements CanActivate {
 
         const session = await this.sessionsService.validateSessionToken(token);
         if (!session) {
-            this.sessionsService.deleteSessionCookie(response);
+            this.sessionsService.clearSessionCookie(response);
             return false;
         }
 
-        this.sessionsService.createSessionCookie(response, token, session.expires_at);
+        this.sessionsService.setSessionCookie(response, token, session.expires_at);
         request.session = session;
 
         return true;

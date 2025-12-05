@@ -46,7 +46,7 @@ export class SessionsService {
     public getSessionTokenFromCookie(req: Request) {
         return req.signedCookies?.[this.COOKIE_NAME];
     }
-    public createSessionCookie(res: Response, token: string, expiresAt: Date) {
+    public setSessionCookie(res: Response, token: string, expiresAt: Date) {
         res.cookie(this.COOKIE_NAME, token, {
             path: '/',
             httpOnly: true,
@@ -57,7 +57,7 @@ export class SessionsService {
             maxAge: this.SESSION_DURATION_MS,
         });
     }
-    public deleteSessionCookie(res: Response) {
+    public clearSessionCookie(res: Response) {
         res.clearCookie(this.COOKIE_NAME, {
             path: '/',
             httpOnly: true,

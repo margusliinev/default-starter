@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import type { Response } from 'express';
 import { DataSource } from 'typeorm';
 import { AccountsService } from '../accounts/accounts.service';
 import { Session } from '../sessions/entities/session.entity';
@@ -17,7 +18,7 @@ export class AuthService {
         private readonly sessionsService: SessionsService,
     ) {}
 
-    async register(registerDto: RegisterDto) {
+    async register(registerDto: RegisterDto, res: Response) {
         const { name, email, password } = registerDto;
 
         const normalizedEmail = email.toLowerCase().trim();
@@ -26,14 +27,17 @@ export class AuthService {
             throw new UnauthorizedException();
         }
 
-        return await this.dataSource.transaction(async (em) => {
+        const { token, expiresAt } = await this.dataSource.transaction(async (em) => {
             const savedUser = await this.usersService.createUser({ name, email: normalizedEmail }, em);
             await this.accountsService.createAccountWithPassword(savedUser.id, password, em);
             return await this.sessionsService.createSession(savedUser.id, em);
         });
+
+        this.sessionsService.setSessionCookie(res, token, expiresAt);
+        return 'Registration successful';
     }
 
-    async login(loginDto: LoginDto) {
+    async login(loginDto: LoginDto, res: Response) {
         const { email, password } = loginDto;
 
         const user = await this.usersService.findUserByEmail(email);
@@ -51,14 +55,20 @@ export class AuthService {
             throw new UnauthorizedException();
         }
 
-        return await this.sessionsService.createSession(user.id);
+        const { token, expiresAt } = await this.sessionsService.createSession(user.id);
+        this.sessionsService.setSessionCookie(res, token, expiresAt);
+        return 'Login successful';
     }
 
-    async logout(session: Session) {
+    async logout(session: Session, res: Response) {
         await this.sessionsService.deleteSessionById(session.id);
+        this.sessionsService.clearSessionCookie(res);
+        return 'Logout successful';
     }
 
-    async logoutAll(session: Session) {
+    async logoutAll(session: Session, res: Response) {
         await this.sessionsService.deleteUserSessions(session.user_id);
+        this.sessionsService.clearSessionCookie(res);
+        return 'Logout all successful';
     }
 }

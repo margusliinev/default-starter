@@ -16,13 +16,13 @@ export class UsersController {
 
     @Patch('me')
     @HttpCode(HttpStatus.OK)
-    async update(@AuthSession() session: Session, @Body() updateUserDto: UpdateUserDto) {
-        return await this.usersService.updateUser(session.user_id, updateUserDto);
+    update(@AuthSession() session: Session, @Body() updateUserDto: UpdateUserDto) {
+        return this.usersService.updateUser(session.user_id, updateUserDto);
     }
 
     @Delete('me')
     @HttpCode(HttpStatus.NO_CONTENT)
-    async remove(@AuthSession() session: Session) {
-        await this.usersService.deleteUser(session.user_id);
+    remove(@AuthSession() session: Session) {
+        return this.usersService.deleteUser(session.user_id);
     }
 }

@@ -12,19 +12,5 @@ services:
             - '5432:5432'
         volumes:
             - postgres_data:/var/lib/postgresql
-    db_test:
-        image: postgres:18.1
-        container_name: db_test
-        restart: always
-        environment:
-            TZ: UTC
-            POSTGRES_DB: db_test
-            POSTGRES_USER: user
-            POSTGRES_PASSWORD: password
-        ports:
-            - '5433:5432'
-        volumes:
-            - postgres_data_test:/var/lib/postgresql
 volumes:
     postgres_data:
-    postgres_data_test:
