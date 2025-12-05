@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import { verify } from '@node-rs/argon2';
 import type { Response } from 'express';
+import { ARGON2_OPTIONS } from 'src/common/constants/argon';
 import { DataSource } from 'typeorm';
 import { AccountsService } from '../accounts/accounts.service';
 import { Session } from '../sessions/entities/session.entity';
@@ -40,7 +41,8 @@ export class AuthService {
     async login(loginDto: LoginDto, res: Response) {
         const { email, password } = loginDto;
 
-        const user = await this.usersService.findUserByEmail(email);
+        const normalizedEmail = email.toLowerCase().trim();
+        const user = await this.usersService.findUserByEmail(normalizedEmail);
         if (!user) {
             throw new UnauthorizedException();
         }
@@ -50,7 +52,7 @@ export class AuthService {
             throw new UnauthorizedException();
         }
 
-        const isPasswordValid = await bcrypt.compare(password, account.password);
+        const isPasswordValid = await verify(account.password, password, ARGON2_OPTIONS);
         if (!isPasswordValid) {
             throw new UnauthorizedException();
         }

@@ -13,6 +13,6 @@ export class CreateUserDto {
     email: string;
 
     @IsOptional()
-    @IsString()
+    @IsString({ message: 'Image is invalid' })
     image?: string;
 }

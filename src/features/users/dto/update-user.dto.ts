@@ -8,6 +8,6 @@ export class UpdateUserDto {
     name?: string;
 
     @IsOptional()
-    @IsString()
+    @IsString({ message: 'Image is invalid' })
     image?: string;
 }

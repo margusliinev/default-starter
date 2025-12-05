@@ -1,6 +1,6 @@
 import { Body, Controller, HttpCode, HttpStatus, Post, Res } from '@nestjs/common';
 import type { Response } from 'express';
-import { AuthSession } from '../../common/decorators/auth-session';
+import { Auth } from '../../common/decorators/auth.decorator';
 import { Public } from '../../common/decorators/public.decorator';
 import { Session } from '../sessions/entities/session.entity';
 import { AuthService } from './auth.service';
@@ -27,13 +27,13 @@ export class AuthController {
 
     @Post('logout')
     @HttpCode(HttpStatus.OK)
-    logout(@AuthSession() session: Session, @Res({ passthrough: true }) res: Response) {
+    logout(@Auth() session: Session, @Res({ passthrough: true }) res: Response) {
         return this.authService.logout(session, res);
     }
 
     @Post('logout-all')
     @HttpCode(HttpStatus.OK)
-    logoutAll(@AuthSession() session: Session, @Res({ passthrough: true }) res: Response) {
+    logoutAll(@Auth() session: Session, @Res({ passthrough: true }) res: Response) {
         return this.authService.logoutAll(session, res);
     }
 }

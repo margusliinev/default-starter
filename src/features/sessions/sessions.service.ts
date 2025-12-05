@@ -37,7 +37,7 @@ export class SessionsService {
         return Date.now() >= new Date(session.expires_at).getTime() - this.SESSION_RENEWAL_THRESHOLD_MS;
     }
     private generateToken() {
-        return encodeBase64url(crypto.getRandomValues(new Uint8Array(18)));
+        return encodeBase64url(crypto.getRandomValues(new Uint8Array(32)));
     }
     private hashToken(token: string) {
         return encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
@@ -54,7 +54,6 @@ export class SessionsService {
             signed: true,
             sameSite: 'lax',
             expires: expiresAt,
-            maxAge: this.SESSION_DURATION_MS,
         });
     }
     public clearSessionCookie(res: Response) {
@@ -64,8 +63,6 @@ export class SessionsService {
             secure: this.getIsProduction(),
             signed: true,
             sameSite: 'lax',
-            expires: new Date(0),
-            maxAge: 0,
         });
     }
 

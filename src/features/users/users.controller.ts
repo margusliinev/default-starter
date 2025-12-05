@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Patch } from '@nestjs/common';
-import { AuthSession } from '../../common/decorators/auth-session';
+import { Auth } from '../../common/decorators/auth.decorator';
 import { Session } from '../sessions/entities/session.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
@@ -10,19 +10,19 @@ export class UsersController {
 
     @Get('me')
     @HttpCode(HttpStatus.OK)
-    me(@AuthSession() session: Session) {
+    me(@Auth() session: Session) {
         return session.user;
     }
 
     @Patch('me')
     @HttpCode(HttpStatus.OK)
-    update(@AuthSession() session: Session, @Body() updateUserDto: UpdateUserDto) {
+    update(@Auth() session: Session, @Body() updateUserDto: UpdateUserDto) {
         return this.usersService.updateUser(session.user_id, updateUserDto);
     }
 
     @Delete('me')
     @HttpCode(HttpStatus.NO_CONTENT)
-    remove(@AuthSession() session: Session) {
+    remove(@Auth() session: Session) {
         return this.usersService.deleteUser(session.user_id);
     }
 }

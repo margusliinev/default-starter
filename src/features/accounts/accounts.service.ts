@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as bcrypt from 'bcrypt';
+import { hash } from '@node-rs/argon2';
+import { ARGON2_OPTIONS } from 'src/common/constants/argon';
 import { EntityManager, Repository } from 'typeorm';
 import { Provider } from '../../common/enums/provider';
 import { User } from '../users/entities/user.entity';
@@ -25,7 +26,7 @@ export class AccountsService {
     }
 
     async createAccountWithPassword(userId: User['id'], password: string, manager?: EntityManager) {
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await hash(password, ARGON2_OPTIONS);
 
         const repo = this.getRepository(manager);
         const account = repo.create({
