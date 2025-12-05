@@ -36,4 +36,21 @@ export class AccountsService {
         });
         return await repo.save(account);
     }
+
+    async findAccountByProviderId(provider: Provider, providerId: string, manager?: EntityManager) {
+        const repo = this.getRepository(manager);
+        return await repo.findOne({
+            where: { provider, provider_id: providerId },
+        });
+    }
+
+    async createOAuthAccount(userId: User['id'], provider: Provider, providerId: string, manager?: EntityManager) {
+        const repo = this.getRepository(manager);
+        const account = repo.create({
+            user_id: userId,
+            provider,
+            provider_id: providerId,
+        });
+        return await repo.save(account);
+    }
 }

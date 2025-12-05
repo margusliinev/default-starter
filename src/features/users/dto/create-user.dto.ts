@@ -1,4 +1,4 @@
-import { IsEmail, IsLowercase, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsDate, IsEmail, IsLowercase, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class CreateUserDto {
     @MaxLength(255, { message: 'Name is too long' })
@@ -14,5 +14,9 @@ export class CreateUserDto {
 
     @IsOptional()
     @IsString({ message: 'Image is invalid' })
-    image?: string;
+    image?: string | null;
+
+    @IsOptional()
+    @IsDate({ message: 'Email verified date is invalid' })
+    email_verified_at?: Date | null;
 }

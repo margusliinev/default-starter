@@ -13,7 +13,7 @@ class EnvironmentVariables {
 
     @IsString()
     @IsNotEmpty()
-    CORS_ORIGIN: string;
+    FRONTEND_URL: string;
 
     @IsString()
     @IsNotEmpty()
@@ -23,6 +23,30 @@ class EnvironmentVariables {
     @IsString()
     @IsNotEmpty()
     DATABASE_URL: string;
+
+    @IsString()
+    @IsNotEmpty()
+    GOOGLE_CLIENT_ID: string;
+
+    @IsString()
+    @IsNotEmpty()
+    GOOGLE_CLIENT_SECRET: string;
+
+    @IsString()
+    @IsNotEmpty()
+    GOOGLE_CALLBACK_URL: string;
+
+    @IsString()
+    @IsNotEmpty()
+    GITHUB_CLIENT_ID: string;
+
+    @IsString()
+    @IsNotEmpty()
+    GITHUB_CLIENT_SECRET: string;
+
+    @IsString()
+    @IsNotEmpty()
+    GITHUB_CALLBACK_URL: string;
 }
 
 export function validate(config: Record<string, unknown>): EnvironmentVariables {
@@ -40,7 +64,17 @@ export function validate(config: Record<string, unknown>): EnvironmentVariables 
 export const config = () => ({
     port: process.env.PORT as unknown as number,
     nodeEnv: process.env.NODE_ENV as Environment,
-    corsOrigin: process.env.CORS_ORIGIN as string,
+    frontendUrl: process.env.FRONTEND_URL as string,
     cookieSecret: process.env.COOKIE_SECRET as string,
     database: { url: process.env.DATABASE_URL as string },
+    google: {
+        clientId: process.env.GOOGLE_CLIENT_ID as string,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+        callbackUrl: process.env.GOOGLE_CALLBACK_URL as string,
+    },
+    github: {
+        clientId: process.env.GITHUB_CLIENT_ID as string,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+        callbackUrl: process.env.GITHUB_CALLBACK_URL as string,
+    },
 });

@@ -1,15 +1,20 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Res } from '@nestjs/common';
-import type { Response } from 'express';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query, Req, Res, UnauthorizedException } from '@nestjs/common';
+import type { Request, Response } from 'express';
 import { Auth } from '../../common/decorators/auth.decorator';
 import { Public } from '../../common/decorators/public.decorator';
+import { Provider } from '../../common/enums/provider';
 import { Session } from '../sessions/entities/session.entity';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { OAuthService } from './oauth.service';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly authService: AuthService) {}
+    constructor(
+        private readonly authService: AuthService,
+        private readonly oauthService: OAuthService,
+    ) {}
 
     @Public()
     @Post('register')
@@ -35,5 +40,47 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     logoutAll(@Auth() session: Session, @Res({ passthrough: true }) res: Response) {
         return this.authService.logoutAll(session, res);
+    }
+
+    @Public()
+    @Get('google')
+    googleAuth(@Res() res: Response) {
+        const state = this.oauthService.setStateCookie(res);
+        const authUrl = this.oauthService.getGoogleAuthUrl(state);
+        return res.redirect(authUrl);
+    }
+
+    @Public()
+    @Get('google/callback')
+    async googleCallback(@Query('code') code: string, @Query('state') state: string, @Req() req: Request, @Res() res: Response) {
+        if (!this.oauthService.validateState(req, state)) {
+            this.oauthService.clearStateCookie(res);
+            throw new UnauthorizedException('Invalid state parameter');
+        }
+        this.oauthService.clearStateCookie(res);
+
+        const userInfo = await this.oauthService.getOAuthUserInfo(Provider.GOOGLE, code);
+        return this.authService.handleOAuthCallback(Provider.GOOGLE, userInfo, res);
+    }
+
+    @Public()
+    @Get('github')
+    githubAuth(@Res() res: Response) {
+        const state = this.oauthService.setStateCookie(res);
+        const authUrl = this.oauthService.getGitHubAuthUrl(state);
+        return res.redirect(authUrl);
+    }
+
+    @Public()
+    @Get('github/callback')
+    async githubCallback(@Query('code') code: string, @Query('state') state: string, @Req() req: Request, @Res() res: Response) {
+        if (!this.oauthService.validateState(req, state)) {
+            this.oauthService.clearStateCookie(res);
+            throw new UnauthorizedException('Invalid state parameter');
+        }
+        this.oauthService.clearStateCookie(res);
+
+        const userInfo = await this.oauthService.getOAuthUserInfo(Provider.GITHUB, code);
+        return this.authService.handleOAuthCallback(Provider.GITHUB, userInfo, res);
     }
 }

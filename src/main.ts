@@ -19,11 +19,11 @@ async function bootstrap() {
     const configService = app.get(ConfigService);
     const port = configService.get('PORT');
     const nodeEnv = configService.get('NODE_ENV');
-    const corsOrigin = configService.get('CORS_ORIGIN');
+    const frontendUrl = configService.get('FRONTEND_URL');
     const cookieSecret = configService.get('COOKIE_SECRET');
 
     // Security
-    app.enableCors({ origin: corsOrigin, credentials: true });
+    app.enableCors({ origin: frontendUrl, credentials: true });
     app.use(helmet());
 
     // Compression
