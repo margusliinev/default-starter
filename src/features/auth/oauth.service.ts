@@ -211,4 +211,9 @@ export class OAuthService {
                 throw new InternalServerErrorException(`Unsupported OAuth provider: ${provider}`);
         }
     }
+
+    redirectToError(res: Response, error: string) {
+        const frontendUrl = this.configService.get<string>('frontendUrl')!;
+        return res.redirect(`${frontendUrl}/auth/error?error=${encodeURIComponent(error)}`);
+    }
 }

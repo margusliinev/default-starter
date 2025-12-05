@@ -8,6 +8,7 @@ import { config, validate } from './config/env';
 import { AccountsModule } from './features/accounts/accounts.module';
 import { AuthGuard } from './features/auth/auth.guard';
 import { AuthModule } from './features/auth/auth.module';
+import { HealthModule } from './features/health/health.module';
 import { SessionsModule } from './features/sessions/sessions.module';
 import { UsersModule } from './features/users/users.module';
 
@@ -28,6 +29,7 @@ import { UsersModule } from './features/users/users.module';
         AuthModule,
         AccountsModule,
         SessionsModule,
+        HealthModule,
     ],
     controllers: [],
     providers: [

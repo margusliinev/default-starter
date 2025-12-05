@@ -52,12 +52,16 @@ export class AuthController {
 
     @Public()
     @Get('google/callback')
-    async googleCallback(@Query('code') code: string, @Query('state') state: string, @Req() req: Request, @Res() res: Response) {
+    async googleCallback(@Query('code') code: string, @Query('state') state: string, @Query('error') error: string, @Req() req: Request, @Res() res: Response) {
+        this.oauthService.clearStateCookie(res);
+
+        if (error) {
+            return this.oauthService.redirectToError(res, error);
+        }
+
         if (!this.oauthService.validateState(req, state)) {
-            this.oauthService.clearStateCookie(res);
             throw new UnauthorizedException('Invalid state parameter');
         }
-        this.oauthService.clearStateCookie(res);
 
         const userInfo = await this.oauthService.getOAuthUserInfo(Provider.GOOGLE, code);
         return this.authService.handleOAuthCallback(Provider.GOOGLE, userInfo, res);
@@ -73,12 +77,16 @@ export class AuthController {
 
     @Public()
     @Get('github/callback')
-    async githubCallback(@Query('code') code: string, @Query('state') state: string, @Req() req: Request, @Res() res: Response) {
+    async githubCallback(@Query('code') code: string, @Query('state') state: string, @Query('error') error: string, @Req() req: Request, @Res() res: Response) {
+        this.oauthService.clearStateCookie(res);
+
+        if (error) {
+            return this.oauthService.redirectToError(res, error);
+        }
+
         if (!this.oauthService.validateState(req, state)) {
-            this.oauthService.clearStateCookie(res);
             throw new UnauthorizedException('Invalid state parameter');
         }
-        this.oauthService.clearStateCookie(res);
 
         const userInfo = await this.oauthService.getOAuthUserInfo(Provider.GITHUB, code);
         return this.authService.handleOAuthCallback(Provider.GITHUB, userInfo, res);

@@ -51,9 +51,11 @@ export class CreateBaseTables1763252052790 implements MigrationInterface {
 
         await queryRunner.query(`CREATE INDEX "IDX_sessions_user_id" ON "sessions" ("user_id")`);
         await queryRunner.query(`CREATE INDEX "IDX_sessions_expires_at" ON "sessions" ("expires_at")`);
+        await queryRunner.query(`CREATE INDEX "IDX_accounts_provider_provider_id" ON "accounts" ("provider", "provider_id")`);
     }
 
     public async down(queryRunner: QueryRunner) {
+        await queryRunner.query(`DROP INDEX IF EXISTS "IDX_accounts_provider_provider_id"`);
         await queryRunner.query(`DROP INDEX IF EXISTS "IDX_sessions_expires_at"`);
         await queryRunner.query(`DROP INDEX IF EXISTS "IDX_sessions_user_id"`);
 
