@@ -17,10 +17,10 @@ async function bootstrap() {
 
     // Configuration
     const configService = app.get(ConfigService);
-    const cookieSecret = configService.get('COOKIE_SECRET');
-    const corsOrigin = configService.get('CORS_ORIGIN');
-    const nodeEnv = configService.get('NODE_ENV');
     const port = configService.get('PORT');
+    const nodeEnv = configService.get('NODE_ENV');
+    const corsOrigin = configService.get('CORS_ORIGIN');
+    const cookieSecret = configService.get('COOKIE_SECRET');
 
     // Security
     app.enableCors({ origin: corsOrigin, credentials: true });

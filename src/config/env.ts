@@ -1,45 +1,29 @@
 import { plainToInstance } from 'class-transformer';
-import { IsEnum, IsNotEmpty, IsNumber, IsString, Max, Min, MinLength, validateSync } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsString, IsUrl, Max, Min, MinLength, validateSync } from 'class-validator';
 import { Environment } from '../common/enums/environment';
 
 class EnvironmentVariables {
-    @IsEnum(Environment)
-    NODE_ENV: Environment;
-
     @IsNumber()
     @Min(0)
     @Max(65535)
     PORT: number;
+
+    @IsEnum(Environment)
+    NODE_ENV: Environment;
+
+    @IsString()
+    @IsNotEmpty()
+    CORS_ORIGIN: string;
 
     @IsString()
     @IsNotEmpty()
     @MinLength(32)
     COOKIE_SECRET: string;
 
+    @IsUrl()
     @IsString()
     @IsNotEmpty()
-    DB_HOST: string;
-
-    @IsNumber()
-    @Min(0)
-    @Max(65535)
-    DB_PORT: number;
-
-    @IsString()
-    @IsNotEmpty()
-    DB_USER: string;
-
-    @IsString()
-    @IsNotEmpty()
-    DB_PASSWORD: string;
-
-    @IsString()
-    @IsNotEmpty()
-    DB_NAME: string;
-
-    @IsString()
-    @IsNotEmpty()
-    CORS_ORIGIN: string;
+    DATABASE_URL: string;
 }
 
 export function validate(config: Record<string, unknown>): EnvironmentVariables {
@@ -56,11 +40,8 @@ export function validate(config: Record<string, unknown>): EnvironmentVariables 
 
 export const config = () => ({
     port: process.env.PORT as unknown as number,
-    database: {
-        port: process.env.DB_PORT as unknown as number,
-        host: process.env.DB_HOST as string,
-        username: process.env.DB_USER as string,
-        password: process.env.DB_PASSWORD as string,
-        database: process.env.DB_NAME as string,
-    },
+    nodeEnv: process.env.NODE_ENV as Environment,
+    corsOrigin: process.env.CORS_ORIGIN as string,
+    cookieSecret: process.env.COOKIE_SECRET as string,
+    database: { url: process.env.DATABASE_URL as string },
 });
