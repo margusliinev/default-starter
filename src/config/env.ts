@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer';
-import { IsEnum, IsNotEmpty, IsNumber, IsString, IsUrl, Max, Min, MinLength, validateSync } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsString, Max, Min, MinLength, validateSync } from 'class-validator';
 import { Environment } from '../common/enums/environment';
 
 class EnvironmentVariables {
@@ -20,7 +20,6 @@ class EnvironmentVariables {
     @MinLength(32)
     COOKIE_SECRET: string;
 
-    @IsUrl()
     @IsString()
     @IsNotEmpty()
     DATABASE_URL: string;
