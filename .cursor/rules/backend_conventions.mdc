@@ -66,9 +66,9 @@ src/common/
 - `env.ts`: Environment variable validation.
 - `database.ts`: TypeORM configuration.
 
-### 4. Database Migrations (`migrations/`)
+### 4. Database Migrations (`db/`)
 
-- `migrations/`: TypeORM migration files (located at project root).
+- `db/`: TypeORM migration files (located at project root).
 
 ## Core Principles & Responsibilities
 

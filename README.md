@@ -12,11 +12,8 @@ Default Starter is a template for new projects built with my preferred stack.
 ## Local Development
 
 ```bash
-# Start PostgreSQL
+# Start database
 docker compose up -d
-
-# Copy Environment Variables
-cp .env.example .env
 
 # Install dependencies
 npm install
@@ -24,23 +21,17 @@ npm install
 # Run database migrations
 npm run migration:run
 
-# Start development mode
+# Start development server
 npm run dev
-
-# Build the project
-npm run build
-
-# Start production mode
-npm run start
 ```
 
-## Useful Scripts:
+## Formatting & Testing
 
 ```bash
-# Run Formatting
+# Formatting
 npm run format
 
-# Run Tests
+# Testing
 npm run test
 ```
 
