@@ -8,155 +8,201 @@ alwaysApply: false
 
 ## Critical Implementation Guidelines
 
-These rules must be followed for all code changes:
-
-1.  **Naming Conventions**:
-    - **Files**: Kebab-case (e.g., `user-profile.service.ts`)
-    - **Classes**: PascalCase (e.g., `UserProfileService`)
-    - **Interfaces/Types**: PascalCase (e.g., `JwtPayload`)
-    - **Variables/Functions**: CamelCase (e.g., `findUserById`)
-2.  **No `any` Type**: The `any` type is strictly forbidden. Use `unknown` or specific types.
-3.  **No Return Types**: Do not add explicit return types to functions/methods unless absolutely necessary.
-4.  **Concise Comments**: Use short, concise comments only where logic is complex and explanation is strictly necessary.
-5.  **Concision**: Be extremely concise. Sacrifice grammar for the sake of concision in all communications and comments.
+1. **Naming Conventions**:
+   - **Files**: Kebab-case (`user-profile.service.ts`)
+   - **Classes**: PascalCase (`UserProfileService`)
+   - **Interfaces/Types**: PascalCase (`OAuthUserInfo`)
+   - **Variables/Functions**: CamelCase (`findUserById`)
+   - **Database Columns**: Snake_case (`email_verified_at`)
+2. **No `any` Type**: Strictly forbidden. Use `unknown` or specific types.
+3. **No Explicit Return Types**: Omit unless absolutely necessary for clarity.
+4. **Concise Comments**: Only where logic is complex; keep short.
+5. **Concision**: Sacrifice grammar for brevity in all communications.
 
 ## Tech Stack
 
-- **Framework**: NestJS 11
-- **Database**: PostgreSQL
-- **Language**: TypeScript
-- **Validation**: class-validator, class-transformer
-- **Testing**: Jest, SWC
-- **Package Manager**: npm
+| Category       | Technology                                       |
+| -------------- | ------------------------------------------------ |
+| Framework      | NestJS 11                                        |
+| Database       | PostgreSQL 18                                    |
+| ORM            | TypeORM                                          |
+| Language       | TypeScript                                       |
+| Validation     | class-validator, class-transformer               |
+| Auth           | Custom session-based + OAuth (Google, GitHub)    |
+| Password Hash  | Argon2 (@node-rs/argon2)                         |
+| Crypto         | @oslojs/crypto, @oslojs/encoding                 |
+| Testing        | Jest 30 with SWC                                 |
+| CLI            | nest-commander                                   |
+| Scheduling     | @nestjs/schedule                                 |
+| Rate Limiting  | @nestjs/throttler                                |
+| Security       | helmet, cookie-parser, signed cookies            |
+| Package Mgr    | npm                                              |
 
 ## Project Structure
 
-### 1. Feature Modules (`src/features/`)
+```
+├── db/                   # TypeORM migrations
+├── compose.yml           # Docker: PostgreSQL
+├── nest-cli.json         # NestJS CLI config
+├── tsconfig.json         # TypeScript config
+└── src/
+    ├── cli/              # CLI commands
+    ├── common/           # Shared utilities
+    ├── crons/            # Scheduled tasks
+    ├── features/         # Feature modules
+    ├── app.module.ts     # Root module, global guards
+    ├── cli.ts            # CLI entrypoint
+    └── main.ts           # HTTP server entrypoint
+```
 
-Follow a vertical slice/feature-based architecture. Each feature is self-contained.
+### Common (`src/common/`)
+
+Shared utilities across features. Not a NestJS module—just organized exports.
+
+| Folder         | Purpose                                                      |
+| -------------- | ------------------------------------------------------------ |
+| `config/`      | Env validation + TypeORM DataSource for migrations           |
+| `constants/`   | Shared constants (Argon2 options, etc.)                      |
+| `decorators/`  | `@Auth()` (extract session), `@Public()` (bypass auth)       |
+| `enums/`       | `Environment`, `Provider` enums                              |
+| `filters/`     | Global exception filter (CatchAllFilter)                     |
+| `interceptors/`| Logging, Timeout (30s), Transform (response wrapper)         |
+| `testing/`     | TestModule, fixtures, DTO validation helpers                 |
+| `types/`       | Type declarations (Express.Request extension)                |
+
+### Features (`src/features/`)
+
+Vertical slice architecture. Each feature is self-contained.
 
 ```
 src/features/{feature}/
-├── dto/                     # Data Transfer Objects
-├── entities/                # TypeORM Entities
-├── {feature}.controller.ts  # HTTP Route Handlers
-├── {feature}.service.ts     # Business Logic
-├── {feature}.module.ts      # Module Definition
-├── {feature}.guard.ts       # Feature-specific Guards
-├── {feature}.tasks.ts       # Scheduled Tasks (Cron)
-└── {feature}.spec.ts        # Integration/Unit Tests
+├── dto/                     # Request/response DTOs
+├── entities/                # TypeORM entities
+├── tests/                   # Unit/integration tests
+├── {feature}.controller.ts  # HTTP handlers
+├── {feature}.service.ts     # Business logic
+├── {feature}.module.ts      # Module definition
+└── {feature}.guard.ts       # Feature-specific guards (optional)
 ```
 
-### 2. Common Shared Code (`src/common/`)
+## Component Patterns
 
-Shared utilities across multiple features.
+### Controllers
 
-```
-src/common/
-├── config/        # Shared Config
-├── constants/     # Shared Constants
-├── decorators/    # Shared decorators (@Auth, @Public)
-├── enums/         # Shared Enums (Environment, Provider)
-├── filters/       # Global Exception Filters
-├── interceptors/  # Global Interceptors
-├── testing/       # Shared Testing Utils
-└── types/         # Shared Types
-```
+- Define routes and HTTP methods
+- Use DTOs for request validation
+- Delegate all logic to services
+- Use `@Auth()` to get session, `@Public()` for public routes
+- Never contain business logic or direct DB access
 
-### 4. Database Migrations (`db/`)
+### Services
 
-- `db/`: TypeORM migration files (located at project root).
+- Contain all business rules
+- Interact with DB via TypeORM repositories
+- Accept optional `EntityManager` param for transaction support via `getRepository()` helper
+- Throw standard NestJS exceptions
+- Never return HTTP-specific objects
 
-## Core Principles & Responsibilities
+### DTOs
 
-### Controllers (`*.controller.ts`)
+- Use class-validator decorators with custom error messages
+- Order decorators from most to least specific
+- Use class-transformer when needed (`@Type()`, `@Transform()`)
 
-**Role**: Entry point for HTTP requests.
+### Entities
 
-- **DO**:
-    - Define routes and HTTP methods (`@Get`, `@Post`, etc.).
-    - Use DTOs for request bodies and query params.
-    - Delegate business logic to Services.
-    - Use `@AuthUser()` to get the current user.
-    - Use `@Public()` to bypass authentication.
-- **DON'T**:
-    - Write business logic.
-    - Access the database directly.
+- Use TypeORM decorators
+- Snake_case for column names (`name: 'created_at'`)
+- Use `timestamptz` for all date columns
+- Use `uuidv7()` for primary keys (via migration)
 
-### Services (`*.service.ts`)
+## Global Setup
 
-**Role**: Business logic container.
+### Bootstrap (`main.ts`)
 
-- **DO**:
-    - Contain all business rules and validation logic.
-    - Interact with the database via Repositories.
-    - Throw standard NestJS Exceptions.
-- **DON'T**:
-    - Return HTTP-specific objects.
+- **Logger**: `['log', 'warn', 'error']`
+- **CORS**: Enabled with `credentials: true`
+- **Security**: Helmet, signed cookies, compression
+- **Global Prefix**: `/api`
+- **ValidationPipe**: `whitelist`, `transform`, `forbidNonWhitelisted`, custom `exceptionFactory`
+- **Interceptors**: Logging → Timeout (30s) → Transform → ClassSerializer
+- **Filters**: CatchAllFilter
 
-### DTOs (`dto/*.dto.ts`)
+### Global Guards (`app.module.ts`)
 
-**Role**: Define data shape and validation rules.
+- **ThrottlerGuard**: Rate limiting (100 req/min)
+- **AuthGuard**: Session-based authentication
 
-- **DO**:
-    - Use `class-validator` decorators (`@IsString()`, `@IsEmail()`, `@IsOptional()`).
-    - Use `class-transformer` decorators (`@Type()`, `@Transform()`) if needed.
+### Response Format
 
-### Entities (`entities/*.entity.ts`)
+- **Success**: `{ success: true, data: ... }`
+- **Error**: `{ success: false, message: '...', errors?: { field: 'message' } }`
 
-**Role**: Database schema definitions.
+## Environment Variables
 
-- **DO**:
-    - Use TypeORM decorators (`@Entity()`, `@Column()`, `@CreateDateColumn`).
+Required in `.env`:
 
-## Global Application Setup (`src/main.ts`)
+| Variable               | Description                          |
+| ---------------------- | ------------------------------------ |
+| `PORT`                 | Server port                          |
+| `NODE_ENV`             | development, production, test        |
+| `FRONTEND_URL`         | CORS origin                          |
+| `COOKIE_SECRET`        | Min 32 chars for signed cookies      |
+| `DATABASE_URL`         | PostgreSQL connection string         |
+| `GOOGLE_CLIENT_ID`     | OAuth client ID                      |
+| `GOOGLE_CLIENT_SECRET` | OAuth client secret                  |
+| `GOOGLE_CALLBACK_URL`  | OAuth callback URL                   |
+| `GITHUB_CLIENT_ID`     | OAuth client ID                      |
+| `GITHUB_CLIENT_SECRET` | OAuth client secret                  |
+| `GITHUB_CALLBACK_URL`  | OAuth callback URL                   |
 
-The application is bootstrapped with the following global configurations:
+## npm Scripts
 
-1.  **Global Prefix**: `/api`
-2.  **ValidationPipe**:
-    - `whitelist: true` (strips unknown properties)
-    - `transform: true` (auto-transforms payloads to DTO instances)
-    - `forbidNonWhitelisted: true`
-3.  **Interceptors**:
-    - `LoggingInterceptor`: Logs request/response duration.
-    - `TimeoutInterceptor`: 30s hard timeout.
-    - `TransformInterceptor`: Standardizes JSON responses `{ success: true, data: ... }`.
-    - `ClassSerializerInterceptor`: Respects `@Exclude()` in entities.
-4.  **Filters**:
-    - `CatchAllFilter`: Standardizes error responses `{ success: false, message: ... }`.
-5.  **Security**:
-    - `Helmet` enabled.
-    - `CORS` enabled.
-    - `CookieParser` enabled.
+| Script                              | Description                           |
+| ----------------------------------- | ------------------------------------- |
+| `npm run dev`                       | Start dev server with watch mode      |
+| `npm run build`                     | Build for production                  |
+| `npm run start`                     | Run production build                  |
+| `npm run format`                    | Format code with Prettier             |
+| `npm run test`                      | Run tests with Jest                   |
+| `npm run cli`                       | Run CLI (shows help)                  |
+| `npm run cli db:seed`               | Seed database with test user          |
+| `npm run migration:create --name=X` | Create new migration                  |
+| `npm run migration:run`             | Run pending migrations                |
+| `npm run migration:revert`          | Revert last migration                 |
+| `npm run migration:show`            | Show migration status                 |
 
-## Global Guards (`src/app.module.ts`)
+## Docker
 
-The application registers the following global guards in `AppModule`:
+Start databases: `docker compose up -d`
 
-1.  **ThrottlerGuard**: Rate limiting.
-2.  **AuthGuard**: Global authentication.
+- **db**: Development database (port 5432)
+- **db_test**: Test database (port 5433)
 
-## Coding Workflow
+## Testing
 
-### Creating a Feature
+- **Framework**: Jest 30 with SWC
+- **Test files**: `*.spec.ts` in `tests/` folders within features
+- **TestModule**: Pre-configured module in `common/testing/` (uses `.env.test`, `synchronize: true`)
+- **Fixtures**: Factory functions for test data (`createUserDto()`, `createMockUser()`, etc.)
+- **Validation helpers**: `validateDto()`, `expectValidationError()`, `describeValidationRules()`
 
-1.  Create directory `src/features/{name}`.
-2.  Define Entity and DTOs first.
-3.  Create Service to handle logic.
-4.  Create Controller to expose endpoints.
-5.  Register in Module.
+## Authentication
 
-### Database Migrations
+- **Session-based**: Signed HTTP-only cookie (`auth-session`)
+- **Session duration**: 30 days, auto-renews within 15 days of expiry
+- **OAuth**: Google/GitHub with state cookie for CSRF protection
+- **AuthGuard**: Global guard validates session on every request
+- **@Public()**: Decorator to bypass auth on specific routes
 
-Use the npm scripts for TypeORM migrations:
+## Creating a New Feature
 
-- `npm run migration:create --name=CreateUsersTable`: Generate a new migration.
-- `npm run migration:revert`: Revert last migration.
-- `npm run migration:show`: Show migration files.
-- `npm run migration:run`: Run migrations.
-
-### Code Quality & Testing
-
-- **Formatting**: `npm run format` (Prettier)
-- **Testing**: `npm run test` (Jest).
+1. Create `src/features/{name}/` directory
+2. Define entity in `entities/`
+3. Create DTOs in `dto/`
+4. Implement service in `{name}.service.ts`
+5. Create controller in `{name}.controller.ts`
+6. Define module in `{name}.module.ts`
+7. Import module in `app.module.ts`
+8. Create migration if needed: `npm run migration:create --name=Create{Name}Table`
+9. Add tests in `tests/`

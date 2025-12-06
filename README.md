@@ -1,38 +1,54 @@
 # Default Starter
 
-Default Starter is a template for new projects built with my preferred stack.
+A NestJS backend template with authentication, PostgreSQL, and TypeORM.
 
 ## Tech Stack
 
-- **TypeScript**
-- **NestJS**
-- **React**
-- **Vite**
+- **NestJS 11** - Backend framework
+- **PostgreSQL** - Database
+- **TypeORM** - ORM with migrations
+- **TypeScript** - Language
+- **Jest** - Testing
 
-## Local Development
+## Quick Start
 
 ```bash
-# Start database
+# Start PostgreSQL
 docker compose up -d
 
 # Install dependencies
 npm install
 
-# Run database migrations
+# Run migrations
 npm run migration:run
 
-# Start development server
+# Start dev server
 npm run dev
 ```
 
-## Formatting & Testing
+The API runs at `http://localhost:3000/api`
 
-```bash
-# Formatting
-npm run format
+## Scripts
 
-# Testing
-npm run test
+| Command                             | Description          |
+| ----------------------------------- | -------------------- |
+| `npm run dev`                       | Start dev server     |
+| `npm run build`                     | Build for production |
+| `npm run start`                     | Run production build |
+| `npm run test`                      | Run tests            |
+| `npm run format`                    | Format with Prettier |
+| `npm run cli db:seed`               | Seed test user       |
+| `npm run migration:create --name=X` | Create migration     |
+| `npm run migration:run`             | Run migrations       |
+
+## Project Structure
+
+```
+src/
+├── cli/       # CLI commands
+├── common/    # Shared utilities
+├── crons/     # Scheduled tasks
+└── features/  # Feature modules
 ```
 
 ## License
