@@ -1,14 +1,17 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query, Req, Res, UnauthorizedException } from '@nestjs/common';
+import { ApiCreatedResponse, ApiExcludeEndpoint, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
-import { Auth } from '../../common/decorators/auth.decorator';
-import { Public } from '../../common/decorators/public.decorator';
-import { Provider } from '../../common/enums/provider';
-import { Session } from '../sessions/entities/session.entity';
-import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
-import { OAuthService } from './oauth.service';
+import { Auth } from '../../common/decorators/auth.decorator.js';
+import { Public } from '../../common/decorators/public.decorator.js';
+import { Provider } from '../../common/enums/provider.js';
+import { Session } from '../sessions/entities/session.entity.js';
+import { AuthService } from './auth.service.js';
+import { LoginDto } from './dto/login.dto.js';
+import { RegisterDto } from './dto/register.dto.js';
+import { LoginResponseDto, LogoutAllResponseDto, LogoutResponseDto, RegisterResponseDto } from './dto/responses';
+import { OAuthService } from './oauth.service.js';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
     constructor(
@@ -19,37 +22,52 @@ export class AuthController {
     @Public()
     @Post('register')
     @HttpCode(HttpStatus.CREATED)
-    register(@Body() registerDto: RegisterDto, @Res({ passthrough: true }) res: Response) {
+    @ApiCreatedResponse({ type: RegisterResponseDto, description: 'Register a new user' })
+    register(@Body() registerDto: RegisterDto, @Res({ passthrough: true }) res: Response): Promise<string> {
         return this.authService.register(registerDto, res);
     }
 
     @Public()
     @Post('login')
     @HttpCode(HttpStatus.OK)
-    login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: Response) {
+    @ApiOkResponse({ type: LoginResponseDto, description: 'Login with email and password' })
+    login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: Response): Promise<string> {
         return this.authService.login(loginDto, res);
     }
 
     @Post('logout')
     @HttpCode(HttpStatus.OK)
-    logout(@Auth() session: Session, @Res({ passthrough: true }) res: Response) {
+    @ApiOkResponse({ type: LogoutResponseDto, description: 'Logout from current session' })
+    logout(@Auth() session: Session, @Res({ passthrough: true }) res: Response): Promise<string> {
         return this.authService.logout(session, res);
     }
 
     @Post('logout-all')
     @HttpCode(HttpStatus.OK)
-    logoutAll(@Auth() session: Session, @Res({ passthrough: true }) res: Response) {
+    @ApiOkResponse({ type: LogoutAllResponseDto, description: 'Logout from all sessions' })
+    logoutAll(@Auth() session: Session, @Res({ passthrough: true }) res: Response): Promise<string> {
         return this.authService.logoutAll(session, res);
     }
 
+    @ApiExcludeEndpoint()
     @Public()
     @Get('google')
-    googleAuth(@Res() res: Response) {
+    googleAuth(@Res() res: Response): void {
         const state = this.oauthService.setStateCookie(res);
         const authUrl = this.oauthService.getGoogleAuthUrl(state);
-        return res.redirect(authUrl);
+        res.redirect(authUrl);
     }
 
+    @ApiExcludeEndpoint()
+    @Public()
+    @Get('github')
+    githubAuth(@Res() res: Response): void {
+        const state = this.oauthService.setStateCookie(res);
+        const authUrl = this.oauthService.getGitHubAuthUrl(state);
+        res.redirect(authUrl);
+    }
+
+    @ApiExcludeEndpoint()
     @Public()
     @Get('google/callback')
     async googleCallback(
@@ -58,11 +76,12 @@ export class AuthController {
         @Query('code') code: string,
         @Req() req: Request,
         @Res() res: Response,
-    ) {
+    ): Promise<void> {
         this.oauthService.clearStateCookie(res);
 
         if (error) {
-            return this.oauthService.redirectToError(res, error);
+            this.oauthService.redirectToError(res, error);
+            return;
         }
 
         if (!this.oauthService.validateState(req, state)) {
@@ -70,17 +89,10 @@ export class AuthController {
         }
 
         const userInfo = await this.oauthService.getOAuthUserInfo(Provider.GOOGLE, code);
-        return this.authService.handleOAuthCallback(Provider.GOOGLE, userInfo, res);
+        await this.authService.handleOAuthCallback(Provider.GOOGLE, userInfo, res);
     }
 
-    @Public()
-    @Get('github')
-    githubAuth(@Res() res: Response) {
-        const state = this.oauthService.setStateCookie(res);
-        const authUrl = this.oauthService.getGitHubAuthUrl(state);
-        return res.redirect(authUrl);
-    }
-
+    @ApiExcludeEndpoint()
     @Public()
     @Get('github/callback')
     async githubCallback(
@@ -89,11 +101,12 @@ export class AuthController {
         @Query('code') code: string,
         @Req() req: Request,
         @Res() res: Response,
-    ) {
+    ): Promise<void> {
         this.oauthService.clearStateCookie(res);
 
         if (error) {
-            return this.oauthService.redirectToError(res, error);
+            this.oauthService.redirectToError(res, error);
+            return;
         }
 
         if (!this.oauthService.validateState(req, state)) {
@@ -101,6 +114,6 @@ export class AuthController {
         }
 
         const userInfo = await this.oauthService.getOAuthUserInfo(Provider.GITHUB, code);
-        return this.authService.handleOAuthCallback(Provider.GITHUB, userInfo, res);
+        await this.authService.handleOAuthCallback(Provider.GITHUB, userInfo, res);
     }
 }

@@ -1,6 +1,7 @@
 import { BadRequestException, ClassSerializerInterceptor, Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
@@ -9,6 +10,7 @@ import { CatchAllFilter } from './common/filters/catch-all.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
+import metadata from './metadata';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
@@ -34,6 +36,22 @@ async function bootstrap() {
 
     // Global Prefix
     app.setGlobalPrefix('/api');
+
+    // Swagger
+    const config = new DocumentBuilder()
+        .setTitle('Default Starter API')
+        .setDescription('REST API')
+        .setVersion('1.0')
+        .addTag('Auth')
+        .addTag('Users')
+        .addTag('Health')
+        .build();
+
+    await SwaggerModule.loadPluginMetadata(metadata);
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('docs', app, document, {
+        swaggerOptions: { defaultModelsExpandDepth: -1 },
+    });
 
     // Validation
     app.useGlobalPipes(
