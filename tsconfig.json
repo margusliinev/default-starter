@@ -19,8 +19,8 @@
         "moduleResolution": "nodenext",
         "module": "nodenext",
         "target": "ES2023",
-        "outDir": "./build",
+        "outDir": "./dist",
         "baseUrl": "./"
     },
-    "exclude": ["node_modules", "build", "coverage"]
+    "exclude": ["node_modules", "dist", "coverage"]
 }
