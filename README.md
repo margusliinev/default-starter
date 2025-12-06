@@ -37,20 +37,8 @@ npm run start
 ## Useful Scripts:
 
 ```bash
-# Check Types
-npm run check:types
-
-# Check Formatting
-npm run check:format
-
-# Check Linting
-npm run check:lint
-
 # Run Formatting
 npm run format
-
-# Run Linting
-npm run lint
 
 # Run Tests
 npm run test

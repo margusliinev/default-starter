@@ -18,10 +18,10 @@
     "scripts": {
         "dev": "nest start --watch",
         "build": "nest build",
-        "start": "node build/main",
-        "typecheck": "tsc --noEmit",
+        "start": "node build/main.js",
         "format": "prettier --write .",
         "test": "jest --runInBand",
+        "test:coverage": "jest --runInBand --coverage",
         "cli": "ts-node -r tsconfig-paths/register src/cli.ts --",
         "migration:create": "typeorm-ts-node-commonjs migration:create migrations/$npm_config_name",
         "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/config/database.ts",
@@ -53,6 +53,7 @@
         "typeorm": "0.3.28"
     },
     "devDependencies": {
+        "@faker-js/faker": "10.1.0",
         "@nestjs/cli": "11.0.14",
         "@nestjs/schematics": "11.0.9",
         "@nestjs/swagger": "11.2.3",
@@ -87,7 +88,7 @@
             ]
         },
         "transformIgnorePatterns": [
-            "node_modules/(?!@oslojs/)"
+            "node_modules/(?!@oslojs/|@faker-js/)"
         ],
         "collectCoverageFrom": [
             "**/*.(t|j)s",
