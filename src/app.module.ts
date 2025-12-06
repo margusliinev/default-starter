@@ -1,17 +1,17 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
-import { ScheduleModule } from '@nestjs/schedule';
+import { AccountsModule } from './features/accounts/accounts.module';
+import { SessionsModule } from './features/sessions/sessions.module';
+import { HealthModule } from './features/health/health.module';
+import { UsersModule } from './features/users/users.module';
+import { AuthModule } from './features/auth/auth.module';
+import { CronsModule } from './crons/crons.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthGuard } from './features/auth/auth.guard';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { config, validate } from './config/env';
-import { CronsModule } from './crons/crons.module';
-import { AccountsModule } from './features/accounts/accounts.module';
-import { AuthGuard } from './features/auth/auth.guard';
-import { AuthModule } from './features/auth/auth.module';
-import { HealthModule } from './features/health/health.module';
-import { SessionsModule } from './features/sessions/sessions.module';
-import { UsersModule } from './features/users/users.module';
+import { APP_GUARD } from '@nestjs/core';
+import { Module } from '@nestjs/common';
 
 @Module({
     imports: [

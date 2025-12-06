@@ -1,7 +1,7 @@
 // @ts-nocheck
-import { faker } from '@faker-js/faker';
 import { createUserDto, expectValidationError, expectValidationSuccess } from '../../../common/testing';
 import { CreateUserDto } from '../dto/create-user.dto';
+import { faker } from '@faker-js/faker';
 
 describe('CreateUserDto', () => {
     const validData = createUserDto();

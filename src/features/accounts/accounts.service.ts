@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { hash } from '@node-rs/argon2';
 import { ARGON2_OPTIONS } from 'src/common/constants/argon';
-import { EntityManager, Repository } from 'typeorm';
 import { Provider } from '../../common/enums/provider';
 import { User } from '../users/entities/user.entity';
 import { Account } from './entities/account.entity';
+import { EntityManager, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable } from '@nestjs/common';
+import { hash } from '@node-rs/argon2';
 
 @Injectable()
 export class AccountsService {

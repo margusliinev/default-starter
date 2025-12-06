@@ -1,8 +1,8 @@
 /* eslint-disable */
 export default async () => {
     const t = {
-        ['./features/users/entities/user.entity.js']: await import('./features/users/entities/user.entity.js'),
         ['./common/enums/provider.js']: await import('./common/enums/provider.js'),
+        ['./features/users/entities/user.entity.js']: await import('./features/users/entities/user.entity.js'),
     };
     return {
         '@nestjs/swagger': {
@@ -22,20 +22,6 @@ export default async () => {
                     },
                 ],
                 [
-                    import('./features/sessions/entities/session.entity.js'),
-                    {
-                        Session: {
-                            id: { required: true, type: () => String },
-                            user_id: { required: true, type: () => String },
-                            token: { required: true, type: () => String },
-                            expires_at: { required: true, type: () => Date },
-                            created_at: { required: true, type: () => Date },
-                            updated_at: { required: true, type: () => Date },
-                            user: { required: true, type: () => t['./features/users/entities/user.entity.js'].User },
-                        },
-                    },
-                ],
-                [
                     import('./features/accounts/entities/account.entity.js'),
                     {
                         Account: {
@@ -44,6 +30,20 @@ export default async () => {
                             provider: { required: true, enum: t['./common/enums/provider.js'].Provider },
                             provider_id: { required: true, type: () => String, nullable: true },
                             password: { required: true, type: () => String, nullable: true },
+                            created_at: { required: true, type: () => Date },
+                            updated_at: { required: true, type: () => Date },
+                            user: { required: true, type: () => t['./features/users/entities/user.entity.js'].User },
+                        },
+                    },
+                ],
+                [
+                    import('./features/sessions/entities/session.entity.js'),
+                    {
+                        Session: {
+                            id: { required: true, type: () => String },
+                            user_id: { required: true, type: () => String },
+                            token: { required: true, type: () => String },
+                            expires_at: { required: true, type: () => Date },
                             created_at: { required: true, type: () => Date },
                             updated_at: { required: true, type: () => Date },
                             user: { required: true, type: () => t['./features/users/entities/user.entity.js'].User },
@@ -71,15 +71,6 @@ export default async () => {
                     },
                 ],
                 [
-                    import('./features/auth/dto/login.dto.js'),
-                    {
-                        LoginDto: {
-                            email: { required: true, type: () => String, format: 'email' },
-                            password: { required: true, type: () => String },
-                        },
-                    },
-                ],
-                [
                     import('./features/auth/dto/register.dto.js'),
                     {
                         RegisterDto: {
@@ -89,8 +80,18 @@ export default async () => {
                         },
                     },
                 ],
+                [
+                    import('./features/auth/dto/login.dto.js'),
+                    {
+                        LoginDto: {
+                            email: { required: true, type: () => String, format: 'email' },
+                            password: { required: true, type: () => String },
+                        },
+                    },
+                ],
             ],
             controllers: [
+                [import('./features/health/health.controller.js'), { HealthController: { check: { type: String } } }],
                 [
                     import('./features/users/users.controller.js'),
                     {
@@ -116,7 +117,6 @@ export default async () => {
                         },
                     },
                 ],
-                [import('./features/health/health.controller.js'), { HealthController: { check: { type: String } } }],
             ],
         },
     };

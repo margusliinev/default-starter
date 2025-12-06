@@ -1,15 +1,15 @@
-import { UnauthorizedException } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import { DataSource, Repository } from 'typeorm';
-import { Provider } from '../../../common/enums/provider';
 import { createMockUser, loginDto, registerDto, TestModule } from '../../../common/testing';
 import { AccountsService } from '../../accounts/accounts.service';
-import { Account } from '../../accounts/entities/account.entity';
-import { Session } from '../../sessions/entities/session.entity';
 import { SessionsService } from '../../sessions/sessions.service';
-import { User } from '../../users/entities/user.entity';
 import { UsersService } from '../../users/users.service';
 import { AuthService } from '../auth.service';
+import { Account } from '../../accounts/entities/account.entity';
+import { Session } from '../../sessions/entities/session.entity';
+import { User } from '../../users/entities/user.entity';
+import { Provider } from '../../../common/enums/provider';
+import { UnauthorizedException } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
+import { Test } from '@nestjs/testing';
 
 describe('AuthService', () => {
     let authService: AuthService;

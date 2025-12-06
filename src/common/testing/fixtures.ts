@@ -1,12 +1,12 @@
-import { faker } from '@faker-js/faker';
-import { Account } from '../../features/accounts/entities/account.entity';
-import { LoginDto } from '../../features/auth/dto/login.dto';
-import { RegisterDto } from '../../features/auth/dto/register.dto';
-import { Session } from '../../features/sessions/entities/session.entity';
 import { CreateUserDto } from '../../features/users/dto/create-user.dto';
 import { UpdateUserDto } from '../../features/users/dto/update-user.dto';
+import { RegisterDto } from '../../features/auth/dto/register.dto';
+import { LoginDto } from '../../features/auth/dto/login.dto';
+import { Account } from '../../features/accounts/entities/account.entity';
+import { Session } from '../../features/sessions/entities/session.entity';
 import { User } from '../../features/users/entities/user.entity';
 import { Provider } from '../enums/provider';
+import { faker } from '@faker-js/faker';
 
 export function createUserDto(overrides: Partial<CreateUserDto> = {}): CreateUserDto {
     return {

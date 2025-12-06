@@ -1,16 +1,16 @@
 import { BadRequestException, ClassSerializerInterceptor, Logger, ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { NestFactory, Reflector } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import compression from 'compression';
-import cookieParser from 'cookie-parser';
-import helmet from 'helmet';
-import { AppModule } from './app.module';
-import { CatchAllFilter } from './common/filters/catch-all.filter';
-import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
-import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
+import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { CatchAllFilter } from './common/filters/catch-all.filter';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { NestFactory, Reflector } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
+import { AppModule } from './app.module';
+import cookieParser from 'cookie-parser';
+import compression from 'compression';
 import metadata from './metadata';
+import helmet from 'helmet';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, {

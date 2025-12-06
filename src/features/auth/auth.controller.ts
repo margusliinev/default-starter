@@ -1,15 +1,15 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query, Req, Res, UnauthorizedException } from '@nestjs/common';
-import { ApiCreatedResponse, ApiExcludeEndpoint, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import type { Request, Response } from 'express';
-import { Auth } from '../../common/decorators/auth.decorator.js';
-import { Public } from '../../common/decorators/public.decorator.js';
-import { Provider } from '../../common/enums/provider.js';
-import { Session } from '../sessions/entities/session.entity.js';
-import { AuthService } from './auth.service.js';
-import { LoginDto } from './dto/login.dto.js';
-import { RegisterDto } from './dto/register.dto.js';
 import { LoginResponseDto, LogoutAllResponseDto, LogoutResponseDto, RegisterResponseDto } from './dto/responses';
+import { ApiCreatedResponse, ApiExcludeEndpoint, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { Public } from '../../common/decorators/public.decorator.js';
+import { Auth } from '../../common/decorators/auth.decorator.js';
+import { Session } from '../sessions/entities/session.entity.js';
+import { Provider } from '../../common/enums/provider.js';
+import { RegisterDto } from './dto/register.dto.js';
+import { LoginDto } from './dto/login.dto.js';
 import { OAuthService } from './oauth.service.js';
+import { AuthService } from './auth.service.js';
+import type { Request, Response } from 'express';
 
 @ApiTags('Auth')
 @Controller('auth')

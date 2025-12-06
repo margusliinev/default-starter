@@ -15,6 +15,7 @@ import { SeedCommand } from './commands/seed.command';
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => ({
                 type: 'postgres',
+                useUTC: true,
                 autoLoadEntities: true,
                 url: configService.get<string>('database.url'),
             }),

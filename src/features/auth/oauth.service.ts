@@ -1,10 +1,10 @@
+import type { GitHubEmail, GitHubTokenResponse, GitHubUserInfo, GoogleTokenResponse, GoogleUserInfo, OAuthUserInfo } from './oauth.types';
+import type { Request, Response } from 'express';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
+import { Provider } from '../../common/enums/provider';
 import { ConfigService } from '@nestjs/config';
 import { sha256 } from '@oslojs/crypto/sha2';
-import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
-import type { Request, Response } from 'express';
-import { Provider } from '../../common/enums/provider';
-import { GitHubEmail, GitHubTokenResponse, GitHubUserInfo, GoogleTokenResponse, GoogleUserInfo, OAuthUserInfo } from './oauth.types';
 
 @Injectable()
 export class OAuthService {

@@ -1,10 +1,10 @@
-import { faker } from '@faker-js/faker';
+import { createUserDto, TestModule, updateUserDto } from '../../../common/testing';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { createUserDto, TestModule, updateUserDto } from '../../../common/testing';
-import { User } from '../entities/user.entity';
 import { UsersService } from '../users.service';
+import { User } from '../entities/user.entity';
+import { faker } from '@faker-js/faker';
+import { Repository } from 'typeorm';
 
 describe('UsersService', () => {
     let module: TestingModule;

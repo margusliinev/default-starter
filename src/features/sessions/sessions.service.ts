@@ -1,12 +1,12 @@
+import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
+import { EntityManager, LessThan, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { InjectRepository } from '@nestjs/typeorm';
 import { sha256 } from '@oslojs/crypto/sha2';
-import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
-import type { Request, Response } from 'express';
-import { EntityManager, LessThan, Repository } from 'typeorm';
-import { User } from '../users/entities/user.entity';
 import { Session } from './entities/session.entity';
+import { User } from '../users/entities/user.entity';
+import type { Request, Response } from 'express';
 
 @Injectable()
 export class SessionsService {

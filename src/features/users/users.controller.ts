@@ -1,11 +1,11 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Patch } from '@nestjs/common';
 import { ApiNoContentResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { Auth } from '../../common/decorators/auth.decorator';
-import { Session } from '../sessions/entities/session.entity';
 import { UserResponseDto } from './dto/responses';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
+import { Auth } from '../../common/decorators/auth.decorator';
+import { Session } from '../sessions/entities/session.entity';
+import { User } from './entities/user.entity';
 
 @ApiTags('Users')
 @Controller('users')

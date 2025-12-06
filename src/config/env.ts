@@ -1,5 +1,5 @@
-import { plainToInstance } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsNumber, IsString, Max, Min, MinLength, validateSync } from 'class-validator';
+import { plainToInstance } from 'class-transformer';
 import { Environment } from '../common/enums/environment';
 
 class EnvironmentVariables {

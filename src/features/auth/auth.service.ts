@@ -1,17 +1,17 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { verify } from '@node-rs/argon2';
-import type { Response } from 'express';
-import { ARGON2_OPTIONS } from 'src/common/constants/argon';
-import { Provider } from 'src/common/enums/provider';
-import { DataSource } from 'typeorm';
 import { AccountsService } from '../accounts/accounts.service';
-import { Session } from '../sessions/entities/session.entity';
 import { SessionsService } from '../sessions/sessions.service';
 import { UsersService } from '../users/users.service';
-import { LoginDto } from './dto/login.dto';
+import { Session } from '../sessions/entities/session.entity';
+import { ARGON2_OPTIONS } from 'src/common/constants/argon';
+import { Provider } from 'src/common/enums/provider';
+import { ConfigService } from '@nestjs/config';
 import { RegisterDto } from './dto/register.dto';
-import { OAuthUserInfo } from './oauth.types';
+import { LoginDto } from './dto/login.dto';
+import { verify } from '@node-rs/argon2';
+import { DataSource } from 'typeorm';
+import type { OAuthUserInfo } from './oauth.types';
+import type { Response } from 'express';
 
 @Injectable()
 export class AuthService {

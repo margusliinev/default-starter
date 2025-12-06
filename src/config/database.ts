@@ -1,9 +1,9 @@
-import * as dotenv from 'dotenv';
-import { DataSource } from 'typeorm';
 import { Account } from '../features/accounts/entities/account.entity';
 import { Session } from '../features/sessions/entities/session.entity';
 import { User } from '../features/users/entities/user.entity';
+import { DataSource } from 'typeorm';
 import { config } from './env';
+import * as dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -13,6 +13,6 @@ export default new DataSource({
     type: 'postgres',
     url: envConfig.database.url,
     entities: [User, Account, Session],
-    migrations: ['migrations/*.ts'],
+    migrations: ['db/*.ts'],
     migrationsTableName: 'migrations',
 });

@@ -1,12 +1,12 @@
-import { faker } from '@faker-js/faker';
+import { createUserDto, TestModule } from '../../../common/testing';
+import { UsersService } from '../../users/users.service';
+import { SessionsService } from '../sessions.service';
+import { User } from '../../users/entities/user.entity';
+import { Session } from '../entities/session.entity';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { faker } from '@faker-js/faker';
 import { Repository } from 'typeorm';
-import { createUserDto, TestModule } from '../../../common/testing';
-import { User } from '../../users/entities/user.entity';
-import { UsersService } from '../../users/users.service';
-import { Session } from '../entities/session.entity';
-import { SessionsService } from '../sessions.service';
 
 describe('SessionsService', () => {
     let module: TestingModule;

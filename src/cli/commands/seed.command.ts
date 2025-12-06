@@ -1,9 +1,9 @@
-import { Logger } from '@nestjs/common';
-import { Command, CommandRunner } from 'nest-commander';
-import { DataSource } from 'typeorm';
 import { AccountsService } from '../../features/accounts/accounts.service';
 import { SessionsService } from '../../features/sessions/sessions.service';
 import { UsersService } from '../../features/users/users.service';
+import { Command, CommandRunner } from 'nest-commander';
+import { Logger } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 
 @Command({
     name: 'db:seed',

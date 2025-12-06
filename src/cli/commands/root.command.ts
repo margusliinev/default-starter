@@ -1,5 +1,5 @@
-import { Logger } from '@nestjs/common';
 import { Command, CommandRunner } from 'nest-commander';
+import { Logger } from '@nestjs/common';
 
 @Command({
     name: 'cli',
@@ -8,10 +8,6 @@ import { Command, CommandRunner } from 'nest-commander';
 })
 export class RootCommand extends CommandRunner {
     private readonly logger = new Logger(RootCommand.name);
-
-    constructor() {
-        super();
-    }
 
     async run(): Promise<void> {
         this.logger.log('Default Starter CLI');
