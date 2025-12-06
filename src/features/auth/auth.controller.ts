@@ -1,6 +1,4 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query, Req, Res, UnauthorizedException } from '@nestjs/common';
-import { LoginResponseDto, LogoutAllResponseDto, LogoutResponseDto, RegisterResponseDto } from './dto/responses';
-import { ApiCreatedResponse, ApiExcludeEndpoint, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../common/decorators/public.decorator.js';
 import { Auth } from '../../common/decorators/auth.decorator.js';
 import { Session } from '../sessions/entities/session.entity.js';
@@ -11,7 +9,6 @@ import { OAuthService } from './oauth.service.js';
 import { AuthService } from './auth.service.js';
 import type { Request, Response } from 'express';
 
-@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
     constructor(
@@ -22,7 +19,6 @@ export class AuthController {
     @Public()
     @Post('register')
     @HttpCode(HttpStatus.CREATED)
-    @ApiCreatedResponse({ type: RegisterResponseDto, description: 'Register a new user' })
     register(@Body() registerDto: RegisterDto, @Res({ passthrough: true }) res: Response): Promise<string> {
         return this.authService.register(registerDto, res);
     }
@@ -30,26 +26,22 @@ export class AuthController {
     @Public()
     @Post('login')
     @HttpCode(HttpStatus.OK)
-    @ApiOkResponse({ type: LoginResponseDto, description: 'Login with email and password' })
     login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: Response): Promise<string> {
         return this.authService.login(loginDto, res);
     }
 
     @Post('logout')
     @HttpCode(HttpStatus.OK)
-    @ApiOkResponse({ type: LogoutResponseDto, description: 'Logout from current session' })
     logout(@Auth() session: Session, @Res({ passthrough: true }) res: Response): Promise<string> {
         return this.authService.logout(session, res);
     }
 
     @Post('logout-all')
     @HttpCode(HttpStatus.OK)
-    @ApiOkResponse({ type: LogoutAllResponseDto, description: 'Logout from all sessions' })
     logoutAll(@Auth() session: Session, @Res({ passthrough: true }) res: Response): Promise<string> {
         return this.authService.logoutAll(session, res);
     }
 
-    @ApiExcludeEndpoint()
     @Public()
     @Get('google')
     googleAuth(@Res() res: Response): void {
@@ -58,7 +50,6 @@ export class AuthController {
         res.redirect(authUrl);
     }
 
-    @ApiExcludeEndpoint()
     @Public()
     @Get('github')
     githubAuth(@Res() res: Response): void {
@@ -67,7 +58,6 @@ export class AuthController {
         res.redirect(authUrl);
     }
 
-    @ApiExcludeEndpoint()
     @Public()
     @Get('google/callback')
     async googleCallback(
@@ -92,7 +82,6 @@ export class AuthController {
         await this.authService.handleOAuthCallback(Provider.GOOGLE, userInfo, res);
     }
 
-    @ApiExcludeEndpoint()
     @Public()
     @Get('github/callback')
     async githubCallback(

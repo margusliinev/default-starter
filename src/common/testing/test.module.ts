@@ -6,7 +6,7 @@ import { Account } from '../../features/accounts/entities/account.entity';
 import { Session } from '../../features/sessions/entities/session.entity';
 import { User } from '../../features/users/entities/user.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { config, validate } from '../../config/env';
+import { config, validate } from '../config/env';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 

@@ -6,10 +6,10 @@ import { AuthModule } from './features/auth/auth.module';
 import { CronsModule } from './crons/crons.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { config, validate } from './common/config/env';
 import { AuthGuard } from './features/auth/auth.guard';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { config, validate } from './config/env';
 import { APP_GUARD } from '@nestjs/core';
 import { Module } from '@nestjs/common';
 

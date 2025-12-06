@@ -3,13 +3,11 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { CatchAllFilter } from './common/filters/catch-all.filter';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
 import compression from 'compression';
-import metadata from './metadata';
 import helmet from 'helmet';
 
 async function bootstrap() {
@@ -36,22 +34,6 @@ async function bootstrap() {
 
     // Global Prefix
     app.setGlobalPrefix('/api');
-
-    // Swagger
-    const config = new DocumentBuilder()
-        .setTitle('Default Starter API')
-        .setDescription('REST API')
-        .setVersion('1.0')
-        .addTag('Auth')
-        .addTag('Users')
-        .addTag('Health')
-        .build();
-
-    await SwaggerModule.loadPluginMetadata(metadata);
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('docs', app, document, {
-        swaggerOptions: { defaultModelsExpandDepth: -1 },
-    });
 
     // Validation
     app.useGlobalPipes(

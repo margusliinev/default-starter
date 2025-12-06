@@ -49,22 +49,19 @@ src/features/{feature}/
 
 ### 2. Common Shared Code (`src/common/`)
 
-Utilities shared across multiple features.
+Shared utilities across multiple features.
 
 ```
 src/common/
-├── decorators/    # Custom decorators (@AuthUser, @Public)
+├── config/        # Shared Config
+├── constants/     # Shared Constants
+├── decorators/    # Shared decorators (@Auth, @Public)
+├── enums/         # Shared Enums (Environment, Provider)
 ├── filters/       # Global Exception Filters
 ├── interceptors/  # Global Interceptors
-├── enums/         # Shared Enums
-├── types/         # Shared Types
-└── testing/       # Test setup helpers
+├── testing/       # Shared Testing Utils
+└── types/         # Shared Types
 ```
-
-### 3. Configuration (`src/config/`)
-
-- `env.ts`: Environment variable validation.
-- `database.ts`: TypeORM configuration.
 
 ### 4. Database Migrations (`db/`)
 

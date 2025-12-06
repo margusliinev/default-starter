@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { config, validate } from '../config/env';
 import { AccountsModule } from '../features/accounts/accounts.module';
 import { SessionsModule } from '../features/sessions/sessions.module';
 import { UsersModule } from '../features/users/users.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { config, validate } from '../common/config/env';
 import { RootCommand } from './commands/root.command';
 import { SeedCommand } from './commands/seed.command';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Module } from '@nestjs/common';
 
 @Module({
     imports: [
