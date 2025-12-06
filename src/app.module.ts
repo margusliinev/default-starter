@@ -5,6 +5,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { config, validate } from './config/env';
+import { CronsModule } from './crons/crons.module';
 import { AccountsModule } from './features/accounts/accounts.module';
 import { AuthGuard } from './features/auth/auth.guard';
 import { AuthModule } from './features/auth/auth.module';
@@ -30,6 +31,7 @@ import { UsersModule } from './features/users/users.module';
         AccountsModule,
         SessionsModule,
         HealthModule,
+        CronsModule,
     ],
     controllers: [],
     providers: [
