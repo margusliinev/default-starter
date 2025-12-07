@@ -1,0 +1,176 @@
+@import '@fontsource-variable/inter';
+
+:root {
+    --font-inter: 'Inter Variable', sans-serif;
+
+    --color-white: #ffffff;
+    --color-black: #000000;
+
+    --color-text-primary: #09090b;
+    --color-text-secondary: #18181b;
+
+    --color-background-primary: #fafafa;
+    --color-background-secondary: #f4f4f5;
+
+    --color-primary-light: #0ea5e9; /* sky-500 */
+    --color-primary: #0284c7; /* sky-600 */
+    --color-primary-dark: #0369a1; /* sky-700 */
+
+    --color-success-light: #10b981; /* emerald-500 */
+    --color-success: #059669; /* emerald-600 */
+    --color-success-dark: #047857; /* emerald-700 */
+
+    --color-warning-light: #eab308; /* yellow-500 */
+    --color-warning: #ca8a04; /* yellow-600 */
+    --color-warning-dark: #a16207; /* yellow-700 */
+
+    --color-danger-light: #ef4444; /* red-500 */
+    --color-danger: #dc2626; /* red-600 */
+    --color-danger-dark: #b91c1c; /* red-700 */
+
+    --color-info-light: #3b82f6; /* blue-500 */
+    --color-info: #2563eb; /* blue-600 */
+    --color-info-dark: #1d4ed8; /* blue-700 */
+
+    --color-card-light: color-mix(in srgb, var(--color-black) 1%, transparent);
+    --color-card: color-mix(in srgb, var(--color-black) 3%, transparent);
+    --color-card-dark: color-mix(in srgb, var(--color-black) 5%, transparent);
+
+    --color-border-light: color-mix(in srgb, var(--color-black) 6%, transparent);
+    --color-border: color-mix(in srgb, var(--color-black) 8%, transparent);
+    --color-border-dark: color-mix(in srgb, var(--color-black) 10%, transparent);
+}
+
+*,
+::after,
+::before,
+::backdrop {
+    padding: 0;
+    margin: 0;
+    border: 0 solid;
+    box-sizing: border-box;
+}
+
+html {
+    tab-size: 4;
+    line-height: 1.5;
+    color-scheme: light;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    min-height: 100vh;
+    isolation: isolate;
+    position: relative;
+    font-family: var(--font-inter);
+    color: var(--color-text-primary);
+    background: linear-gradient(135deg, var(--color-background-primary) 0%, var(--color-background-secondary) 100%);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    opacity: 0.4;
+    z-index: -1;
+    pointer-events: none;
+    background-size: 180px 180px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='0.70'/></svg>");
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+hr {
+    color: inherit;
+    height: 0;
+    border-top-width: 1px;
+}
+
+a {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+b,
+strong {
+    font-weight: bolder;
+}
+
+i,
+em {
+    font-style: italic;
+}
+
+code,
+pre {
+    font-size: 1em;
+}
+
+ol,
+ul,
+menu {
+    list-style: none;
+}
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+    display: block;
+}
+
+img,
+video {
+    max-width: 100%;
+    height: auto;
+}
+
+table {
+    text-indent: 0;
+    border-color: inherit;
+    border-collapse: collapse;
+}
+
+button,
+input,
+select,
+option,
+optgroup,
+textarea {
+    font: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    background-color: transparent;
+    border-radius: 0;
+    opacity: 1;
+}
+
+input:where([type='button'], [type='reset'], [type='submit']) {
+    appearance: button;
+}
+
+button {
+    cursor: pointer;
+}
+
+textarea {
+    resize: vertical;
+}

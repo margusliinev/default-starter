@@ -1,6 +1,6 @@
 {
-    "name": "default-starter",
-    "description": "Default Starter is a template for new projects built with my preferred stack.",
+    "name": "default-starter-api",
+    "description": "Default Starter API template",
     "author": "Margus Liinev",
     "version": "1.0.0",
     "homepage": "https://github.com/margusliinev/default-starter",
@@ -8,8 +8,8 @@
     "sideEffects": false,
     "private": true,
     "keywords": [
-        "Margus Liinev",
-        "Default Starter"
+        "Default Starter",
+        "Project Template"
     ],
     "repository": {
         "type": "git",
