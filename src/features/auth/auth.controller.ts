@@ -19,26 +19,26 @@ export class AuthController {
     @Public()
     @Post('register')
     @HttpCode(HttpStatus.CREATED)
-    register(@Body() registerDto: RegisterDto, @Res({ passthrough: true }) res: Response): Promise<string> {
+    register(@Body() registerDto: RegisterDto, @Res({ passthrough: true }) res: Response) {
         return this.authService.register(registerDto, res);
     }
 
     @Public()
     @Post('login')
     @HttpCode(HttpStatus.OK)
-    login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: Response): Promise<string> {
+    login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: Response) {
         return this.authService.login(loginDto, res);
     }
 
     @Post('logout')
     @HttpCode(HttpStatus.OK)
-    logout(@Auth() session: Session, @Res({ passthrough: true }) res: Response): Promise<string> {
+    logout(@Auth() session: Session, @Res({ passthrough: true }) res: Response) {
         return this.authService.logout(session, res);
     }
 
     @Post('logout-all')
     @HttpCode(HttpStatus.OK)
-    logoutAll(@Auth() session: Session, @Res({ passthrough: true }) res: Response): Promise<string> {
+    logoutAll(@Auth() session: Session, @Res({ passthrough: true }) res: Response) {
         return this.authService.logoutAll(session, res);
     }
 
@@ -66,7 +66,7 @@ export class AuthController {
         @Query('code') code: string,
         @Req() req: Request,
         @Res() res: Response,
-    ): Promise<void> {
+    ) {
         this.oauthService.clearStateCookie(res);
 
         if (error) {
@@ -90,7 +90,7 @@ export class AuthController {
         @Query('code') code: string,
         @Req() req: Request,
         @Res() res: Response,
-    ): Promise<void> {
+    ) {
         this.oauthService.clearStateCookie(res);
 
         if (error) {

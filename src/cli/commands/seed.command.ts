@@ -21,7 +21,7 @@ export class SeedCommand extends CommandRunner {
         super();
     }
 
-    async run(): Promise<void> {
+    async run() {
         this.logger.log('Database seeding started!');
         this.logger.log('========================================');
 

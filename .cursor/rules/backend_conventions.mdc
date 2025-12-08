@@ -8,16 +8,21 @@ alwaysApply: false
 
 ## Critical Implementation Guidelines
 
-1. **Naming Conventions**:
-   - **Files**: Kebab-case (`user-profile.service.ts`)
-   - **Classes**: PascalCase (`UserProfileService`)
-   - **Interfaces/Types**: PascalCase (`OAuthUserInfo`)
-   - **Variables/Functions**: CamelCase (`findUserById`)
-   - **Database Columns**: Snake_case (`email_verified_at`)
-2. **No `any` Type**: Strictly forbidden. Use `unknown` or specific types.
-3. **No Explicit Return Types**: Omit unless absolutely necessary for clarity.
-4. **Concise Comments**: Only where logic is complex; keep short.
-5. **Concision**: Sacrifice grammar for brevity in all communications.
+1. **No `any` Type**: Strictly forbidden. Use `unknown` or specific types.
+2. **No Explicit Return Types**: Omit unless absolutely necessary for clarity.
+3. **No default exports**: Always use named exports, use default only if needed.
+4. **Concise Comments**: Only where logic is complex or not obvious, keep short.
+5. **Communication**: Be extremely concise and give answers like an engineer.
+
+## Naming Conventions
+
+1. **Files**: Kebab-case (`user-profile.service.ts`)
+2. **Classes**: PascalCase (`UserProfileService`)
+3. **Interfaces/Types**: PascalCase (`OAuthUserInfo`)
+4. **Variables/Functions**: CamelCase (`findUserById`)
+5. **Database Columns**: Snake_case (`email_verified_at`)
+6. **Constants**: UPPERCASE_WITH_UNDERSCORES (`ARGON2_OPTIONS`)
+7. **Enums**: PascalCase (`Environment`)
 
 ## Tech Stack
 
@@ -36,39 +41,66 @@ alwaysApply: false
 | Scheduling     | @nestjs/schedule                                 |
 | Rate Limiting  | @nestjs/throttler                                |
 | Security       | helmet, cookie-parser, signed cookies            |
-| Package Mgr    | npm                                              |
 
 ## Project Structure
 
 ```
-├── db/                   # TypeORM migrations
-├── compose.yml           # Docker: PostgreSQL
-├── nest-cli.json         # NestJS CLI config
-├── tsconfig.json         # TypeScript config
-└── src/
-    ├── cli/              # CLI commands
-    ├── common/           # Shared utilities
-    ├── crons/            # Scheduled tasks
-    ├── features/         # Feature modules
-    ├── app.module.ts     # Root module, global guards
-    ├── cli.ts            # CLI entrypoint
-    └── main.ts           # HTTP server entrypoint
+├── db/
+│   ├── init/
+│   └── migrations/
+├── src/
+│   ├── cli/
+│   ├── common/
+│   ├── crons/
+│   ├── features/
+│   ├── app.module.ts
+│   ├── cli.ts
+│   └── main.ts
+├── .env.example
+├── .gitignore
+├── .prettierignore
+├── .prettierrc
+├── .swcrc
+├── compose.yml
+├── nest-cli.json
+├── package-lock.json
+├── package.json
+├── README.md
+└── tsconfig.json
 ```
+
+### CLI (`src/cli/`)
+
+Command-line interface using nest-commander.
+
+| File              | Purpose                              |
+| ----------------- | ------------------------------------ |
+| `cli.module.ts`   | CLI module definition                |
+| `commands/`       | Individual command implementations   |
 
 ### Common (`src/common/`)
 
 Shared utilities across features. Not a NestJS module—just organized exports.
 
-| Folder         | Purpose                                                      |
-| -------------- | ------------------------------------------------------------ |
-| `config/`      | Env validation + TypeORM DataSource for migrations           |
-| `constants/`   | Shared constants (Argon2 options, etc.)                      |
-| `decorators/`  | `@Auth()` (extract session), `@Public()` (bypass auth)       |
-| `enums/`       | `Environment`, `Provider` enums                              |
-| `filters/`     | Global exception filter (CatchAllFilter)                     |
-| `interceptors/`| Logging, Timeout (30s), Transform (response wrapper)         |
-| `testing/`     | TestModule, fixtures, DTO validation helpers                 |
-| `types/`       | Type declarations (Express.Request extension)                |
+| Folder         | Purpose                                      |
+| -------------- | -------------------------------------------- |
+| `config/`      | Configuration and environment setup          |
+| `constants/`   | Common constants used across the project     |
+| `decorators/`  | Custom decorators for application behavior   |
+| `enums/`       | Enum definitions                             |
+| `filters/`     | Error and exception handling                 |
+| `interceptors/`| Request/response transformation utilities    |
+| `testing/`     | Testing utilities and helpers                |
+| `types/`       | Shared type definitions                      |
+
+### Crons (`src/crons/`)
+
+Scheduled tasks using @nestjs/schedule.
+
+| File              | Purpose                              |
+| ----------------- | ------------------------------------ |
+| `crons.module.ts` | Cron module definition               |
+| `*.cron.ts`       | Individual cron job implementations  |
 
 ### Features (`src/features/`)
 
@@ -92,14 +124,14 @@ src/features/{feature}/
 - Define routes and HTTP methods
 - Use DTOs for request validation
 - Delegate all logic to services
-- Use `@Auth()` to get session, `@Public()` for public routes
+- Use `@Public()` for public routes
 - Never contain business logic or direct DB access
 
 ### Services
 
 - Contain all business rules
 - Interact with DB via TypeORM repositories
-- Accept optional `EntityManager` param for transaction support via `getRepository()` helper
+- Accept optional `EntityManager` as last parameter
 - Throw standard NestJS exceptions
 - Never return HTTP-specific objects
 
@@ -107,14 +139,13 @@ src/features/{feature}/
 
 - Use class-validator decorators with custom error messages
 - Order decorators from most to least specific
-- Use class-transformer when needed (`@Type()`, `@Transform()`)
+- Use class-transformer when needed
 
 ### Entities
 
 - Use TypeORM decorators
-- Snake_case for column names (`name: 'created_at'`)
-- Use `timestamptz` for all date columns
-- Use `uuidv7()` for primary keys (via migration)
+- Define relationships last
+- Snake_case for column names
 
 ## Global Setup
 
@@ -124,23 +155,23 @@ src/features/{feature}/
 - **CORS**: Enabled with `credentials: true`
 - **Security**: Helmet, signed cookies, compression
 - **Global Prefix**: `/api`
-- **ValidationPipe**: `whitelist`, `transform`, `forbidNonWhitelisted`, custom `exceptionFactory`
+- **ValidationPipe**: `whitelist`, `transform`, `forbidNonWhitelisted`
 - **Interceptors**: Logging → Timeout (30s) → Transform → ClassSerializer
 - **Filters**: CatchAllFilter
 
 ### Global Guards (`app.module.ts`)
 
-- **ThrottlerGuard**: Rate limiting (100 req/min)
+- **ThrottlerGuard**: Rate limiting
 - **AuthGuard**: Session-based authentication
 
 ### Response Format
 
-- **Success**: `{ success: true, data: ... }`
-- **Error**: `{ success: false, message: '...', errors?: { field: 'message' } }`
+- **Success**: `{ success: true, data: '...' }`
+- **Error**: `{ success: false, message: '...' }`
 
 ## Environment Variables
 
-Required in `.env`:
+Required in `.env` (see `.env.example`):
 
 | Variable               | Description                          |
 | ---------------------- | ------------------------------------ |
@@ -148,7 +179,11 @@ Required in `.env`:
 | `NODE_ENV`             | development, production, test        |
 | `FRONTEND_URL`         | CORS origin                          |
 | `COOKIE_SECRET`        | Min 32 chars for signed cookies      |
-| `DATABASE_URL`         | PostgreSQL connection string         |
+| `DB_HOST`              | Database host                        |
+| `DB_PORT`              | Database port                        |
+| `DB_NAME`              | Database name                        |
+| `DB_USERNAME`          | Database username                    |
+| `DB_PASSWORD`          | Database password                    |
 | `GOOGLE_CLIENT_ID`     | OAuth client ID                      |
 | `GOOGLE_CLIENT_SECRET` | OAuth client secret                  |
 | `GOOGLE_CALLBACK_URL`  | OAuth callback URL                   |
@@ -168,24 +203,24 @@ Required in `.env`:
 | `npm run cli`                       | Run CLI (shows help)                  |
 | `npm run cli db:seed`               | Seed database with test user          |
 | `npm run migration:create --name=X` | Create new migration                  |
-| `npm run migration:run`             | Run pending migrations                |
 | `npm run migration:revert`          | Revert last migration                 |
 | `npm run migration:show`            | Show migration status                 |
+| `npm run migration:run`             | Run pending migrations                |
 
 ## Docker
 
-Start databases: `docker compose up -d`
+Single PostgreSQL container with two databases:
 
-- **db**: Development database (port 5432)
-- **db_test**: Test database (port 5433)
+- **db**: Dev database
+- **db_test**: Test database
 
 ## Testing
 
 - **Framework**: Jest 30 with SWC
 - **Test files**: `*.spec.ts` in `tests/` folders within features
-- **TestModule**: Pre-configured module in `common/testing/` (uses `.env.test`, `synchronize: true`)
-- **Fixtures**: Factory functions for test data (`createUserDto()`, `createMockUser()`, etc.)
-- **Validation helpers**: `validateDto()`, `expectValidationError()`, `describeValidationRules()`
+- **TestModule**: Pre-configured module in `common/testing/`
+- **Fixtures**: Factory functions for creating test data
+- **Validation helpers**: Functions for validating common results
 
 ## Authentication
 
@@ -204,5 +239,5 @@ Start databases: `docker compose up -d`
 5. Create controller in `{name}.controller.ts`
 6. Define module in `{name}.module.ts`
 7. Import module in `app.module.ts`
-8. Create migration if needed: `npm run migration:create --name=Create{Name}Table`
+8. Create migration if needed
 9. Add tests in `tests/`

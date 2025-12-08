@@ -11,19 +11,19 @@ export class UsersController {
 
     @Get('me')
     @HttpCode(HttpStatus.OK)
-    me(@Auth() session: Session): User {
+    get(@Auth() session: Session) {
         return session.user;
     }
 
     @Patch('me')
     @HttpCode(HttpStatus.OK)
-    update(@Auth() session: Session, @Body() updateUserDto: UpdateUserDto): Promise<User | null> {
+    update(@Auth() session: Session, @Body() updateUserDto: UpdateUserDto) {
         return this.usersService.updateUser(session.user_id, updateUserDto);
     }
 
     @Delete('me')
     @HttpCode(HttpStatus.NO_CONTENT)
-    remove(@Auth() session: Session): Promise<void> {
+    remove(@Auth() session: Session) {
         return this.usersService.deleteUser(session.user_id);
     }
 }

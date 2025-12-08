@@ -9,7 +9,7 @@ import { Logger } from '@nestjs/common';
 export class RootCommand extends CommandRunner {
     private readonly logger = new Logger(RootCommand.name);
 
-    async run(): Promise<void> {
+    async run() {
         this.logger.log('Default Starter CLI');
         this.logger.log('');
         this.logger.log('Available commands:');

@@ -25,7 +25,7 @@ export class OAuthService {
         return encodeHexLowerCase(sha256(new TextEncoder().encode(state)));
     }
 
-    setStateCookie(res: Response): string {
+    setStateCookie(res: Response){
         const state = this.generateState();
         const hashedState = this.hashState(state);
 
@@ -41,7 +41,7 @@ export class OAuthService {
         return state;
     }
 
-    validateState(req: Request, state: string): boolean {
+    validateState(req: Request, state: string) {
         const storedHash = req.signedCookies?.[this.STATE_COOKIE_NAME];
         if (!storedHash || !state) {
             return false;
@@ -61,7 +61,7 @@ export class OAuthService {
         });
     }
 
-    getGoogleAuthUrl(state: string): string {
+    getGoogleAuthUrl(state: string) {
         const clientId = this.configService.get<string>('google.clientId')!;
         const callbackUrl = this.configService.get<string>('google.callbackUrl')!;
 
@@ -119,7 +119,7 @@ export class OAuthService {
         };
     }
 
-    getGitHubAuthUrl(state: string): string {
+    getGitHubAuthUrl(state: string) {
         const clientId = this.configService.get<string>('github.clientId')!;
         const callbackUrl = this.configService.get<string>('github.callbackUrl')!;
 

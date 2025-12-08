@@ -5,7 +5,7 @@ import { Controller, Get } from '@nestjs/common';
 export class HealthController {
     @Public()
     @Get()
-    check(): string {
+    check() {
         return 'OK';
     }
 }
