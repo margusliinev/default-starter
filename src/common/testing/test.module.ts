@@ -12,20 +12,19 @@ import { Module } from '@nestjs/common';
 
 @Module({
     imports: [
-        ConfigModule.forRoot({
-            isGlobal: true,
-            load: [config],
-            validate,
-            envFilePath: '.env.test',
-        }),
+        ConfigModule.forRoot({ isGlobal: true, load: [config], validate }),
         TypeOrmModule.forRootAsync({
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => ({
                 type: 'postgres',
                 useUTC: true,
-                url: configService.get<string>('database.url'),
-                autoLoadEntities: true,
                 synchronize: true,
+                autoLoadEntities: true,
+                port: configService.get<number>('database.port'),
+                host: configService.get<string>('database.host'),
+                database: configService.get<string>('database.name') + '_test',
+                username: configService.get<string>('database.username'),
+                password: configService.get<string>('database.password'),
             }),
         }),
         TypeOrmModule.forFeature([User, Account, Session]),

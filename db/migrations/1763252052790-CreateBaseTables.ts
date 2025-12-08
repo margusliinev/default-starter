@@ -4,7 +4,7 @@ export class CreateBaseTables1763252052790 implements MigrationInterface {
     name = 'CreateBaseTables1763252052790';
 
     public async up(queryRunner: QueryRunner) {
-        await queryRunner.query(`CREATE TYPE "provider_type" AS ENUM ('password', 'google', 'github');`);
+        await queryRunner.query(`CREATE TYPE "provider_type" AS ENUM ('password', 'google', 'github')`);
 
         await queryRunner.query(`
             CREATE TABLE "users" (
