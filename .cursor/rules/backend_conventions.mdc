@@ -8,7 +8,7 @@ alwaysApply: false
 
 ## Critical Implementation Guidelines
 
-1. **No `any` Type**: Strictly forbidden. Use `unknown` or specific types.
+1. **No Any Types**: Strictly forbidden. Use `unknown` or specific types.
 2. **No Explicit Return Types**: Omit unless absolutely necessary for clarity.
 3. **No default exports**: Always use named exports, use default only if needed.
 4. **Concise Comments**: Only where logic is complex or not obvious, keep short.
