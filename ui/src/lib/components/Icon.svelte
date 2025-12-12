@@ -1,7 +1,7 @@
 <script lang="ts">
     import { icons } from '$lib/icons';
 
-    type IconName = 'github' | 'instagram' | 'linkedin' | 'logo' | 'moon' | 'sun' | 'twitter';
+    type IconName = 'github' | 'instagram' | 'linkedin' | 'moon' | 'sun' | 'twitter';
     type IconSize = 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
     interface Props {
