@@ -25,7 +25,7 @@ export class OAuthService {
         return encodeHexLowerCase(sha256(new TextEncoder().encode(state)));
     }
 
-    setStateCookie(res: Response){
+    setStateCookie(res: Response) {
         const state = this.generateState();
         const hashedState = this.hashState(state);
 

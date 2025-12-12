@@ -1,4 +1,4 @@
-import { ARGON2_OPTIONS } from 'src/common/constants/argon';
+import { ARGON2_OPTIONS } from '../../common/constants/argon';
 import { Provider } from '../../common/enums/provider';
 import { User } from '../users/entities/user.entity';
 import { Account } from './entities/account.entity';

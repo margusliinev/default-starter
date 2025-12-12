@@ -79,6 +79,7 @@ async function request<T>(method: string, path: string, options: RequestOptions 
 
 export const api = {
     get: <T>(path: ApiRoutes['GET'], options?: RequestOptions) => request<T>('GET', path, options),
+    put: <T>(path: ApiRoutes['PATCH'], options?: RequestOptions) => request<T>('PUT', path, options),
     post: <T>(path: ApiRoutes['POST'], options?: RequestOptions) => request<T>('POST', path, options),
     patch: <T>(path: ApiRoutes['PATCH'], options?: RequestOptions) => request<T>('PATCH', path, options),
     delete: <T>(path: ApiRoutes['DELETE'], options?: RequestOptions) => request<T>('DELETE', path, options),

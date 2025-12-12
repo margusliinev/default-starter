@@ -33,24 +33,23 @@ The API runs at `http://localhost:3000/api`
 
 ## Environment Variables
 
-| Variable               | Description                        |
-| ---------------------- | ---------------------------------- |
-| `PORT`                 | Server port                        |
-| `NODE_ENV`             | Server environment                 |
-| `COOKIE_SECRET`        | Cookie secret                      |
-| `FRONTEND_URL`         | CORS origin                        |
-| `DB_HOST`              | Database host                      |
-| `DB_PORT`              | Database port                      |
-| `DB_NAME`              | Database name                      |
-| `DB_USERNAME`          | Database user                      |
-| `DB_PASSWORD`          | Database password                  |
-| `GOOGLE_CLIENT_ID`     | OAuth client ID                    |
-| `GOOGLE_CLIENT_SECRET` | OAuth client secret                |
-| `GOOGLE_CALLBACK_URL`  | OAuth callback URL                 |
-| `GITHUB_CLIENT_ID`     | OAuth client ID                    |
-| `GITHUB_CLIENT_SECRET` | OAuth client secret                |
-| `GITHUB_CALLBACK_URL`  | OAuth callback URL                 |
-
+| Variable               | Description         |
+| ---------------------- | ------------------- |
+| `PORT`                 | Server port         |
+| `NODE_ENV`             | Server environment  |
+| `COOKIE_SECRET`        | Cookie secret       |
+| `FRONTEND_URL`         | CORS origin         |
+| `DB_HOST`              | Database host       |
+| `DB_PORT`              | Database port       |
+| `DB_NAME`              | Database name       |
+| `DB_USERNAME`          | Database user       |
+| `DB_PASSWORD`          | Database password   |
+| `GOOGLE_CLIENT_ID`     | OAuth client ID     |
+| `GOOGLE_CLIENT_SECRET` | OAuth client secret |
+| `GOOGLE_CALLBACK_URL`  | OAuth callback URL  |
+| `GITHUB_CLIENT_ID`     | OAuth client ID     |
+| `GITHUB_CLIENT_SECRET` | OAuth client secret |
+| `GITHUB_CALLBACK_URL`  | OAuth callback URL  |
 
 ## Scripts
 
