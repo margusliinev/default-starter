@@ -3,6 +3,13 @@
 /build
 /dist
 
+# Output
+.svelte-kit
+.wrangler
+.netlify
+.output
+.vercel
+
 # Logs
 logs
 *.log

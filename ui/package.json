@@ -21,8 +21,7 @@
         "build": "vite build",
         "preview": "vite preview",
         "prepare": "svelte-kit sync",
-        "check": "svelte-kit sync && svelte-check",
-        "format": "prettier --write ."
+        "check": "svelte-kit sync && svelte-check"
     },
     "dependencies": {
         "@fontsource-variable/inter": "5.2.8"
