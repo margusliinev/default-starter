@@ -91,13 +91,16 @@ export class AuthService {
 
         const existingUser = await this.usersService.findUserByEmail(normalizedEmail);
         if (existingUser) {
-            await this.accountsService.createOAuthAccount(existingUser.id, provider, userInfo.id);
+            const { token, expiresAt } = await this.dataSource.transaction(async (em) => {
+                await this.accountsService.createOAuthAccount(existingUser.id, provider, userInfo.id, em);
 
-            if (!existingUser.image && userInfo.image) {
-                await this.usersService.updateUser(existingUser.id, { image: userInfo.image });
-            }
+                if (!existingUser.image && userInfo.image) {
+                    await this.usersService.updateUser(existingUser.id, { image: userInfo.image }, em);
+                }
 
-            const { token, expiresAt } = await this.sessionsService.createSession(existingUser.id);
+                return await this.sessionsService.createSession(existingUser.id, em);
+            });
+
             this.sessionsService.setSessionCookie(res, token, expiresAt);
             return res.redirect(frontendUrl);
         }
