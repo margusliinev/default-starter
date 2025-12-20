@@ -1,9 +1,3 @@
----
-description: NestJS Backend Standards & Conventions
-globs: **/*.ts
-alwaysApply: false
----
-
 # NestJS Backend Conventions
 
 ## Critical Implementation Guidelines
@@ -26,21 +20,21 @@ alwaysApply: false
 
 ## Tech Stack
 
-| Category       | Technology                                       |
-| -------------- | ------------------------------------------------ |
-| Framework      | NestJS 11                                        |
-| Database       | PostgreSQL 18                                    |
-| ORM            | TypeORM                                          |
-| Language       | TypeScript                                       |
-| Validation     | class-validator, class-transformer               |
-| Auth           | Custom session-based + OAuth (Google, GitHub)    |
-| Password Hash  | Argon2 (@node-rs/argon2)                         |
-| Crypto         | @oslojs/crypto, @oslojs/encoding                 |
-| Testing        | Jest 30 with SWC                                 |
-| CLI            | nest-commander                                   |
-| Scheduling     | @nestjs/schedule                                 |
-| Rate Limiting  | @nestjs/throttler                                |
-| Security       | helmet, cookie-parser, signed cookies            |
+| Category      | Technology                                    |
+| ------------- | --------------------------------------------- |
+| Framework     | NestJS 11                                     |
+| Database      | PostgreSQL 18                                 |
+| ORM           | TypeORM                                       |
+| Language      | TypeScript                                    |
+| Validation    | class-validator, class-transformer            |
+| Auth          | Custom session-based + OAuth (Google, GitHub) |
+| Password Hash | Argon2 (@node-rs/argon2)                      |
+| Crypto        | @oslojs/crypto, @oslojs/encoding              |
+| Testing       | Jest 30 with SWC                              |
+| CLI           | nest-commander                                |
+| Scheduling    | @nestjs/schedule                              |
+| Rate Limiting | @nestjs/throttler                             |
+| Security      | helmet, cookie-parser, signed cookies         |
 
 ## Project Structure
 
@@ -73,34 +67,34 @@ alwaysApply: false
 
 Command-line interface using nest-commander.
 
-| File              | Purpose                              |
-| ----------------- | ------------------------------------ |
-| `cli.module.ts`   | CLI module definition                |
-| `commands/`       | Individual command implementations   |
+| File            | Purpose                            |
+| --------------- | ---------------------------------- |
+| `cli.module.ts` | CLI module definition              |
+| `commands/`     | Individual command implementations |
 
 ### Common (`src/common/`)
 
 Shared utilities across features. Not a NestJS module—just organized exports.
 
-| Folder         | Purpose                                      |
-| -------------- | -------------------------------------------- |
-| `config/`      | Configuration and environment setup          |
-| `constants/`   | Common constants used across the project     |
-| `decorators/`  | Custom decorators for application behavior   |
-| `enums/`       | Enum definitions                             |
-| `filters/`     | Error and exception handling                 |
-| `interceptors/`| Request/response transformation utilities    |
-| `testing/`     | Testing utilities and helpers                |
-| `types/`       | Shared type definitions                      |
+| Folder          | Purpose                                    |
+| --------------- | ------------------------------------------ |
+| `config/`       | Configuration and environment setup        |
+| `constants/`    | Common constants used across the project   |
+| `decorators/`   | Custom decorators for application behavior |
+| `enums/`        | Enum definitions                           |
+| `filters/`      | Error and exception handling               |
+| `interceptors/` | Request/response transformation utilities  |
+| `testing/`      | Testing utilities and helpers              |
+| `types/`        | Shared type definitions                    |
 
 ### Crons (`src/crons/`)
 
 Scheduled tasks using @nestjs/schedule.
 
-| File              | Purpose                              |
-| ----------------- | ------------------------------------ |
-| `crons.module.ts` | Cron module definition               |
-| `*.cron.ts`       | Individual cron job implementations  |
+| File              | Purpose                             |
+| ----------------- | ----------------------------------- |
+| `crons.module.ts` | Cron module definition              |
+| `*.cron.ts`       | Individual cron job implementations |
 
 ### Features (`src/features/`)
 
@@ -173,39 +167,39 @@ src/features/{feature}/
 
 Required in `.env` (see `.env.example`):
 
-| Variable               | Description                          |
-| ---------------------- | ------------------------------------ |
-| `PORT`                 | Server port                          |
-| `NODE_ENV`             | development, production, test        |
-| `FRONTEND_URL`         | CORS origin                          |
-| `COOKIE_SECRET`        | Min 32 chars for signed cookies      |
-| `DB_HOST`              | Database host                        |
-| `DB_PORT`              | Database port                        |
-| `DB_NAME`              | Database name                        |
-| `DB_USERNAME`          | Database username                    |
-| `DB_PASSWORD`          | Database password                    |
-| `GOOGLE_CLIENT_ID`     | OAuth client ID                      |
-| `GOOGLE_CLIENT_SECRET` | OAuth client secret                  |
-| `GOOGLE_CALLBACK_URL`  | OAuth callback URL                   |
-| `GITHUB_CLIENT_ID`     | OAuth client ID                      |
-| `GITHUB_CLIENT_SECRET` | OAuth client secret                  |
-| `GITHUB_CALLBACK_URL`  | OAuth callback URL                   |
+| Variable               | Description                     |
+| ---------------------- | ------------------------------- |
+| `PORT`                 | Server port                     |
+| `NODE_ENV`             | development, production, test   |
+| `FRONTEND_URL`         | CORS origin                     |
+| `COOKIE_SECRET`        | Min 32 chars for signed cookies |
+| `DB_HOST`              | Database host                   |
+| `DB_PORT`              | Database port                   |
+| `DB_NAME`              | Database name                   |
+| `DB_USERNAME`          | Database username               |
+| `DB_PASSWORD`          | Database password               |
+| `GOOGLE_CLIENT_ID`     | OAuth client ID                 |
+| `GOOGLE_CLIENT_SECRET` | OAuth client secret             |
+| `GOOGLE_CALLBACK_URL`  | OAuth callback URL              |
+| `GITHUB_CLIENT_ID`     | OAuth client ID                 |
+| `GITHUB_CLIENT_SECRET` | OAuth client secret             |
+| `GITHUB_CALLBACK_URL`  | OAuth callback URL              |
 
 ## npm Scripts
 
-| Script                              | Description                           |
-| ----------------------------------- | ------------------------------------- |
-| `npm run dev`                       | Start dev server with watch mode      |
-| `npm run build`                     | Build for production                  |
-| `npm run start`                     | Run production build                  |
-| `npm run format`                    | Format code with Prettier             |
-| `npm run test`                      | Run tests with Jest                   |
-| `npm run cli`                       | Run CLI (shows help)                  |
-| `npm run cli db:seed`               | Seed database with test user          |
-| `npm run migration:create --name=X` | Create new migration                  |
-| `npm run migration:revert`          | Revert last migration                 |
-| `npm run migration:show`            | Show migration status                 |
-| `npm run migration:run`             | Run pending migrations                |
+| Script                              | Description                      |
+| ----------------------------------- | -------------------------------- |
+| `npm run dev`                       | Start dev server with watch mode |
+| `npm run build`                     | Build for production             |
+| `npm run start`                     | Run production build             |
+| `npm run format`                    | Format code with Prettier        |
+| `npm run test`                      | Run tests with Jest              |
+| `npm run cli`                       | Run CLI (shows help)             |
+| `npm run cli db:seed`               | Seed database with test user     |
+| `npm run migration:create --name=X` | Create new migration             |
+| `npm run migration:revert`          | Revert last migration            |
+| `npm run migration:show`            | Show migration status            |
+| `npm run migration:run`             | Run pending migrations           |
 
 ## Docker
 

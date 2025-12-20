@@ -1,6 +1,7 @@
 import type { GitHubEmail, GitHubTokenResponse, GitHubUserInfo, GoogleTokenResponse, GoogleUserInfo, OAuthUserInfo } from './oauth.types';
 import type { Request, Response } from 'express';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { GITHUB_OAUTH, GOOGLE_OAUTH } from '../../common/constants/oauth';
 import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
 import { Provider } from '../../common/enums/provider';
 import { ConfigService } from '@nestjs/config';
@@ -43,7 +44,7 @@ export class OAuthService {
 
     validateState(req: Request, state: string) {
         const storedHash = req.signedCookies?.[this.STATE_COOKIE_NAME];
-        if (!storedHash || !state) {
+        if (!storedHash) {
             return false;
         }
 
@@ -69,11 +70,11 @@ export class OAuthService {
             client_id: clientId,
             redirect_uri: callbackUrl,
             response_type: 'code',
-            scope: 'openid email profile',
+            scope: GOOGLE_OAUTH.SCOPES,
             state,
         });
 
-        return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+        return `${GOOGLE_OAUTH.AUTH_URL}?${params.toString()}`;
     }
 
     async exchangeGoogleCode(code: string): Promise<GoogleTokenResponse> {
@@ -81,7 +82,7 @@ export class OAuthService {
         const clientSecret = this.configService.get<string>('google.clientSecret')!;
         const callbackUrl = this.configService.get<string>('google.callbackUrl')!;
 
-        const response = await fetch('https://oauth2.googleapis.com/token', {
+        const response = await fetch(GOOGLE_OAUTH.TOKEN_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams({
@@ -101,7 +102,7 @@ export class OAuthService {
     }
 
     async getGoogleUserInfo(accessToken: string): Promise<OAuthUserInfo> {
-        const response = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+        const response = await fetch(GOOGLE_OAUTH.USER_INFO_URL, {
             headers: { Authorization: `Bearer ${accessToken}` },
         });
 
@@ -126,11 +127,11 @@ export class OAuthService {
         const params = new URLSearchParams({
             client_id: clientId,
             redirect_uri: callbackUrl,
-            scope: 'read:user user:email',
+            scope: GITHUB_OAUTH.SCOPES,
             state,
         });
 
-        return `https://github.com/login/oauth/authorize?${params.toString()}`;
+        return `${GITHUB_OAUTH.AUTH_URL}?${params.toString()}`;
     }
 
     async exchangeGitHubCode(code: string): Promise<GitHubTokenResponse> {
@@ -138,7 +139,7 @@ export class OAuthService {
         const clientSecret = this.configService.get<string>('github.clientSecret')!;
         const callbackUrl = this.configService.get<string>('github.callbackUrl')!;
 
-        const response = await fetch('https://github.com/login/oauth/access_token', {
+        const response = await fetch(GITHUB_OAUTH.TOKEN_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -161,13 +162,13 @@ export class OAuthService {
 
     async getGitHubUserInfo(accessToken: string): Promise<OAuthUserInfo> {
         const [userResponse, emailsResponse] = await Promise.all([
-            fetch('https://api.github.com/user', {
+            fetch(GITHUB_OAUTH.USER_URL, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                     Accept: 'application/vnd.github+json',
                 },
             }),
-            fetch('https://api.github.com/user/emails', {
+            fetch(GITHUB_OAUTH.EMAILS_URL, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                     Accept: 'application/vnd.github+json',
@@ -214,6 +215,6 @@ export class OAuthService {
 
     redirectToError(res: Response, error: string) {
         const frontendUrl = this.configService.get<string>('frontendUrl')!;
-        return res.redirect(`${frontendUrl}/auth/error?error=${encodeURIComponent(error)}`);
+        return res.redirect(`${frontendUrl}/auth/callback?error=${encodeURIComponent(error)}`);
     }
 }

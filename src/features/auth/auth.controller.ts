@@ -74,8 +74,19 @@ export class AuthController {
             return;
         }
 
+        if (!state) {
+            this.oauthService.redirectToError(res, 'missing_state');
+            return;
+        }
+
+        if (!code) {
+            this.oauthService.redirectToError(res, 'missing_code');
+            return;
+        }
+
         if (!this.oauthService.validateState(req, state)) {
-            throw new UnauthorizedException('Invalid state parameter');
+            this.oauthService.redirectToError(res, 'invalid_state');
+            return;
         }
 
         const userInfo = await this.oauthService.getOAuthUserInfo(Provider.GOOGLE, code);
@@ -98,8 +109,19 @@ export class AuthController {
             return;
         }
 
+        if (!state) {
+            this.oauthService.redirectToError(res, 'missing_state');
+            return;
+        }
+
+        if (!code) {
+            this.oauthService.redirectToError(res, 'missing_code');
+            return;
+        }
+
         if (!this.oauthService.validateState(req, state)) {
-            throw new UnauthorizedException('Invalid state parameter');
+            this.oauthService.redirectToError(res, 'invalid_state');
+            return;
         }
 
         const userInfo = await this.oauthService.getOAuthUserInfo(Provider.GITHUB, code);

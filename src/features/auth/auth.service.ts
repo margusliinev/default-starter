@@ -86,7 +86,7 @@ export class AuthService {
         if (existingAccount) {
             const { token, expiresAt } = await this.sessionsService.createSession(existingAccount.user_id);
             this.sessionsService.setSessionCookie(res, token, expiresAt);
-            return res.redirect(frontendUrl);
+            return res.redirect(`${frontendUrl}/auth/callback`);
         }
 
         const existingUser = await this.usersService.findUserByEmail(normalizedEmail);
@@ -102,7 +102,7 @@ export class AuthService {
             });
 
             this.sessionsService.setSessionCookie(res, token, expiresAt);
-            return res.redirect(frontendUrl);
+            return res.redirect(`${frontendUrl}/auth/callback`);
         }
 
         const { token, expiresAt } = await this.dataSource.transaction(async (em) => {
@@ -120,6 +120,6 @@ export class AuthService {
         });
 
         this.sessionsService.setSessionCookie(res, token, expiresAt);
-        return res.redirect(frontendUrl);
+        return res.redirect(`${frontendUrl}/auth/callback`);
     }
 }
