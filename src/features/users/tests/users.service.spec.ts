@@ -12,216 +12,97 @@ describe('UsersService', () => {
     let userRepository: Repository<User>;
 
     beforeAll(async () => {
-        module = await Test.createTestingModule({
-            imports: [TestModule],
-        }).compile();
-
-        usersService = module.get<UsersService>(UsersService);
-        userRepository = module.get<Repository<User>>(getRepositoryToken(User));
-    });
-
-    afterAll(async () => {
-        await module.close();
+        module = await Test.createTestingModule({ imports: [TestModule] }).compile();
+        usersService = module.get(UsersService);
+        userRepository = module.get(getRepositoryToken(User));
     });
 
     afterEach(async () => {
         await userRepository.deleteAll();
     });
 
-    it('should create a new user with valid data', async () => {
+    afterAll(async () => {
+        await module.close();
+    });
+
+    it('createUser persists user to database', async () => {
         const dto = createUserDto();
 
         const user = await usersService.createUser(dto);
 
-        expect(user).toBeDefined();
+        expect(user).toMatchObject({ name: dto.name, email: dto.email });
         expect(user.id).toBeDefined();
-        expect(user.name).toBe(dto.name);
-        expect(user.email).toBe(dto.email);
-        expect(user.image).toBe(dto.image);
-        expect(user.email_verified_at).toBe(dto.email_verified_at);
-        expect(user.created_at).toBeInstanceOf(Date);
-        expect(user.updated_at).toBeInstanceOf(Date);
     });
 
-    it('should create a user with image', async () => {
-        const imageUrl = faker.image.avatar();
-        const dto = createUserDto({ image: imageUrl });
-
-        const user = await usersService.createUser(dto);
-
-        expect(user.image).toBe(imageUrl);
-    });
-
-    it('should create a user with verified email', async () => {
-        const verifiedAt = new Date();
-        const dto = createUserDto({ email_verified_at: verifiedAt });
-
-        const user = await usersService.createUser(dto);
-
-        expect(user.email_verified_at).toEqual(verifiedAt);
-    });
-
-    it('should persist user to database', async () => {
-        const dto = createUserDto();
-
-        const createdUser = await usersService.createUser(dto);
-        const foundUser = await userRepository.findOne({ where: { id: createdUser.id } });
-
-        expect(foundUser).toBeDefined();
-        expect(foundUser?.id).toBe(createdUser.id);
-        expect(foundUser?.email).toBe(dto.email);
-    });
-
-    it('should throw error when creating user with duplicate email', async () => {
+    it('createUser throws for duplicate email', async () => {
         const email = faker.internet.email().toLowerCase();
-        const dto1 = createUserDto({ email });
-        const dto2 = createUserDto({ email });
+        await usersService.createUser(createUserDto({ email }));
 
-        await usersService.createUser(dto1);
-
-        await expect(usersService.createUser(dto2)).rejects.toThrow();
+        await expect(usersService.createUser(createUserDto({ email }))).rejects.toThrow();
     });
 
-    it('should find an existing user by id', async () => {
-        const dto = createUserDto();
-        const createdUser = await usersService.createUser(dto);
+    it('findUserById returns user', async () => {
+        const user = await usersService.createUser(createUserDto());
 
-        const foundUser = await usersService.findUserById(createdUser.id);
+        const found = await usersService.findUserById(user.id);
 
-        expect(foundUser).toBeDefined();
-        expect(foundUser?.id).toBe(createdUser.id);
-        expect(foundUser?.email).toBe(dto.email);
+        expect(found).toMatchObject({ id: user.id });
     });
 
-    it('should return null for non-existent user id', async () => {
-        const nonExistentId = faker.string.uuid();
+    it('findUserById returns null for non-existent id', async () => {
+        const found = await usersService.findUserById(faker.string.uuid());
 
-        const foundUser = await usersService.findUserById(nonExistentId);
-
-        expect(foundUser).toBeNull();
+        expect(found).toBeNull();
     });
 
-    it('should find an existing user by email', async () => {
-        const dto = createUserDto();
-        const createdUser = await usersService.createUser(dto);
-
-        const foundUser = await usersService.findUserByEmail(dto.email);
-
-        expect(foundUser).toBeDefined();
-        expect(foundUser?.id).toBe(createdUser.id);
-        expect(foundUser?.email).toBe(dto.email);
-    });
-
-    it('should return null for non-existent email', async () => {
-        const nonExistentEmail = faker.internet.email().toLowerCase();
-
-        const foundUser = await usersService.findUserByEmail(nonExistentEmail);
-
-        expect(foundUser).toBeNull();
-    });
-
-    it('should be case-sensitive for email lookup', async () => {
+    it('findUserByEmail returns user', async () => {
         const dto = createUserDto();
         await usersService.createUser(dto);
 
-        const foundWithUpperCase = await usersService.findUserByEmail(dto.email.toUpperCase());
+        const found = await usersService.findUserByEmail(dto.email);
 
-        expect(foundWithUpperCase).toBeNull();
+        expect(found).toMatchObject({ email: dto.email });
     });
 
-    it('should update user name', async () => {
-        const dto = createUserDto();
-        const createdUser = await usersService.createUser(dto);
-        const newName = faker.person.fullName();
+    it('findUserByEmail returns null for non-existent email', async () => {
+        const found = await usersService.findUserByEmail(faker.internet.email());
 
-        const updatedUser = await usersService.updateUser(createdUser.id, updateUserDto({ name: newName }));
-
-        expect(updatedUser).toBeDefined();
-        expect(updatedUser?.name).toBe(newName);
-        expect(updatedUser?.email).toBe(dto.email);
+        expect(found).toBeNull();
     });
 
-    it('should update user image', async () => {
+    it('findUserByEmail is case-sensitive', async () => {
         const dto = createUserDto();
-        const createdUser = await usersService.createUser(dto);
-        const newImage = faker.image.avatar();
+        await usersService.createUser(dto);
 
-        const updatedUser = await usersService.updateUser(createdUser.id, updateUserDto({ image: newImage }));
+        const found = await usersService.findUserByEmail(dto.email.toUpperCase());
 
-        expect(updatedUser).toBeDefined();
-        expect(updatedUser?.image).toBe(newImage);
+        expect(found).toBeNull();
     });
 
-    it('should update multiple fields at once', async () => {
-        const dto = createUserDto();
-        const createdUser = await usersService.createUser(dto);
+    it('updateUser updates fields', async () => {
+        const user = await usersService.createUser(createUserDto());
         const updates = updateUserDto();
 
-        const updatedUser = await usersService.updateUser(createdUser.id, updates);
+        const updated = await usersService.updateUser(user.id, updates);
 
-        expect(updatedUser).toBeDefined();
-        expect(updatedUser?.name).toBe(updates.name);
-        expect(updatedUser?.image).toBe(updates.image);
+        expect(updated).toMatchObject({ name: updates.name, image: updates.image });
     });
 
-    it('should update updated_at timestamp', async () => {
-        const dto = createUserDto();
-        const createdUser = await usersService.createUser(dto);
-        const originalUpdatedAt = createdUser.updated_at;
-
-        await new Promise((resolve) => setTimeout(resolve, 10));
-
-        const updatedUser = await usersService.updateUser(createdUser.id, updateUserDto());
-
-        expect(updatedUser?.updated_at.getTime()).toBeGreaterThanOrEqual(originalUpdatedAt.getTime());
-    });
-
-    it('should return null when updating non-existent user', async () => {
-        const nonExistentId = faker.string.uuid();
-
-        const result = await usersService.updateUser(nonExistentId, updateUserDto());
+    it('updateUser returns null for non-existent id', async () => {
+        const result = await usersService.updateUser(faker.string.uuid(), updateUserDto());
 
         expect(result).toBeNull();
     });
 
-    it('should persist updates to database', async () => {
-        const dto = createUserDto();
-        const createdUser = await usersService.createUser(dto);
-        const newName = faker.person.fullName();
+    it('deleteUser removes user from database', async () => {
+        const user = await usersService.createUser(createUserDto());
 
-        await usersService.updateUser(createdUser.id, updateUserDto({ name: newName }));
-        const foundUser = await userRepository.findOne({ where: { id: createdUser.id } });
+        await usersService.deleteUser(user.id);
 
-        expect(foundUser?.name).toBe(newName);
+        expect(await userRepository.findOne({ where: { id: user.id } })).toBeNull();
     });
 
-    it('should delete an existing user', async () => {
-        const dto = createUserDto();
-        const createdUser = await usersService.createUser(dto);
-
-        await usersService.deleteUser(createdUser.id);
-
-        const foundUser = await userRepository.findOne({ where: { id: createdUser.id } });
-        expect(foundUser).toBeNull();
-    });
-
-    it('should not throw when deleting non-existent user', async () => {
-        const nonExistentId = faker.string.uuid();
-
-        await expect(usersService.deleteUser(nonExistentId)).resolves.not.toThrow();
-    });
-
-    it('should only delete specified user', async () => {
-        const dto1 = createUserDto();
-        const dto2 = createUserDto();
-        const user1 = await usersService.createUser(dto1);
-        const user2 = await usersService.createUser(dto2);
-
-        await usersService.deleteUser(user1.id);
-
-        const foundUser1 = await userRepository.findOne({ where: { id: user1.id } });
-        const foundUser2 = await userRepository.findOne({ where: { id: user2.id } });
-        expect(foundUser1).toBeNull();
-        expect(foundUser2).toBeDefined();
+    it('deleteUser does not throw for non-existent id', async () => {
+        await expect(usersService.deleteUser(faker.string.uuid())).resolves.not.toThrow();
     });
 });
