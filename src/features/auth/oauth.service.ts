@@ -3,16 +3,26 @@ import type { Request, Response } from 'express';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { GITHUB_OAUTH, GOOGLE_OAUTH } from '../../common/constants/oauth';
 import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
+import { AccountsService } from '../accounts/accounts.service';
+import { SessionsService } from '../sessions/sessions.service';
+import { UsersService } from '../users/users.service';
 import { Provider } from '../../common/enums/provider';
 import { ConfigService } from '@nestjs/config';
 import { sha256 } from '@oslojs/crypto/sha2';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class OAuthService {
     private readonly STATE_COOKIE_NAME = 'oauth-state';
     private readonly STATE_COOKIE_MAX_AGE = 10 * 60 * 1000;
 
-    constructor(private readonly configService: ConfigService) {}
+    constructor(
+        private readonly dataSource: DataSource,
+        private readonly configService: ConfigService,
+        private readonly usersService: UsersService,
+        private readonly accountsService: AccountsService,
+        private readonly sessionsService: SessionsService,
+    ) {}
 
     private getIsProduction() {
         return this.configService.get('NODE_ENV') === 'production';
@@ -216,5 +226,49 @@ export class OAuthService {
     redirectToError(res: Response, error: string) {
         const frontendUrl = this.configService.get<string>('frontendUrl')!;
         return res.redirect(`${frontendUrl}/auth/callback?error=${encodeURIComponent(error)}`);
+    }
+
+    async handleOAuthCallback(provider: Provider, userInfo: OAuthUserInfo, res: Response) {
+        const frontendUrl = this.configService.get<string>('frontendUrl')!;
+
+        const existingAccount = await this.accountsService.findOAuthAccount(provider, userInfo.id);
+        if (existingAccount) {
+            const { token, expiresAt } = await this.sessionsService.createSession(existingAccount.user_id);
+            this.sessionsService.setSessionCookie(res, token, expiresAt);
+            return res.redirect(`${frontendUrl}/auth/callback`);
+        }
+
+        const existingUser = await this.usersService.findUserByEmail(userInfo.email);
+        if (existingUser) {
+            const { token, expiresAt } = await this.dataSource.transaction(async (em) => {
+                await this.accountsService.createOAuthAccount(existingUser.id, provider, userInfo.id, em);
+
+                if (!existingUser.image && userInfo.image) {
+                    await this.usersService.updateUser(existingUser.id, { image: userInfo.image }, em);
+                }
+
+                return await this.sessionsService.createSession(existingUser.id, em);
+            });
+
+            this.sessionsService.setSessionCookie(res, token, expiresAt);
+            return res.redirect(`${frontendUrl}/auth/callback`);
+        }
+
+        const { token, expiresAt } = await this.dataSource.transaction(async (em) => {
+            const newUser = await this.usersService.createUser(
+                {
+                    name: userInfo.name,
+                    email: userInfo.email,
+                    image: userInfo.image,
+                    email_verified_at: new Date(),
+                },
+                em,
+            );
+            await this.accountsService.createOAuthAccount(newUser.id, provider, userInfo.id, em);
+            return await this.sessionsService.createSession(newUser.id, em);
+        });
+
+        this.sessionsService.setSessionCookie(res, token, expiresAt);
+        return res.redirect(`${frontendUrl}/auth/callback`);
     }
 }

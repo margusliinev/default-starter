@@ -18,30 +18,26 @@ export class AccountsService {
         return manager ? manager.getRepository(Account) : this.accountRepository;
     }
 
-    async findAccountWithPasswordByUserId(userId: User['id'], manager?: EntityManager) {
+    async findCredentialsAccount(userId: User['id'], manager?: EntityManager) {
         const repo = this.getRepository(manager);
-        return await repo.findOne({
-            where: { user_id: userId, provider: Provider.PASSWORD },
-        });
+        return await repo.findOne({ where: { provider: Provider.CREDENTIALS, provider_id: userId } });
     }
 
-    async createAccountWithPassword(userId: User['id'], password: string, manager?: EntityManager) {
-        const hashedPassword = await hash(password, ARGON2_OPTIONS);
-
+    async createCredentialsAccount(userId: User['id'], password: string, manager?: EntityManager) {
         const repo = this.getRepository(manager);
+        const hashedPassword = await hash(password, ARGON2_OPTIONS);
         const account = repo.create({
             user_id: userId,
-            provider: Provider.PASSWORD,
+            provider: Provider.CREDENTIALS,
+            provider_id: userId,
             password: hashedPassword,
         });
         return await repo.save(account);
     }
 
-    async findAccountByProviderId(provider: Provider, providerId: string, manager?: EntityManager) {
+    async findOAuthAccount(provider: Provider, providerId: string, manager?: EntityManager) {
         const repo = this.getRepository(manager);
-        return await repo.findOne({
-            where: { provider, provider_id: providerId },
-        });
+        return await repo.findOne({ where: { provider, provider_id: providerId } });
     }
 
     async createOAuthAccount(userId: User['id'], provider: Provider, providerId: string, manager?: EntityManager) {

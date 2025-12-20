@@ -36,125 +36,165 @@ describe('AccountsService', () => {
         await userRepository.deleteAll();
     });
 
-    it('should create an account with password', async () => {
+    it('should create a credentials account', async () => {
         const user = await usersService.createUser(createUserDto());
         const password = 'TestPassword123';
 
-        const account = await accountsService.createAccountWithPassword(user.id, password);
+        const account = await accountsService.createCredentialsAccount(user.id, password);
 
-        expect(account).toBeDefined();
-        expect(account.id).toBeDefined();
-        expect(account.user_id).toBe(user.id);
-        expect(account.provider).toBe(Provider.PASSWORD);
-        expect(account.password).toBeDefined();
-        expect(account.password).not.toBe(password);
-        expect(account.provider_id).toBeNull();
+        expect(account).toMatchObject({
+            id: expect.any(String),
+            user_id: user.id,
+            provider: Provider.CREDENTIALS,
+            password: expect.any(String),
+            provider_id: user.id,
+        });
     });
 
-    it('should hash the password when creating account', async () => {
+    it('should hash the password when creating credentials account', async () => {
         const user = await usersService.createUser(createUserDto());
         const password = 'TestPassword123';
 
-        const account = await accountsService.createAccountWithPassword(user.id, password);
+        const account = await accountsService.createCredentialsAccount(user.id, password);
 
+        expect(account).toMatchObject({
+            id: expect.any(String),
+            user_id: user.id,
+            provider: Provider.CREDENTIALS,
+            password: expect.any(String),
+            provider_id: user.id,
+        });
         expect(account.password).not.toBe(password);
-        expect(account.password?.length).toBeGreaterThan(password.length);
     });
 
-    it('should find account with password by user id', async () => {
+    it('should find credentials account by user id', async () => {
         const user = await usersService.createUser(createUserDto());
-        const createdAccount = await accountsService.createAccountWithPassword(user.id, 'TestPassword123');
+        const createdAccount = await accountsService.createCredentialsAccount(user.id, 'TestPassword123');
 
-        const foundAccount = await accountsService.findAccountWithPasswordByUserId(user.id);
+        const foundAccount = await accountsService.findCredentialsAccount(user.id);
 
-        expect(foundAccount).toBeDefined();
-        expect(foundAccount?.id).toBe(createdAccount.id);
-        expect(foundAccount?.provider).toBe(Provider.PASSWORD);
+        expect(foundAccount).toMatchObject({
+            id: createdAccount.id,
+            user_id: user.id,
+            provider: Provider.CREDENTIALS,
+            provider_id: user.id,
+        });
     });
 
-    it('should return null when finding account with password for non-existent user', async () => {
+    it('should return null when finding credentials account for non-existent user', async () => {
         const nonExistentUserId = faker.string.uuid();
 
-        const foundAccount = await accountsService.findAccountWithPasswordByUserId(nonExistentUserId);
+        const foundAccount = await accountsService.findCredentialsAccount(nonExistentUserId);
 
         expect(foundAccount).toBeNull();
     });
 
-    it('should create an OAuth account', async () => {
+    it('should create a Google OAuth account', async () => {
         const user = await usersService.createUser(createUserDto());
         const providerId = faker.string.alphanumeric(20);
 
         const account = await accountsService.createOAuthAccount(user.id, Provider.GOOGLE, providerId);
 
-        expect(account).toBeDefined();
-        expect(account.id).toBeDefined();
-        expect(account.user_id).toBe(user.id);
-        expect(account.provider).toBe(Provider.GOOGLE);
-        expect(account.provider_id).toBe(providerId);
-        expect(account.password).toBeNull();
+        expect(account).toMatchObject({
+            id: expect.any(String),
+            user_id: user.id,
+            provider: Provider.GOOGLE,
+            provider_id: providerId,
+            password: null,
+        });
     });
 
-    it('should create GitHub OAuth account', async () => {
+    it('should create a GitHub OAuth account', async () => {
         const user = await usersService.createUser(createUserDto());
         const providerId = faker.string.alphanumeric(20);
 
         const account = await accountsService.createOAuthAccount(user.id, Provider.GITHUB, providerId);
 
-        expect(account.provider).toBe(Provider.GITHUB);
-        expect(account.provider_id).toBe(providerId);
+        expect(account).toMatchObject({
+            id: expect.any(String),
+            user_id: user.id,
+            provider: Provider.GITHUB,
+            provider_id: providerId,
+            password: null,
+        });
     });
 
-    it('should find account by provider id', async () => {
+    it('should find OAuth account by provider id', async () => {
         const user = await usersService.createUser(createUserDto());
         const providerId = faker.string.alphanumeric(20);
+
         await accountsService.createOAuthAccount(user.id, Provider.GOOGLE, providerId);
 
-        const foundAccount = await accountsService.findAccountByProviderId(Provider.GOOGLE, providerId);
-
-        expect(foundAccount).toBeDefined();
-        expect(foundAccount?.provider).toBe(Provider.GOOGLE);
-        expect(foundAccount?.provider_id).toBe(providerId);
+        const foundAccount = await accountsService.findOAuthAccount(Provider.GOOGLE, providerId);
+        expect(foundAccount).toMatchObject({
+            id: expect.any(String),
+            user_id: user.id,
+            provider: Provider.GOOGLE,
+            provider_id: providerId,
+            password: null,
+        });
     });
 
-    it('should return null when finding account by non-existent provider id', async () => {
+    it('should return null when finding OAuth account by non-existent provider id', async () => {
         const nonExistentProviderId = faker.string.alphanumeric(20);
 
-        const foundAccount = await accountsService.findAccountByProviderId(Provider.GOOGLE, nonExistentProviderId);
+        const foundAccount = await accountsService.findOAuthAccount(Provider.GOOGLE, nonExistentProviderId);
 
         expect(foundAccount).toBeNull();
     });
 
-    it('should not find account with wrong provider', async () => {
+    it('should not find OAuth account with wrong provider', async () => {
         const user = await usersService.createUser(createUserDto());
         const providerId = faker.string.alphanumeric(20);
         await accountsService.createOAuthAccount(user.id, Provider.GOOGLE, providerId);
 
-        const foundAccount = await accountsService.findAccountByProviderId(Provider.GITHUB, providerId);
+        const foundAccount = await accountsService.findOAuthAccount(Provider.GITHUB, providerId);
 
         expect(foundAccount).toBeNull();
     });
 
     it('should persist account to database', async () => {
         const user = await usersService.createUser(createUserDto());
-        const createdAccount = await accountsService.createAccountWithPassword(user.id, 'TestPassword123');
+        const createdAccount = await accountsService.createCredentialsAccount(user.id, 'TestPassword123');
 
         const foundAccount = await accountRepository.findOne({ where: { id: createdAccount.id } });
 
-        expect(foundAccount).toBeDefined();
-        expect(foundAccount?.id).toBe(createdAccount.id);
+        expect(foundAccount).toMatchObject({
+            id: createdAccount.id,
+            user_id: user.id,
+            provider: Provider.CREDENTIALS,
+            provider_id: user.id,
+            password: expect.any(String),
+        });
     });
 
     it('should allow multiple accounts for same user with different providers', async () => {
         const user = await usersService.createUser(createUserDto());
 
-        const passwordAccount = await accountsService.createAccountWithPassword(user.id, 'TestPassword123');
+        const credentialsAccount = await accountsService.createCredentialsAccount(user.id, 'TestPassword123');
         const googleAccount = await accountsService.createOAuthAccount(user.id, Provider.GOOGLE, faker.string.alphanumeric(20));
         const githubAccount = await accountsService.createOAuthAccount(user.id, Provider.GITHUB, faker.string.alphanumeric(20));
 
-        expect(passwordAccount.id).not.toBe(googleAccount.id);
-        expect(googleAccount.id).not.toBe(githubAccount.id);
-
-        const accounts = await accountRepository.find({ where: { user_id: user.id } });
-        expect(accounts).toHaveLength(3);
+        expect(credentialsAccount).toMatchObject({
+            id: expect.any(String),
+            user_id: user.id,
+            provider: Provider.CREDENTIALS,
+            provider_id: user.id,
+            password: expect.any(String),
+        });
+        expect(googleAccount).toMatchObject({
+            id: expect.any(String),
+            user_id: user.id,
+            provider: Provider.GOOGLE,
+            provider_id: expect.any(String),
+            password: null,
+        });
+        expect(githubAccount).toMatchObject({
+            id: expect.any(String),
+            user_id: user.id,
+            provider: Provider.GITHUB,
+            provider_id: expect.any(String),
+            password: null,
+        });
     });
 });

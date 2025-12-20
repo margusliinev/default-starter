@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class RegisterDto {
     @MaxLength(255, { message: 'Name must be at most 255 characters' })
@@ -7,6 +8,7 @@ export class RegisterDto {
     @IsNotEmpty({ message: 'Name is required' })
     name: string;
 
+    @Transform(({ value }) => (typeof value === 'string' ? value.toLowerCase().trim() : value))
     @IsEmail({}, { message: 'Email is invalid' })
     @IsNotEmpty({ message: 'Email is required' })
     email: string;

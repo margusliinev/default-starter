@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query, Req, Res, UnauthorizedException } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query, Req, Res } from '@nestjs/common';
 import { Public } from '../../common/decorators/public.decorator.js';
 import { Auth } from '../../common/decorators/auth.decorator.js';
 import { Session } from '../sessions/entities/session.entity.js';
@@ -90,7 +90,7 @@ export class AuthController {
         }
 
         const userInfo = await this.oauthService.getOAuthUserInfo(Provider.GOOGLE, code);
-        await this.authService.handleOAuthCallback(Provider.GOOGLE, userInfo, res);
+        await this.oauthService.handleOAuthCallback(Provider.GOOGLE, userInfo, res);
     }
 
     @Public()
@@ -125,6 +125,6 @@ export class AuthController {
         }
 
         const userInfo = await this.oauthService.getOAuthUserInfo(Provider.GITHUB, code);
-        await this.authService.handleOAuthCallback(Provider.GITHUB, userInfo, res);
+        await this.oauthService.handleOAuthCallback(Provider.GITHUB, userInfo, res);
     }
 }

@@ -42,7 +42,7 @@ export class SeedCommand extends CommandRunner {
             );
             this.logger.log('Created user');
 
-            await this.accountsService.createAccountWithPassword(user.id, 'password', manager);
+            await this.accountsService.createCredentialsAccount(user.id, 'password', manager);
             this.logger.log('Created account');
 
             const { token, expiresAt } = await this.sessionsService.createSession(user.id, manager);

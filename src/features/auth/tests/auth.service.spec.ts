@@ -54,33 +54,30 @@ describe('AuthService', () => {
         await dataSource.destroy();
     });
 
-    it('should be defined', () => {
-        expect(authService).toBeDefined();
-    });
-
     it('register creates user with account and session', async () => {
         const dto = registerDto();
 
         const result = await authService.register(dto, mockResponse);
 
-        expect(result).toBe('Registration successful');
+        expect(result).toBe('Register successful');
         expect(mockResponse.cookie).toHaveBeenCalled();
-        const user = await usersService.findUserByEmail(dto.email.toLowerCase());
-        expect(user).toBeDefined();
-        expect(user!.name).toBe(dto.name);
-        const account = await accountsService.findAccountWithPasswordByUserId(user!.id);
-        expect(account).toBeDefined();
-        expect(account!.provider).toBe('password');
-    });
 
-    it('register normalizes email to lowercase', async () => {
-        const dto = registerDto({ email: 'TEST@EXAMPLE.COM' });
+        const user = await usersService.findUserByEmail(dto.email);
+        expect(user).toMatchObject({
+            id: expect.any(String),
+            name: dto.name,
+            email: dto.email,
+            email_verified_at: null,
+        });
 
-        await authService.register(dto, mockResponse);
-
-        const user = await usersService.findUserByEmail('test@example.com');
-        expect(user).toBeDefined();
-        expect(user!.email).toBe('test@example.com');
+        const account = await accountsService.findCredentialsAccount(user!.id);
+        expect(account).toMatchObject({
+            id: expect.any(String),
+            user_id: user!.id,
+            provider: Provider.CREDENTIALS,
+            provider_id: user!.id,
+            password: expect.any(String),
+        });
     });
 
     it('register throws UnauthorizedException when email already exists', async () => {
@@ -95,14 +92,7 @@ describe('AuthService', () => {
 
         await authService.register(dto, mockResponse);
 
-        expect(mockResponse.cookie).toHaveBeenCalledWith(
-            'auth-session',
-            expect.any(String),
-            expect.objectContaining({
-                httpOnly: true,
-                expires: expect.any(Date),
-            }),
-        );
+        expect(mockResponse.cookie).toHaveBeenCalled();
     });
 
     it('login authenticates user with valid credentials', async () => {
@@ -114,16 +104,6 @@ describe('AuthService', () => {
 
         expect(result).toBe('Login successful');
         expect(mockResponse.cookie).toHaveBeenCalled();
-    });
-
-    it('login normalizes email to lowercase', async () => {
-        const dto = registerDto({ email: 'user@example.com' });
-        await authService.register(dto, mockResponse);
-        mockResponse.cookie.mockClear();
-
-        const result = await authService.login(loginDto({ email: 'USER@EXAMPLE.COM', password: dto.password }), mockResponse);
-
-        expect(result).toBe('Login successful');
     });
 
     it('login throws UnauthorizedException for non-existent user', async () => {

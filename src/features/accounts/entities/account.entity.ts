@@ -13,8 +13,8 @@ export class Account {
     @Column({ type: 'enum', enum: Provider })
     provider: Provider;
 
-    @Column({ name: 'provider_id', type: 'varchar', length: 255, nullable: true })
-    provider_id: string | null;
+    @Column({ name: 'provider_id', type: 'varchar', length: 255 })
+    provider_id: string;
 
     @Column({ type: 'varchar', length: 255, nullable: true })
     password: string | null;

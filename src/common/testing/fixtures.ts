@@ -42,11 +42,12 @@ export function createMockUser(overrides: Partial<User> = {}): User {
 
 export function createMockAccount(overrides: Partial<Account> = {}): Account {
     const now = new Date();
+    const userId = faker.string.uuid();
     return {
         id: faker.string.uuid(),
-        user_id: faker.string.uuid(),
-        provider: Provider.PASSWORD,
-        provider_id: null,
+        user_id: userId,
+        provider: Provider.CREDENTIALS,
+        provider_id: userId,
         password: faker.internet.password(),
         created_at: now,
         updated_at: now,
