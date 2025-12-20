@@ -1,9 +1,10 @@
-import { enhancedImages } from '@sveltejs/enhanced-img';
-import { sveltekit } from '@sveltejs/kit/vite';
+import { reactRouter } from '@react-router/dev/vite';
 import { defineConfig } from 'vite';
+import tsconfigPaths from 'vite-tsconfig-paths';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-    plugins: [enhancedImages(), sveltekit()],
+    plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
     server: {
         proxy: {
             '/api': {

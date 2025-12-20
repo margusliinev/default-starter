@@ -47,7 +47,12 @@ describe('RegisterDto', () => {
     });
 
     it('fails with password too long', async () => {
-        await expectValidationError(RegisterDto, validData, { password: 'A1' + 'a'.repeat(254) }, 'Password must be at most 255 characters');
+        await expectValidationError(
+            RegisterDto,
+            validData,
+            { password: 'A1' + 'a'.repeat(254) },
+            'Password must be at most 255 characters',
+        );
     });
 
     it('fails with password without letter', async () => {

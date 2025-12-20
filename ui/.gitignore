@@ -4,6 +4,7 @@
 /dist
 
 # Output
+.react-router
 .svelte-kit
 .wrangler
 .netlify

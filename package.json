@@ -19,7 +19,7 @@
         "dev": "nest start --watch",
         "build": "nest build",
         "start": "node build/main.js",
-        "format": "prettier --write . '!ui/**'",
+        "format": "prettier --write .",
         "test": "jest --runInBand",
         "cli": "ts-node -r tsconfig-paths/register src/cli.ts --",
         "migration:create": "typeorm-ts-node-commonjs migration:create db/migrations/$npm_config_name",
