@@ -1,45 +1,42 @@
-# General
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
 /node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
 /build
-/dist
 
-# Output
-.react-router
-.svelte-kit
-.wrangler
-.netlify
-.output
-.vercel
+# misc
+.DS_Store
+*.pem
 
-# Logs
-logs
-*.log
+# debug
 npm-debug.log*
-pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-lerna-debug.log*
 
-# Environment
-.env
-!.env.example
+# local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# OS
-.DS_Store
+# vercel
+.vercel
 
-# Tests
-/coverage
-/.nyc_output
-
-# Temporary files
-.temp
-.tmp
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Diagnostic reports (https://nodejs.org/api/report.html)
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+**/*.trace
+**/*.zip
+**/*.tar.gz
+**/*.tgz
+**/*.log
+package-lock.json
+**/*.bun
