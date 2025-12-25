@@ -26,6 +26,8 @@ npm install
 npm run migration:run
 
 # Start dev server
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 npm run dev
 ```
 
@@ -50,6 +52,35 @@ The API runs at `http://localhost:3000/api`
 | `GITHUB_CLIENT_ID`     | OAuth client ID     |
 | `GITHUB_CLIENT_SECRET` | OAuth client secret |
 | `GITHUB_CALLBACK_URL`  | OAuth callback URL  |
+=======
+bun run dev
+```
+
+The API runs at `http://localhost:3000/api`
+=======
+bun run dev
+```
+
+The API runs at `http://localhost:3000/api`
+>>>>>>> Stashed changes
+API docs available at `http://localhost:3000/api/docs`
+
+## Environment Variables
+
+| Variable               | Description                  |
+| ---------------------- | ---------------------------- |
+| `PORT`                 | Server port                  |
+| `NODE_ENV`             | development / production     |
+| `SESSION_SECRET`       | Min 32 chars for cookies     |
+| `FRONTEND_URL`         | CORS origin for frontend     |
+| `DATABASE_URL`         | PostgreSQL connection string |
+| `GOOGLE_CLIENT_ID`     | OAuth client ID              |
+| `GOOGLE_CLIENT_SECRET` | OAuth client secret          |
+| `GOOGLE_CALLBACK_URL`  | OAuth callback URL           |
+| `GITHUB_CLIENT_ID`     | OAuth client ID              |
+| `GITHUB_CLIENT_SECRET` | OAuth client secret          |
+| `GITHUB_CALLBACK_URL`  | OAuth callback URL           |
+>>>>>>> Stashed changes
 
 ## Scripts
 
@@ -71,8 +102,16 @@ The API runs at `http://localhost:3000/api`
 
 Single PostgreSQL container with two databases:
 
+<<<<<<< Updated upstream
 - **db** - Dev database
 - **db_test** - Test database
+=======
+- **Port**: `5432`
+- **Host**: `localhost`
+- **Database**: `db`
+- **Username**: `user`
+- **Password**: `password`
+>>>>>>> Stashed changes
 
 ## Project Structure
 
@@ -81,6 +120,8 @@ Single PostgreSQL container with two databases:
 │   ├── init/
 │   └── migrations/
 ├── src/
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 │   ├── cli/
 │   ├── common/
 │   ├── crons/
@@ -93,6 +134,16 @@ Single PostgreSQL container with two databases:
 ├── .prettierignore
 ├── .prettierrc
 ├── .swcrc
+=======
+=======
+>>>>>>> Stashed changes
+│   ├── common/
+│   ├── crons/
+│   ├── database/
+│   ├── queries/
+│   └── index.ts
+├── build.ts
+>>>>>>> Stashed changes
 ├── compose.yml
 ├── nest-cli.json
 ├── package-lock.json
