@@ -22,15 +22,20 @@ lerna-debug.log*
 
 # Environment
 .env
-!.env.example
+.env.*
 
 # OS
 .DS_Store
 Thumbs.db
 
+# Git
+.git
+.gitignore
+.gitattributes
+
 # Tests
-/coverage
-/.nyc_output
+coverage
+.nyc_output
 
 # Temporary
 .temp
@@ -45,3 +50,33 @@ pids
 
 # Diagnostic reports
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Documentation
+README.md
+LICENSE
+docs
+
+# Docker
+.dockerignore
+Dockerfile
+docker-compose.*.yml
+docker-compose.yml
+compose.yml
+
+# IDE
+.cursor
+.vscode
+.idea
+*.swp
+*.swo
+.editorconfig
+
+# Config files
+.prettierrc
+.prettierignore
+.eslintrc*
+.eslintignore
+tsconfig.json
+drizzle.config.ts
+biome.json
+turbo.json

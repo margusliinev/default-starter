@@ -1,27 +1,14 @@
-# NestJS Backend Conventions
+# Backend Conventions
 
 ## Critical Implementation Guidelines
 
 1. **No Any Types**: Strictly forbidden. Use `unknown` or specific types.
 2. **No Explicit Return Types**: Omit unless absolutely necessary for clarity.
-3. **No default exports**: Always use named exports, use default only if needed.
+3. **No Default Exports**: Always use named exports, use default only if needed.
 4. **Concise Comments**: Only where logic is complex or not obvious, keep short.
-5. **Communication**: Be extremely concise and give answers like an engineer.
 
 ## Naming Conventions
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-1. **Files**: Kebab-case (`user-profile.service.ts`)
-2. **Classes**: PascalCase (`UserProfileService`)
-3. **Interfaces/Types**: PascalCase (`OAuthUserInfo`)
-4. **Variables/Functions**: CamelCase (`findUserById`)
-5. **Database Columns**: Snake_case (`email_verified_at`)
-6. **Constants**: UPPERCASE_WITH_UNDERSCORES (`ARGON2_OPTIONS`)
-7. **Enums**: PascalCase (`Environment`)
-=======
-=======
->>>>>>> Stashed changes
 | Category            | Convention                 | Example         |
 | ------------------- | -------------------------- | --------------- |
 | Folders/Files       | camelCase                  | `createUser.ts` |
@@ -31,322 +18,102 @@
 | Enums               | PascalCase                 | `Provider`      |
 | Database Columns    | snake_case                 | `created_at`    |
 | Constants           | UPPERCASE_WITH_UNDERSCORES | `ELYSIA_ERRORS` |
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
 ## Tech Stack
 
-| Category      | Technology                                    |
-| ------------- | --------------------------------------------- |
-| Framework     | NestJS 11                                     |
-| Database      | PostgreSQL 18                                 |
-| ORM           | TypeORM                                       |
-| Language      | TypeScript                                    |
-| Validation    | class-validator, class-transformer            |
-| Auth          | Custom session-based + OAuth (Google, GitHub) |
-| Password Hash | Argon2 (@node-rs/argon2)                      |
-| Crypto        | @oslojs/crypto, @oslojs/encoding              |
-| Testing       | Jest 30 with SWC                              |
-| CLI           | nest-commander                                |
-| Scheduling    | @nestjs/schedule                              |
-| Rate Limiting | @nestjs/throttler                             |
-| Security      | helmet, cookie-parser, signed cookies         |
+| Category   | Technology          |
+| ---------- | ------------------- |
+| Runtime    | Bun                 |
+| Framework  | Elysia              |
+| Language   | TypeScript          |
+| Database   | PostgreSQL 18       |
+| ORM        | Drizzle ORM         |
+| Migrations | Drizzle Kit         |
+| Validation | TypeBox             |
 
 ## Project Structure
 
 ```
-├── db/
-│   ├── init/
-│   └── migrations/
+├── migrations/
 ├── src/
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-│   ├── cli/
-│   ├── common/
-│   ├── crons/
-│   ├── features/
-│   ├── app.module.ts
-│   ├── cli.ts
-│   └── main.ts
-├── .env.example
-├── .gitignore
-├── .prettierignore
-├── .prettierrc
-├── .swcrc
-=======
-=======
->>>>>>> Stashed changes
 │   ├── common/
 │   ├── crons/
 │   ├── database/
 │   ├── queries/
 │   └── index.ts
 ├── build.ts
->>>>>>> Stashed changes
 ├── compose.yml
-├── nest-cli.json
-├── package-lock.json
+├── Dockerfile
+├── drizzle.config.ts
 ├── package.json
-├── README.md
 └── tsconfig.json
 ```
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-### CLI (`src/cli/`)
-
-Command-line interface using nest-commander.
-
-| File            | Purpose                            |
-| --------------- | ---------------------------------- |
-| `cli.module.ts` | CLI module definition              |
-| `commands/`     | Individual command implementations |
-
-### Common (`src/common/`)
-
-Shared utilities across features. Not a NestJS module—just organized exports.
-
-| Folder          | Purpose                                    |
-| --------------- | ------------------------------------------ |
-| `config/`       | Configuration and environment setup        |
-| `constants/`    | Common constants used across the project   |
-| `decorators/`   | Custom decorators for application behavior |
-| `enums/`        | Enum definitions                           |
-| `filters/`      | Error and exception handling               |
-| `interceptors/` | Request/response transformation utilities  |
-| `testing/`      | Testing utilities and helpers              |
-| `types/`        | Shared type definitions                    |
-
-### Crons (`src/crons/`)
-
-Scheduled tasks using @nestjs/schedule.
-
-| File              | Purpose                             |
-| ----------------- | ----------------------------------- |
-| `crons.module.ts` | Cron module definition              |
-| `*.cron.ts`       | Individual cron job implementations |
-
-### Features (`src/features/`)
-
-Vertical slice architecture. Each feature is self-contained.
-
-```
-src/features/{feature}/
-├── dto/                     # Request/response DTOs
-├── entities/                # TypeORM entities
-├── tests/                   # Unit/integration tests
-├── {feature}.controller.ts  # HTTP handlers
-├── {feature}.service.ts     # Business logic
-├── {feature}.module.ts      # Module definition
-└── {feature}.guard.ts       # Feature-specific guards (optional)
-```
-
-## Component Patterns
-
-### Controllers
-
-- Define routes and HTTP methods
-- Use DTOs for request validation
-- Delegate all logic to services
-- Use `@Public()` for public routes
-- Never contain business logic or direct DB access
-
-### Services
-
-- Contain all business rules
-- Interact with DB via TypeORM repositories
-- Accept optional `EntityManager` as last parameter
-- Throw standard NestJS exceptions
-- Never return HTTP-specific objects
-
-### DTOs
-
-- Use class-validator decorators with custom error messages
-- Order decorators from most to least specific
-- Use class-transformer when needed
-
-### Entities
-
-- Use TypeORM decorators
-- Define relationships last
-- Snake_case for column names
-
-## Global Setup
-
-### Bootstrap (`main.ts`)
-
-- **Logger**: `['log', 'warn', 'error']`
-- **CORS**: Enabled with `credentials: true`
-- **Security**: Helmet, signed cookies, compression
-- **Global Prefix**: `/api`
-- **ValidationPipe**: `whitelist`, `transform`, `forbidNonWhitelisted`
-- **Interceptors**: Logging → Timeout (30s) → Transform → ClassSerializer
-- **Filters**: CatchAllFilter
-
-### Global Guards (`app.module.ts`)
-
-- **ThrottlerGuard**: Rate limiting
-- **AuthGuard**: Session-based authentication
-
-### Response Format
-
-- **Success**: `{ success: true, data: '...' }`
-- **Error**: `{ success: false, message: '...' }`
-
-## Environment Variables
-
-Required in `.env` (see `.env.example`):
-
-| Variable               | Description                     |
-| ---------------------- | ------------------------------- |
-| `PORT`                 | Server port                     |
-| `NODE_ENV`             | development, production, test   |
-| `FRONTEND_URL`         | CORS origin                     |
-| `COOKIE_SECRET`        | Min 32 chars for signed cookies |
-| `DB_HOST`              | Database host                   |
-| `DB_PORT`              | Database port                   |
-| `DB_NAME`              | Database name                   |
-| `DB_USERNAME`          | Database username               |
-| `DB_PASSWORD`          | Database password               |
-| `GOOGLE_CLIENT_ID`     | OAuth client ID                 |
-| `GOOGLE_CLIENT_SECRET` | OAuth client secret             |
-| `GOOGLE_CALLBACK_URL`  | OAuth callback URL              |
-| `GITHUB_CLIENT_ID`     | OAuth client ID                 |
-| `GITHUB_CLIENT_SECRET` | OAuth client secret             |
-| `GITHUB_CALLBACK_URL`  | OAuth callback URL              |
-=======
 ## Folder Guide
 
-| Folder          | Purpose                                            |
-| --------------- | -------------------------------------------------- |
-| `src/common/`   | Shared utilities, schemas, types, errors, etc.     |
-| `src/crons/`    | Scheduled tasks                                    |
-| `src/database/` | Database connection, schema, migrations, relations |
-| `src/queries/`  | Database queries                                   |
-| `src/index.ts`  | Main entry point, app setup, and route definitions |
+| Folder          | Purpose          |
+| --------------- | ---------------- |
+| `src/common/`   | Shared utilities |
+| `src/crons/`    | Scheduling tasks |
+| `src/database/` | Database schemas |
+| `src/queries/`  | Database queries |
+| `src/index.ts`  | Main application |
 
 ## Environment Variables
 
-=======
-## Folder Guide
+| Variable               | Description              |
+| ---------------------- | ------------------------ |
+| `PORT`                 | Server Port              |
+| `NODE_ENV`             | Development / Production |
+| `SESSION_SECRET`       | Session Secret           |
+| `FRONTEND_URL`         | Frontend URL             |
+| `DATABASE_URL`         | Database URL             |
+| `GOOGLE_CLIENT_ID`     | OAuth client ID          |
+| `GOOGLE_CLIENT_SECRET` | OAuth client secret      |
+| `GOOGLE_CALLBACK_URL`  | OAuth callback URL       |
+| `GITHUB_CLIENT_ID`     | OAuth client ID          |
+| `GITHUB_CLIENT_SECRET` | OAuth client secret      |
+| `GITHUB_CALLBACK_URL`  | OAuth callback URL       |
 
-| Folder          | Purpose                                            |
-| --------------- | -------------------------------------------------- |
-| `src/common/`   | Shared utilities, schemas, types, errors, etc.     |
-| `src/crons/`    | Scheduled tasks                                    |
-| `src/database/` | Database connection, schema, migrations, relations |
-| `src/queries/`  | Database queries                                   |
-| `src/index.ts`  | Main entry point, app setup, and route definitions |
+## Scripts
 
-## Environment Variables
-
->>>>>>> Stashed changes
-| Variable               | Description                  |
-| ---------------------- | ---------------------------- |
-| `PORT`                 | Server port                  |
-| `NODE_ENV`             | development / production     |
-| `SESSION_SECRET`       | Min 32 chars for cookies     |
-| `FRONTEND_URL`         | CORS origin for frontend     |
-| `DATABASE_URL`         | PostgreSQL connection string |
-| `GOOGLE_CLIENT_ID`     | OAuth client ID              |
-| `GOOGLE_CLIENT_SECRET` | OAuth client secret          |
-| `GOOGLE_CALLBACK_URL`  | OAuth callback URL           |
-| `GITHUB_CLIENT_ID`     | OAuth client ID              |
-| `GITHUB_CLIENT_SECRET` | OAuth client secret          |
-| `GITHUB_CALLBACK_URL`  | OAuth callback URL           |
->>>>>>> Stashed changes
-
-## npm Scripts
-
-| Script                              | Description                      |
-| ----------------------------------- | -------------------------------- |
-| `npm run dev`                       | Start dev server with watch mode |
-| `npm run build`                     | Build for production             |
-| `npm run start`                     | Run production build             |
-| `npm run format`                    | Format code with Prettier        |
-| `npm run test`                      | Run tests with Jest              |
-| `npm run cli`                       | Run CLI (shows help)             |
-| `npm run cli db:seed`               | Seed database with test user     |
-| `npm run migration:create --name=X` | Create new migration             |
-| `npm run migration:revert`          | Revert last migration            |
-| `npm run migration:show`            | Show migration status            |
-| `npm run migration:run`             | Run pending migrations           |
+| Command               | Description                              |
+| --------------------- | ---------------------------------------- |
+| `bun run dev`         | Start development server with hot reload |
+| `bun run build`       | Build for production                     |
+| `bun run start`       | Start production server                  |
+| `bun run format`      | Format code with Prettier                |
+| `bun run db:generate` | Generate migrations from schema changes  |
+| `bun run db:migrate`  | Apply pending migrations                 |
+| `bun run db:studio`   | Open Drizzle Studio database GUI         |
+| `bun run db:check`    | Check migration consistency              |
+| `bun run db:push`     | Push schema changes directly             |
+| `bun run db:pull`     | Pull schema from database                |
 
 ## Architecture & Patterns
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-Single PostgreSQL container with two databases:
-
-- **db**: Dev database
-- **db_test**: Test database
-
-## Testing
-
-- **Framework**: Jest 30 with SWC
-- **Test files**: `*.spec.ts` in `tests/` folders within features
-- **TestModule**: Pre-configured module in `common/testing/`
-- **Fixtures**: Factory functions for creating test data
-- **Validation helpers**: Functions for validating common results
-
-## Authentication
-
-- **Session-based**: Signed HTTP-only cookie (`auth-session`)
-- **Session duration**: 30 days, auto-renews within 15 days of expiry
-- **OAuth**: Google/GitHub with state cookie for CSRF protection
-- **AuthGuard**: Global guard validates session on every request
-- **@Public()**: Decorator to bypass auth on specific routes
-=======
 ### 1. Main Application (`src/index.ts`)
 
 - **Role**: Entry point, Server configuration, Route definitions.
 - **Contents**:
     - Global error handling and error class registration.
     - Global middleware (CORS, Security Headers, OpenAPI).
-    - Authentication macro and guards setup.
     - Route registration and cookie management.
-    - All business logic in route handlers.
->>>>>>> Stashed changes
-
-### 2. Common Utilities (`src/common/`)
-
-<<<<<<< Updated upstream
-1. Create `src/features/{name}/` directory
-2. Define entity in `entities/`
-3. Create DTOs in `dto/`
-4. Implement service in `{name}.service.ts`
-5. Create controller in `{name}.controller.ts`
-6. Define module in `{name}.module.ts`
-7. Import module in `app.module.ts`
-8. Create migration if needed
-9. Add tests in `tests/`
-=======
-=======
-### 1. Main Application (`src/index.ts`)
-
-- **Role**: Entry point, Server configuration, Route definitions.
-- **Contents**:
-    - Global error handling and error class registration.
-    - Global middleware (CORS, Security Headers, OpenAPI).
     - Authentication macro and guards setup.
-    - Route registration and cookie management.
     - All business logic in route handlers.
 
 ### 2. Common Utilities (`src/common/`)
 
->>>>>>> Stashed changes
 - **Role**: Shared resources used across the application.
 - **Contents**:
-    - `constants.ts`: Global constants (e.g., Session duration).
-    - `cookie.ts`: Cookie configuration and schemas.
-    - `crypto.ts`: Hashing and token generation helpers.
-    - `enums.ts`: TypeScript enums (Provider, OpenApiTag).
-    - `env.ts`: Type-safe environment variable validation.
-    - `errors.ts`: Custom error classes and error handling logic.
-    - `oauth.ts`: OAuth flow handlers.
-    - `schemas.ts`: TypeBox schemas for validation (Request/Response).
+    - `constants.ts`: Global constants.
+    - `cookie.ts`: Cookie configuration.
+    - `crypto.ts`: Crypto helpers.
+    - `enums.ts`: TypeScript enums.
+    - `env.ts`: Environment variables.
+    - `errors.ts`: Custom error classes.
+    - `oauth.ts`: OAuth flow helper functions.
+    - `schemas.ts`: TypeBox schemas for validation.
     - `types.ts`: Shared TypeScript interfaces and types.
 
 ### 3. Cron Jobs (`src/crons/`)
@@ -478,7 +245,3 @@ throw new UnauthorizedError();
 5.  **Routes**: Setup routes at `src/index.ts` & write all business logic to the route handlers.
 6.  **Guards**: Apply guards at `src/index.ts` & apply `{ auth: true }` for protected routes.
 7.  **OpenAPI**: Add schemas to `src/index.ts` for Request/Response validation with details.
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes

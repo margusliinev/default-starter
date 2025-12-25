@@ -9,13 +9,13 @@ import type {
     OAuthCallbackQuery,
 } from '@/common/types';
 import type { redirect } from 'elysia';
-import { createUser, findUserByEmail, updateUser } from '@/queries/users';
-import { createAccount, findOAuthAccount } from '@/queries/accounts';
-import { createSession } from '@/queries/sessions';
 import { GOOGLE_OAUTH, GITHUB_OAUTH, SESSION, OAUTH } from '@/common/constants';
 import { generateToken, hashToken, secureCompare } from '@/common/crypto';
 import { Provider } from '@/common/enums';
 import { env } from '@/common/env';
+import { createUser, findUserByEmail, updateUser } from '@/queries/users';
+import { createAccount, findOAuthAccount } from '@/queries/accounts';
+import { createSession } from '@/queries/sessions';
 import { db } from '@/database/index';
 
 function getGoogleAuthUrl(state: string): string {
