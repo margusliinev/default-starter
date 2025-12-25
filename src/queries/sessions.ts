@@ -1,10 +1,9 @@
-import type { Datasource } from '@/db';
-import type { Session, CreateSession, UpdateSession } from '@/db/schema';
-import { sessionTable, userTable } from '@/db/schema';
+import type { Datasource, Session, CreateSession, UpdateSession } from '@/common/types';
+import { sessionTable, userTable } from '@/database/schema';
 import { eq, lt } from 'drizzle-orm';
-import { db } from '@/db';
+import { db } from '@/database';
 
-export function findSessionWithUser(hashedToken: string, datasource: Datasource = db) {
+export function findSessionWithUser(hashedToken: Session['token'], datasource: Datasource = db) {
     return datasource
         .select()
         .from(sessionTable)

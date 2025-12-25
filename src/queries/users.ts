@@ -1,8 +1,7 @@
-import type { Datasource } from '@/db';
-import type { User, CreateUser, UpdateUser } from '@/db/schema';
-import { userTable } from '@/db/schema';
+import type { Datasource, User, CreateUser, UpdateUser } from '@/common/types';
+import { userTable } from '@/database/schema';
 import { eq } from 'drizzle-orm';
-import { db } from '@/db';
+import { db } from '@/database';
 
 export function findUserByEmail(email: User['email'], datasource: Datasource = db) {
     return datasource.select().from(userTable).where(eq(userTable.email, email));

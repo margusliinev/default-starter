@@ -19,7 +19,7 @@ FROM oven/bun
 WORKDIR /app
 
 COPY --from=build /app/package.json package.json
-COPY --from=build /app/dist/server.js dist/server.js
+COPY --from=build /app/dist/index.js dist/index.js
 COPY ./migrations ./migrations
 
 ENV NODE_ENV=production

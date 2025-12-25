@@ -1,11 +1,11 @@
 import { deleteExpiredSessions } from '@/queries/sessions';
-import { cron } from '@elysiajs/cron';
+import { cron, Patterns } from '@elysiajs/cron';
 import { Elysia } from 'elysia';
 
-export const cronPlugin = new Elysia().use(
+export const cronjobs = new Elysia({ name: 'cron' }).use(
     cron({
         name: 'deleteExpiredSessions',
-        pattern: '0 0 * * *',
+        pattern: Patterns.EVERY_DAY_AT_MIDNIGHT,
         async run() {
             console.log('[CRON] deleteExpiredSessions started');
             await deleteExpiredSessions();

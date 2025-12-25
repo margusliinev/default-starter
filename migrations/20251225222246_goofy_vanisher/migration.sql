@@ -1,3 +1,4 @@
+CREATE TYPE "provider" AS ENUM('credentials', 'github', 'google');--> statement-breakpoint
 CREATE TABLE "account" (
 	"id" uuid PRIMARY KEY DEFAULT uuidv7(),
 	"user_id" uuid NOT NULL,

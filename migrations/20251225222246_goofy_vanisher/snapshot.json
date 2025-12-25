@@ -1,11 +1,21 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "c8a5c493-3048-492a-a816-ba0bf464af76",
+  "id": "4e56cfdc-eab6-480f-84a1-b65685bae486",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
   "ddl": [
+    {
+      "values": [
+        "credentials",
+        "github",
+        "google"
+      ],
+      "name": "provider",
+      "entityType": "enums",
+      "schema": "public"
+    },
     {
       "isRlsEnabled": false,
       "name": "account",

@@ -26,7 +26,7 @@ console.log('🚀 Starting build process');
 
 const start = performance.now();
 const result = await Bun.build({
-    entrypoints: ['src/server.ts'],
+    entrypoints: ['src/index.ts'],
     target: 'bun',
     format: 'esm',
     outdir,

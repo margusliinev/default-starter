@@ -24,4 +24,6 @@ if (!Value.Check(schema, converted)) {
     process.exit(1);
 }
 
-export const env = converted;
+const env = converted;
+
+export { env };

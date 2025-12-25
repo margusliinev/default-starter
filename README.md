@@ -1,15 +1,16 @@
 # Default Starter
 
-Project template using my favourite technologies.
+Project template with my favourite tech stack.
 
 ## Tech Stack
 
 - **Bun** - Runtime
-- **Elysia** - Web framework
-- **Drizzle ORM** - Database
-- **Drizzle KIT** - Migrations
-- **PostgreSQL 18** - Database
+- **Elysia** - Framework
 - **TypeScript** - Language
+- **PostgreSQL 18** - Database
+- **Drizzle ORM** - ORM
+- **Drizzle KIT** - Migrations
+- **Typebox** - Validation
 
 ## Quick Start
 
@@ -24,28 +25,27 @@ docker compose up -d
 bun install
 
 # Start dev server
-bun dev
+bun run dev
 ```
 
-The API runs at `http://localhost:3000/api`
-
-API docs available at `http://localhost:3000/api/docs`
+API Base URL: `http://localhost:3000/api`
+API Docs URL: `http://localhost:3000/api/docs`
 
 ## Environment Variables
 
-| Variable               | Description                  |
-| ---------------------- | ---------------------------- |
-| `PORT`                 | Server port                  |
-| `NODE_ENV`             | development / production     |
-| `DATABASE_URL`         | PostgreSQL connection string |
-| `FRONTEND_URL`         | CORS origin for frontend     |
-| `SESSION_SECRET`       | Min 32 chars for cookies     |
-| `GOOGLE_CLIENT_ID`     | OAuth client ID              |
-| `GOOGLE_CLIENT_SECRET` | OAuth client secret          |
-| `GOOGLE_CALLBACK_URL`  | OAuth callback URL           |
-| `GITHUB_CLIENT_ID`     | OAuth client ID              |
-| `GITHUB_CLIENT_SECRET` | OAuth client secret          |
-| `GITHUB_CALLBACK_URL`  | OAuth callback URL           |
+| Variable               | Description              |
+| ---------------------- | ------------------------ |
+| `PORT`                 | Server Port              |
+| `NODE_ENV`             | Development / Production |
+| `SESSION_SECRET`       | Session Secret           |
+| `FRONTEND_URL`         | Frontend URL             |
+| `DATABASE_URL`         | Database URL             |
+| `GOOGLE_CLIENT_ID`     | OAuth client ID          |
+| `GOOGLE_CLIENT_SECRET` | OAuth client secret      |
+| `GOOGLE_CALLBACK_URL`  | OAuth callback URL       |
+| `GITHUB_CLIENT_ID`     | OAuth client ID          |
+| `GITHUB_CLIENT_SECRET` | OAuth client secret      |
+| `GITHUB_CALLBACK_URL`  | OAuth callback URL       |
 
 ## Scripts
 
@@ -64,12 +64,12 @@ API docs available at `http://localhost:3000/api/docs`
 
 ## Docker
 
-Single PostgreSQL container for development:
+Single PostgreSQL container with two databases:
 
 - **Port**: `5432`
 - **Host**: `localhost`
 - **Database**: `db`
-- **User**: `user`
+- **Username**: `user`
 - **Password**: `password`
 
 ## Project Structure
@@ -77,15 +77,11 @@ Single PostgreSQL container for development:
 ```
 ├── migrations/
 ├── src/
-│   ├── config/
-│   ├── db/
-│   ├── lib/
-│   ├── macros/
-│   ├── plugins/
+│   ├── common/
+│   ├── crons/
+│   ├── database/
 │   ├── queries/
-│   ├── routes/
-│   ├── schemas/
-│   └── server.ts
+│   └── index.ts
 ├── build.ts
 ├── compose.yml
 ├── Dockerfile
