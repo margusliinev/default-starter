@@ -1,18 +1,18 @@
+name: dev
 services:
-    db:
+    postgres:
+        container_name: postgres
         image: postgres:18.1
-        container_name: db
-        hostname: ${DB_HOST}
         restart: always
         environment:
             TZ: UTC
-            POSTGRES_DB: ${DB_NAME}
-            POSTGRES_USER: ${DB_USERNAME}
-            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: db
+            POSTGRES_USER: user
+            POSTGRES_PASSWORD: password
         ports:
-            - '${DB_PORT}:5432'
+            - '5432:5432'
         volumes:
             - postgres_data:/var/lib/postgresql
-            - ./db/init:/docker-entrypoint-initdb.d
 volumes:
     postgres_data:
+        name: postgres_data

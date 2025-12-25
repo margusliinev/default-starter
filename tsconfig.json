@@ -1,25 +1,19 @@
 {
     "compilerOptions": {
-        "forceConsistentCasingInFileNames": true,
-        "allowSyntheticDefaultImports": true,
+        "noPropertyAccessFromIndexSignature": true,
         "noFallthroughCasesInSwitch": true,
-        "resolvePackageJsonExports": true,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "strictBindCallApply": true,
-        "strictNullChecks": true,
-        "esModuleInterop": true,
-        "isolatedModules": true,
-        "removeComments": true,
-        "noImplicitAny": true,
+        "noUncheckedIndexedAccess": true,
+        "noUnusedParameters": true,
+        "noUnusedLocals": true,
         "skipLibCheck": true,
-        "declaration": true,
-        "incremental": true,
-        "sourceMap": true,
-        "moduleResolution": "nodenext",
-        "module": "nodenext",
-        "target": "ES2023",
-        "outDir": "./build"
+        "noEmit": true,
+        "strict": true,
+        "moduleResolution": "bundler",
+        "moduleDetection": "force",
+        "module": "Preserve",
+        "target": "ESNext",
+        "baseUrl": ".",
+        "paths": { "@/*": ["./src/*"] }
     },
-    "exclude": ["node_modules", "build", "ui"]
+    "exclude": ["node_modules", "dist", "ui"]
 }
