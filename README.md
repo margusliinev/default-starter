@@ -2,16 +2,6 @@
 
 Project template with my favourite tech stack.
 
-## Tech Stack
-
-- **Bun** - Runtime
-- **Elysia** - Framework
-- **TypeScript** - Language
-- **PostgreSQL 18** - Database
-- **Drizzle ORM** - ORM
-- **Drizzle KIT** - Migrations
-- **Typebox** - Validation
-
 ## Quick Start
 
 ```bash
@@ -30,6 +20,36 @@ bun run dev
 
 API Base URL: `http://localhost:3000/api`
 API Docs URL: `http://localhost:3000/api/docs`
+
+## Project Structure
+
+```
+├── migrations/
+├── src/
+│   ├── common/
+│   ├── crons/
+│   ├── database/
+│   ├── queries/
+│   └── index.ts
+├── build.ts
+├── compose.yml
+├── Dockerfile
+├── drizzle.config.ts
+├── package.json
+└── tsconfig.json
+```
+
+## Tech Stack
+
+| Category   | Technology    |
+| ---------- | ------------- |
+| Runtime    | Bun           |
+| Framework  | Elysia        |
+| Language   | TypeScript    |
+| Database   | PostgreSQL 18 |
+| ORM        | Drizzle ORM   |
+| Migrations | Drizzle Kit   |
+| Validation | TypeBox       |
 
 ## Environment Variables
 
@@ -61,34 +81,6 @@ API Docs URL: `http://localhost:3000/api/docs`
 | `bun run db:check`    | Check migration consistency              |
 | `bun run db:push`     | Push schema changes directly             |
 | `bun run db:pull`     | Pull schema from database                |
-
-## Docker
-
-Single PostgreSQL container with two databases:
-
-- **Port**: `5432`
-- **Host**: `localhost`
-- **Database**: `db`
-- **Username**: `user`
-- **Password**: `password`
-
-## Project Structure
-
-```
-├── migrations/
-├── src/
-│   ├── common/
-│   ├── crons/
-│   ├── database/
-│   ├── queries/
-│   └── index.ts
-├── build.ts
-├── compose.yml
-├── Dockerfile
-├── drizzle.config.ts
-├── package.json
-└── tsconfig.json
-```
 
 ## License
 

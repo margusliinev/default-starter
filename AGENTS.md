@@ -21,15 +21,15 @@
 
 ## Tech Stack
 
-| Category   | Technology          |
-| ---------- | ------------------- |
-| Runtime    | Bun                 |
-| Framework  | Elysia              |
-| Language   | TypeScript          |
-| Database   | PostgreSQL 18       |
-| ORM        | Drizzle ORM         |
-| Migrations | Drizzle Kit         |
-| Validation | TypeBox             |
+| Category   | Technology    |
+| ---------- | ------------- |
+| Runtime    | Bun           |
+| Framework  | Elysia        |
+| Language   | TypeScript    |
+| Database   | PostgreSQL 18 |
+| ORM        | Drizzle ORM   |
+| Migrations | Drizzle Kit   |
+| Validation | TypeBox       |
 
 ## Project Structure
 
