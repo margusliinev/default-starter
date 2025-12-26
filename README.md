@@ -24,18 +24,26 @@ API Docs URL: `http://localhost:3000/api/docs`
 ## Project Structure
 
 ```
-├── migrations/
+┌── migrations/
 ├── src/
 │   ├── common/
 │   ├── crons/
 │   ├── database/
 │   ├── queries/
 │   └── index.ts
+├── .dockerignore
+├── .env.example
+├── .gitignore
+├── .prettierignore
+├── .prettierrc
+├── AGENTS.md
 ├── build.ts
+├── bun.lock
 ├── compose.yml
 ├── Dockerfile
 ├── drizzle.config.ts
 ├── package.json
+├── README.md
 └── tsconfig.json
 ```
 
