@@ -37,8 +37,9 @@
 ┌── migrations/
 ├── src/
 │   ├── common/
-│   ├── crons/
 │   ├── database/
+│   ├── features/
+│   ├── macros/
 │   ├── queries/
 │   └── index.ts
 ├── .dockerignore
@@ -62,8 +63,9 @@
 | Folder          | Purpose          |
 | --------------- | ---------------- |
 | `src/common/`   | Shared utilities |
-| `src/crons/`    | Scheduling tasks |
 | `src/database/` | Database schemas |
+| `src/features/` | Feature modules  |
+| `src/macros/`   | Elysia macros    |
 | `src/queries/`  | Database queries |
 | `src/index.ts`  | Main application |
 
@@ -102,13 +104,11 @@
 
 ### 1. Main Application (`src/index.ts`)
 
-- **Role**: Entry point, Server configuration, Route definitions.
+- **Role**: Entry point, server configuration, feature registration.
 - **Contents**:
-    - Global error handling and error class registration.
-    - Global middleware (CORS, Security Headers, OpenAPI).
-    - Route registration and cookie management.
-    - Authentication macro and guards setup.
-    - All business logic in route handlers.
+    - Global middleware registration.
+    - Feature modules registration.
+    - Graceful shutdown setup.
 
 ### 2. Common Utilities (`src/common/`)
 
@@ -120,17 +120,11 @@
     - `enums.ts`: TypeScript enums.
     - `env.ts`: Environment variables.
     - `errors.ts`: Custom error classes.
-    - `oauth.ts`: OAuth flow helper functions.
     - `schemas.ts`: TypeBox schemas for validation.
-    - `types.ts`: Shared TypeScript interfaces and types.
+    - `types.ts`: TypeScript interfaces and types.
+    - `index.ts`: Barrel file exporting all common resources.
 
-### 3. Cron Jobs (`src/crons/`)
-
-- **Role**: Scheduled background tasks.
-- **Contents**:
-    - `index.ts`: List of cron jobs active in our application.
-
-### 4. Database Layer (`src/database/`)
+### 3. Database Layer (`src/database/`)
 
 - **Role**: Database configuration and definition.
 - **Contents**:
@@ -141,13 +135,41 @@
     - Use snake_case for database columns.
     - Use UUIDv7 for primary keys.
 
-### 5. Data Access Layer (`src/queries/`)
+### 4. Feature Modules (`src/features/`)
+
+- **Role**: Route handlers and business logic grouped by feature.
+- **Contents**:
+    - `auth.ts`: Authentication routes.
+    - `users.ts`: User management routes.
+    - `crons.ts`: Scheduled background tasks.
+    - `index.ts`: Barrel file exporting all features.
+- **Conventions**:
+    - Each feature is an Elysia plugin with its own prefix.
+    - Use macros for shared functionality.
+    - Business logic in route handlers.
+
+### 5. Macros (`src/macros/`)
+
+- **Role**: Reusable Elysia macros for route configuration.
+- **Contents**:
+    - `auth.ts`: Authentication macro for session validation.
+    - `index.ts`: Barrel file exporting all macros.
+- **Conventions**:
+    - Macros add functionality via `resolve` hooks.
+    - Used with `{ auth: true }` in route config.
+
+### 6. Data Access Layer (`src/queries/`)
 
 - **Role**: Pure functions to interact with the database.
+- **Contents**:
+    - `users.ts`: User-related queries.
+    - `accounts.ts`: Account-related queries.
+    - `sessions.ts`: Session-related queries.
+    - `index.ts`: Barrel file exporting all queries.
 - **Conventions**:
     - **No Business Logic**: Only database queries without any extra code.
-    - **Transactions**: Optional `tx` parameter as the last argument.
-    - **Usage**: Imported and used in `src/index.ts` routes.
+    - **Datasource**: Optional `datasource` parameter as the last argument for transactions.
+    - **Usage**: Imported and used in `src/features/` route handlers.
 
 ## Implementation Details
 
@@ -220,16 +242,18 @@ import { env } from '@/common/env';
 ### Cron Jobs
 
 - **Plugin**: `@elysiajs/cron`.
-- **Location**: `src/crons/index.ts`.
-- **Setup**: `.use(cron({...}))`.
+- **Location**: `src/features/crons.ts`.
+- **Setup**: Export as Elysia plugin and register in `src/index.ts`.
 
 ```typescript
 // Cron Job with defined execution time
-cron({
-    name: 'cleanup',
-    pattern: Patterns.EVERY_DAY_AT_MIDNIGHT,
-    run() { ... }
-})
+export const featureCrons = new Elysia({ name: 'feature:crons' }).use(
+    cron({
+        name: 'cleanup',
+        pattern: Patterns.EVERY_DAY_AT_MIDNIGHT,
+        async run() { ... }
+    }),
+);
 ```
 
 ### Error Handling
@@ -247,9 +271,10 @@ throw new UnauthorizedError();
 ### Feature Workflow
 
 1.  **Database**: Add tables to `src/database/schema.ts` & relations to `src/database/relations.ts`.
-2.  **Queries**: Add queries to `src/queries/feature.ts` & make transaction optional last parameter.
+2.  **Queries**: Add queries to `src/queries/feature.ts` & make datasource optional last parameter.
 3.  **Schemas**: Add schemas to `src/common/schemas.ts` & inferred types to `src/common/types.ts`.
-4.  **Errors**: Throw errors at `src/common/errors.ts` & let global error handlers deal with them.
-5.  **Routes**: Setup routes at `src/index.ts` & write all business logic to the route handlers.
-6.  **Guards**: Apply guards at `src/index.ts` & apply `{ auth: true }` for protected routes.
-7.  **OpenAPI**: Add schemas to `src/index.ts` for Request/Response validation with details.
+4.  **Feature**: Create feature module at `src/features/feature.ts` with routes and business logic.
+5.  **Guards**: Use `macroAuth` in feature & apply `{ auth: true }` for protected routes.
+6.  **Register**: Import the feature and register with `.use()` in `src/index.ts`.
+7.  **Errors**: Throw errors from `@/common/errors` & let global error handlers deal with them.
+8.  **OpenAPI**: Add schemas to route config for Request/Response validation with details.

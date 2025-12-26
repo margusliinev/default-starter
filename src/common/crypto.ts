@@ -1,4 +1,4 @@
-import { ARGON2_CONFIG } from './constants';
+import { ARGON2_CONFIG } from '@/common';
 import { timingSafeEqual } from 'crypto';
 
 function generateToken() {

@@ -1,3 +1,4 @@
+import type { redirect } from 'elysia';
 import type {
     OAuthUserInfo,
     GoogleTokenResponse,
@@ -7,16 +8,224 @@ import type {
     GitHubEmail,
     Cookies,
     OAuthCallbackQuery,
-} from '@/common/types';
-import type { redirect } from 'elysia';
-import { createUser, findUserByEmail, updateUser } from '@/queries/users';
-import { createAccount, findOAuthAccount } from '@/queries/accounts';
-import { createSession } from '@/queries/sessions';
-import { GOOGLE_OAUTH, GITHUB_OAUTH, SESSION, OAUTH } from '@/common/constants';
-import { generateToken, hashToken, secureCompare } from '@/common/crypto';
-import { Provider } from '@/common/enums';
+} from '@/common';
+import {
+    ErrorSchema,
+    LoginSchema,
+    MessageSchema,
+    OAuthCallbackQuerySchema,
+    RegisterSchema,
+    VoidSchema,
+    generateToken,
+    hashToken,
+    hashPassword,
+    verifyPassword,
+    secureCompare,
+    ConflictError,
+    InternalServerError,
+    UnauthorizedError,
+    OpenApiTag,
+    Provider,
+    cookieSchema,
+    GOOGLE_OAUTH,
+    GITHUB_OAUTH,
+    SESSION,
+    OAUTH,
+} from '@/common';
+import {
+    findUserByEmail,
+    createUser,
+    findCredentialsAccount,
+    createAccount,
+    createSession,
+    deleteSession,
+    deleteUserSessions,
+    findOAuthAccount,
+    updateUser,
+} from '@/queries';
+import { macroAuth } from '@/macros';
+import { Elysia } from 'elysia';
 import { env } from '@/common/env';
-import { db } from '@/database/index';
+import { db } from '@/database';
+
+export const featureAuth = new Elysia({ name: 'feature:auth', prefix: '/auth' })
+    .guard({ as: 'scoped', cookie: cookieSchema })
+    .use(macroAuth)
+    .post(
+        '/register',
+        async ({ body, cookie, set }) => {
+            const normalizedEmail = body.email.toLowerCase().trim();
+
+            const [existingUser] = await findUserByEmail(normalizedEmail);
+            if (existingUser) throw new ConflictError();
+
+            const plainSessionToken = generateToken();
+            const hashedSessionToken = hashToken(plainSessionToken);
+            const hashedPassword = await hashPassword(body.password);
+            const expiresAt = new Date(Date.now() + SESSION.DURATION_MS);
+
+            await db.transaction(async (tx) => {
+                const [user] = await createUser({ name: body.name, email: normalizedEmail }, tx);
+                if (!user) throw new InternalServerError();
+
+                await createAccount(
+                    { user_id: user.id, provider: Provider.CREDENTIALS, provider_id: user.id, password: hashedPassword },
+                    tx,
+                );
+                await createSession({ user_id: user.id, token: hashedSessionToken, expires_at: expiresAt }, tx);
+            });
+
+            cookie.session.value = plainSessionToken;
+            cookie.session.expires = expiresAt;
+
+            set.status = 201;
+            return { message: 'Register successful' };
+        },
+        {
+            body: RegisterSchema,
+            response: {
+                201: MessageSchema,
+                409: ErrorSchema,
+                422: ErrorSchema,
+                500: ErrorSchema,
+            },
+            detail: {
+                tags: [OpenApiTag.AUTH],
+                summary: 'Register',
+                description: 'Creates a new user account.',
+            },
+        },
+    )
+    .post(
+        '/login',
+        async ({ body, cookie }) => {
+            const normalizedEmail = body.email.toLowerCase().trim();
+
+            const [user] = await findUserByEmail(normalizedEmail);
+            if (!user) throw new UnauthorizedError();
+
+            const [account] = await findCredentialsAccount(user.id);
+            if (!account || !account.password) throw new UnauthorizedError();
+
+            const isValidPassword = await verifyPassword(body.password, account.password);
+            if (!isValidPassword) throw new UnauthorizedError();
+
+            const plainSessionToken = generateToken();
+            const hashedSessionToken = hashToken(plainSessionToken);
+            const expiresAt = new Date(Date.now() + SESSION.DURATION_MS);
+
+            await createSession({ user_id: user.id, token: hashedSessionToken, expires_at: expiresAt });
+
+            cookie.session.value = plainSessionToken;
+            cookie.session.expires = expiresAt;
+
+            return { message: 'Login successful' };
+        },
+        {
+            body: LoginSchema,
+            response: {
+                200: MessageSchema,
+                401: ErrorSchema,
+                422: ErrorSchema,
+                500: ErrorSchema,
+            },
+            detail: {
+                tags: [OpenApiTag.AUTH],
+                summary: 'Login',
+                description: 'Authenticates the user.',
+            },
+        },
+    )
+    .post(
+        '/logout',
+        async ({ cookie, session }) => {
+            await deleteSession(session.id);
+
+            cookie.session.value = undefined;
+            cookie.session.expires = new Date(0);
+
+            return { message: 'Logout successful' };
+        },
+        {
+            auth: true,
+            response: {
+                200: MessageSchema,
+                401: ErrorSchema,
+                500: ErrorSchema,
+            },
+            detail: {
+                tags: [OpenApiTag.AUTH],
+                summary: 'Logout',
+                description: 'Ends the current session.',
+            },
+        },
+    )
+    .post(
+        '/logout-all',
+        async ({ cookie, session }) => {
+            await deleteUserSessions(session.user_id);
+
+            cookie.session.value = undefined;
+            cookie.session.expires = new Date(0);
+
+            return { message: 'Logout all successful' };
+        },
+        {
+            auth: true,
+            response: {
+                200: MessageSchema,
+                401: ErrorSchema,
+                500: ErrorSchema,
+            },
+            detail: {
+                tags: [OpenApiTag.AUTH],
+                summary: 'Logout all',
+                description: 'Ends all user sessions.',
+            },
+        },
+    )
+    .get('/google', ({ cookie, redirect }) => handleOAuthRedirect({ provider: Provider.GOOGLE, cookie, redirect }), {
+        response: { 302: VoidSchema },
+        detail: {
+            tags: [OpenApiTag.AUTH],
+            summary: 'Google OAuth',
+            description: 'Redirects to Google for authentication.',
+        },
+    })
+    .get('/github', ({ cookie, redirect }) => handleOAuthRedirect({ provider: Provider.GITHUB, cookie, redirect }), {
+        response: { 302: VoidSchema },
+        detail: {
+            tags: [OpenApiTag.AUTH],
+            summary: 'GitHub OAuth',
+            description: 'Redirects to GitHub for authentication.',
+        },
+    })
+    .get(
+        '/google/callback',
+        async ({ query, cookie, redirect }) => handleOauthCallback({ provider: Provider.GOOGLE, query, cookie, redirect }),
+        {
+            query: OAuthCallbackQuerySchema,
+            response: { 302: VoidSchema },
+            detail: {
+                tags: [OpenApiTag.AUTH],
+                summary: 'Google OAuth Callback',
+                description: 'Handles the callback from Google OAuth.',
+            },
+        },
+    )
+    .get(
+        '/github/callback',
+        async ({ query, cookie, redirect }) => handleOauthCallback({ provider: Provider.GITHUB, query, cookie, redirect }),
+        {
+            query: OAuthCallbackQuerySchema,
+            response: { 302: VoidSchema },
+            detail: {
+                tags: [OpenApiTag.AUTH],
+                summary: 'GitHub OAuth Callback',
+                description: 'Handles the callback from GitHub OAuth.',
+            },
+        },
+    );
 
 function getGoogleAuthUrl(state: string): string {
     const params = new URLSearchParams({
@@ -260,5 +469,3 @@ async function handleOauthCallback({
         return redirect(getOAuthErrorRedirectUrl('oauth_failed', 'Please restart the process'));
     }
 }
-
-export { getGoogleAuthUrl, getGitHubAuthUrl, handleOAuthRedirect, handleOauthCallback };

@@ -1,5 +1,5 @@
 import type { CookieOptions } from 'elysia';
-import { SESSION, OAUTH } from './constants';
+import { SESSION, OAUTH } from '@/common';
 import { env } from '@/common/env';
 import { t } from 'elysia';
 

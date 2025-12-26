@@ -1,8 +1,8 @@
-import { deleteExpiredSessions } from '@/queries/sessions';
+import { deleteExpiredSessions } from '@/queries';
 import { cron, Patterns } from '@elysiajs/cron';
 import { Elysia } from 'elysia';
 
-export const cronjobs = new Elysia({ name: 'cron' }).use(
+export const featureCrons = new Elysia({ name: 'feature:crons' }).use(
     cron({
         name: 'deleteExpiredSessions',
         pattern: Patterns.EVERY_DAY_AT_MIDNIGHT,

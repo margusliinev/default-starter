@@ -10,7 +10,7 @@ import {
     sessionInsertSchema,
     sessionUpdateSchema,
 } from '@/common/schemas';
-import { db } from '@/database/index';
+import { db } from '@/database';
 
 type User = Static<typeof userSelectSchema>;
 type CreateUser = Static<typeof userInsertSchema>;

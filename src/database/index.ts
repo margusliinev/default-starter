@@ -1,6 +1,6 @@
+import { relations } from '@/database/relations';
 import { migrate } from 'drizzle-orm/bun-sql/migrator';
 import { drizzle } from 'drizzle-orm/bun-sql';
-import { relations } from '@/database/relations';
 import { env } from '@/common/env';
 import { SQL } from 'bun';
 import * as schema from './schema';
@@ -44,5 +44,5 @@ async function migrateDatabase() {
     }
 }
 
-export { db, client };
 export { migrateDatabase };
+export { db, client, schema };

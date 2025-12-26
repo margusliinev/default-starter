@@ -1,20 +1,19 @@
-import type { Datasource, User, CreateUser, UpdateUser } from '@/common/types';
-import { userTable } from '@/database/schema';
+import type { Datasource, User, CreateUser, UpdateUser } from '@/common';
+import { db, schema } from '@/database';
 import { eq } from 'drizzle-orm';
-import { db } from '@/database';
 
 export function findUserByEmail(email: User['email'], datasource: Datasource = db) {
-    return datasource.select().from(userTable).where(eq(userTable.email, email));
+    return datasource.select().from(schema.userTable).where(eq(schema.userTable.email, email));
 }
 
 export function createUser(data: CreateUser, datasource: Datasource = db) {
-    return datasource.insert(userTable).values(data).returning();
+    return datasource.insert(schema.userTable).values(data).returning();
 }
 
 export function updateUser(id: User['id'], data: UpdateUser, datasource: Datasource = db) {
-    return datasource.update(userTable).set(data).where(eq(userTable.id, id)).returning();
+    return datasource.update(schema.userTable).set(data).where(eq(schema.userTable.id, id)).returning();
 }
 
 export function deleteUser(id: User['id'], datasource: Datasource = db) {
-    return datasource.delete(userTable).where(eq(userTable.id, id));
+    return datasource.delete(schema.userTable).where(eq(schema.userTable.id, id));
 }
