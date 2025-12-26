@@ -153,7 +153,7 @@
 { id: 1, name: 'Alice', email: 'alice@gmail.com', image: null };
 
 // Error Sample
-{ code: "VALIDATION_ERROR", message: "Unprocessable Entity", errors: { email: "Email is invalid" } }
+{ code: "VALIDATION", message: "Unprocessable Entity", errors: { email: "Email is invalid" } }
 ```
 
 ### Authentication

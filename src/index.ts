@@ -8,37 +8,34 @@ import {
     userUpdateSchema,
     VoidSchema,
 } from '@/common/schemas';
-import { errorClasses, handleError, UnauthorizedError, ConflictError, InternalServerError } from '@/common/errors';
-import { handleOAuthRedirect, handleOauthCallback } from '@/common/oauth';
+import { handleError, UnauthorizedError, ConflictError, InternalServerError, ERROR_CLASSES } from '@/common/errors';
 import { generateToken, hashToken, hashPassword, verifyPassword } from '@/common/crypto';
-import { SESSION } from './common/constants';
+import { handleOAuthRedirect, handleOauthCallback } from '@/common/oauth';
 import { cookieOptions, cookieSchema } from '@/common/cookie';
 import { Provider, OpenApiTag } from '@/common/enums';
+import { SESSION } from '@/common/constants';
 import { env } from '@/common/env';
 import { createSession, deleteSession, deleteUserSessions, findSessionWithUser, updateSession } from '@/queries/sessions';
 import { createUser, deleteUser, findUserByEmail, updateUser } from '@/queries/users';
 import { createAccount, findCredentialsAccount } from '@/queries/accounts';
-import { openapi, fromTypes } from '@elysiajs/openapi';
+import { client, db, migrateDatabase } from '@/database/index';
+import { openapi } from '@elysiajs/openapi';
 import { cors } from '@elysiajs/cors';
 import { Elysia } from 'elysia';
-import { client, db, migrateDatabase } from '@/database/index';
 import { cronjobs } from '@/crons';
 
 const app = new Elysia({ name: 'app', prefix: '/api', strictPath: true, cookie: cookieOptions })
-    .error(errorClasses)
+    .error(ERROR_CLASSES)
     .onError(({ code, error }) => handleError(code, error))
     .onBeforeHandle({ as: 'global' }, ({ set, path }) => {
         if (path === '/api/docs') return;
 
-        set.headers['x-dns-prefetch-control'] = 'off';
-        set.headers['x-frame-options'] = 'DENY';
+        set.headers['content-security-policy'] = "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'";
         set.headers['strict-transport-security'] = 'max-age=31536000; includeSubDomains';
-        set.headers['x-download-options'] = 'noopen';
-        set.headers['x-content-type-options'] = 'nosniff';
-        set.headers['x-permitted-cross-domain-policies'] = 'none';
         set.headers['referrer-policy'] = 'no-referrer';
+        set.headers['x-content-type-options'] = 'nosniff';
+        set.headers['x-frame-options'] = 'DENY';
         set.headers['x-xss-protection'] = '0';
-        set.headers['content-security-policy'] = "default-src 'none'; frame-ancestors 'none'";
     })
     .use(
         cors({
@@ -50,7 +47,6 @@ const app = new Elysia({ name: 'app', prefix: '/api', strictPath: true, cookie: 
     )
     .use(
         openapi({
-            references: fromTypes(),
             path: '/docs',
             documentation: {
                 info: {
@@ -346,8 +342,8 @@ const app = new Elysia({ name: 'app', prefix: '/api', strictPath: true, cookie: 
         maxRequestBodySize: 1024 * 1024,
     });
 
-console.log(`🚀 API Base URL: http://localhost:${env.PORT}/api`);
-console.log(`📖 API Docs URL: http://localhost:${env.PORT}/api/docs`);
+console.log(`API Base URL: http://localhost:${env.PORT}/api`);
+console.log(`API Docs URL: http://localhost:${env.PORT}/api/docs`);
 
 process.on('SIGINT', async () => {
     await app.stop();

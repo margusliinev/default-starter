@@ -29,13 +29,11 @@ async function migrateDatabase() {
     });
 
     try {
-        console.info('🟡 Database migrations started');
-        console.log('\u200B');
+        console.info('🚀 Database migrations started');
 
         await client.connect();
         await migrate(db, { migrationsFolder: './migrations', migrationsSchema: 'public', migrationsTable: 'migrations' });
 
-        console.log('\u200B');
         console.info('🟢 Database migrations completed');
     } catch (error) {
         console.error('🔴 Database migrations failed');
