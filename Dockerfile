@@ -14,16 +14,14 @@ ENV NODE_ENV=production
 
 RUN bun run build
 
-FROM oven/bun
+FROM gcr.io/distroless/base
 
 WORKDIR /app
 
-COPY --from=build /app/package.json package.json
-COPY --from=build /app/dist/index.js dist/index.js
-COPY ./migrations ./migrations
+COPY --from=build /app/server server
 
 ENV NODE_ENV=production
 
-CMD ["bun", "run", "start"]
+CMD ["./server"]
 
 EXPOSE 3000

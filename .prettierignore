@@ -1,8 +1,6 @@
 # General
 node_modules
 migrations
-static
-public
 build
 dist
 
@@ -38,3 +36,6 @@ bun.lockb
 # Other
 /coverage
 /uploads
+
+# Binary
+server

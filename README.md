@@ -8,13 +8,19 @@ Project template with my favourite tech stack.
 # Copy environment file
 cp .env.example .env
 
-# Start PostgreSQL
+# Start database
 docker compose up -d
 
 # Install dependencies
 bun install
 
-# Start dev server
+# Generate migration files from schema
+bun run db:generate
+
+# Apply migrations to the database
+bun run db:migrate
+
+# Start the development server
 bun run dev
 ```
 
@@ -43,7 +49,6 @@ API Docs URL: `http://localhost:3000/api/docs`
 ├── bun.lock
 ├── compose.yml
 ├── Dockerfile
-├── drizzle.config.ts
 ├── package.json
 ├── README.md
 └── tsconfig.json

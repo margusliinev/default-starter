@@ -54,7 +54,6 @@
 ├── bun.lock
 ├── compose.yml
 ├── Dockerfile
-├── drizzle.config.ts
 ├── package.json
 ├── README.md
 └── tsconfig.json

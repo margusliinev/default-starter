@@ -1,6 +1,5 @@
 import { ERROR_CLASSES, handleError } from '@/common/errors';
 import { authRoutes, usersRoutes } from '@/features';
-import { migrateDatabase } from '@/database';
 import { cookieOptions } from '@/common/cookie';
 import { OpenApiTag } from '@/common/enums';
 import { openapi } from '@elysiajs/openapi';
@@ -48,14 +47,14 @@ const app = new Elysia({ name: 'app', prefix: '/api', strictPath: true, cookie: 
     .use(authRoutes)
     .use(usersRoutes)
     .use(cronjobs)
-    .onStart(async () => await migrateDatabase())
     .listen({
         port: env.PORT,
         maxRequestBodySize: 1024 * 1024,
     });
 
-console.log(`API Base URL: http://localhost:${env.PORT}/api`);
-console.log(`API Docs URL: http://localhost:${env.PORT}/api/docs`);
+console.log(`🚀 Server ready: started in ${env.NODE_ENV}`);
+console.log(`🏠 API Base URL: http://localhost:${env.PORT}/api`);
+console.log(`📖 API Docs URL: http://localhost:${env.PORT}/api/docs`);
 
 process.on('SIGINT', async () => {
     await app.stop();

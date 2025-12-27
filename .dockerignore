@@ -1,5 +1,6 @@
 # General
 node_modules
+migrations
 build
 dist
 
@@ -52,6 +53,7 @@ pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # Documentation
+AGENTS.md
 README.md
 LICENSE
 docs
@@ -80,3 +82,6 @@ tsconfig.json
 drizzle.config.ts
 biome.json
 turbo.json
+
+# Binary
+server

@@ -1,6 +1,4 @@
 #!/usr/bin/env bun
-import { existsSync } from 'fs';
-import { rm } from 'fs/promises';
 import path from 'path';
 
 const formatFileSize = (bytes: number): string => {
@@ -16,23 +14,19 @@ const formatFileSize = (bytes: number): string => {
     return `${size.toFixed(2)} ${units[unitIndex]}`;
 };
 
-const outdir = path.join(process.cwd(), 'dist');
-
-if (existsSync(outdir)) {
-    await rm(outdir, { recursive: true, force: true });
+const binary = Bun.file('./server');
+if (await binary.exists()) {
+    await binary.delete();
 }
 
-console.log('🚀 Starting build process');
+console.log('🚀 Build process started');
 
-const start = performance.now();
 const result = await Bun.build({
     entrypoints: ['src/index.ts'],
+    compile: { outfile: 'server' },
     target: 'bun',
-    format: 'esm',
-    outdir,
-    define: { 'process.env.NODE_ENV': JSON.stringify('production') },
+    minify: true,
 });
-const end = performance.now();
 
 const outputTable = result.outputs.map((output) => ({
     File: path.relative(process.cwd(), output.path),
@@ -41,5 +35,4 @@ const outputTable = result.outputs.map((output) => ({
 }));
 
 console.table(outputTable);
-const buildTime = (end - start).toFixed(2);
-console.log(`✅ Build completed in ${buildTime}ms`);
+console.log(`✅ Build process completed`);

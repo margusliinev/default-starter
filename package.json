@@ -19,20 +19,20 @@
     "scripts": {
         "dev": "bun run --watch src/index.ts",
         "build": "bun run build.ts",
-        "start": "bun run dist/index.js",
+        "start": "./server",
         "format": "prettier --write .",
-        "db:generate": "bunx drizzle-kit generate",
-        "db:migrate": "bunx drizzle-kit migrate",
-        "db:studio": "bunx drizzle-kit studio",
-        "db:check": "bunx drizzle-kit check",
-        "db:push": "bunx drizzle-kit push",
-        "db:pull": "bunx drizzle-kit pull"
+        "db:generate": "bun --bun drizzle-kit generate --config=./src/database/drizzle.config.ts",
+        "db:migrate": "bun --bun drizzle-kit migrate --config=./src/database/drizzle.config.ts",
+        "db:studio": "bun --bun drizzle-kit studio --config=./src/database/drizzle.config.ts",
+        "db:check": "bun --bun drizzle-kit check --config=./src/database/drizzle.config.ts",
+        "db:push": "bun --bun drizzle-kit push --config=./src/database/drizzle.config.ts",
+        "db:pull": "bun --bun drizzle-kit pull --config=./src/database/drizzle.config.ts"
     },
     "dependencies": {
         "@elysiajs/cors": "1.4.0",
         "@elysiajs/cron": "1.4.1",
         "@elysiajs/eden": "1.4.6",
-        "@elysiajs/openapi": "1.4.12",
+        "@elysiajs/openapi": "1.4.13",
         "@elysiajs/static": "1.4.7",
         "drizzle-kit": "1.0.0-beta.6-4414a19",
         "drizzle-orm": "1.0.0-beta.6-4414a19",
