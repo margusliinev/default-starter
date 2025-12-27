@@ -178,12 +178,12 @@ function getErrorRedirectUrl(error: string, description?: string) {
 }
 
 export function initiateOAuth(provider: Provider) {
-    const stateToken = generateToken();
-    const hashedStateToken = hashToken(stateToken);
+    const token = generateToken();
+    const hashedToken = hashToken(token);
     const expiresAt = new Date(Date.now() + OAUTH.DURATION_IN_MS);
-    const authUrl = getOAuthAuthUrl(provider, stateToken);
+    const authUrl = getOAuthAuthUrl(provider, token);
 
-    return { authUrl, hashedStateToken, expiresAt };
+    return { authUrl, hashedToken, expiresAt };
 }
 
 export async function handleOAuthCallback(params: OAuthCallbackParams): Promise<OAuthCallbackSuccess | OAuthCallbackError> {

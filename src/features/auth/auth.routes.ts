@@ -113,9 +113,9 @@ export const authRoutes = new Elysia({ name: 'route:auth', prefix: '/auth' })
     .get(
         '/google',
         ({ cookie, redirect }) => {
-            const { authUrl, hashedStateToken, expiresAt } = initiateOAuth(Provider.GOOGLE);
+            const { authUrl, hashedToken, expiresAt } = initiateOAuth(Provider.GOOGLE);
 
-            cookie.oauth_state.value = hashedStateToken;
+            cookie.oauth_state.value = hashedToken;
             cookie.oauth_state.expires = expiresAt;
 
             return redirect(authUrl);
@@ -132,9 +132,9 @@ export const authRoutes = new Elysia({ name: 'route:auth', prefix: '/auth' })
     .get(
         '/github',
         ({ cookie, redirect }) => {
-            const { authUrl, hashedStateToken, expiresAt } = initiateOAuth(Provider.GITHUB);
+            const { authUrl, hashedToken, expiresAt } = initiateOAuth(Provider.GITHUB);
 
-            cookie.oauth_state.value = hashedStateToken;
+            cookie.oauth_state.value = hashedToken;
             cookie.oauth_state.expires = expiresAt;
 
             return redirect(authUrl);
@@ -190,9 +190,9 @@ export const authRoutes = new Elysia({ name: 'route:auth', prefix: '/auth' })
 
             const result = await handleOAuthCallback({
                 provider: Provider.GITHUB,
+                storedState,
                 code: query.code,
                 state: query.state,
-                storedState,
                 error: query.error,
                 errorDescription: query.error_description,
             });

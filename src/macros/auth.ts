@@ -7,11 +7,11 @@ import { Elysia } from 'elysia';
 
 export const authMacro = new Elysia({ name: 'macro:auth' }).guard({ as: 'scoped', cookie }).macro('auth', {
     resolve: async ({ cookie }) => {
-        const plainSessionToken = cookie.session.value;
-        if (!plainSessionToken) throw new UnauthorizedError();
+        const token = cookie.session.value;
+        if (!token) throw new UnauthorizedError();
 
-        const hashedSessionToken = hashToken(plainSessionToken);
-        const [result] = await findSessionWithUser(hashedSessionToken);
+        const hashedToken = hashToken(token);
+        const [result] = await findSessionWithUser(hashedToken);
 
         if (!result) {
             cookie.session.value = undefined;
