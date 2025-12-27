@@ -9,6 +9,7 @@ RUN bun install --frozen-lockfile
 
 COPY ./src ./src
 COPY ./build.ts ./build.ts
+COPY ./tsconfig.json ./tsconfig.json
 
 ENV NODE_ENV=production
 

@@ -78,7 +78,6 @@ compose.yml
 .prettierignore
 .eslintrc*
 .eslintignore
-tsconfig.json
 drizzle.config.ts
 biome.json
 turbo.json
