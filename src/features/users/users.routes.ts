@@ -1,11 +1,13 @@
-import { ErrorSchema, userSelectSchema, userUpdateSchema, VoidSchema, InternalServerError, cookieSchema, OpenApiTag } from '@/common';
-import { updateUser, deleteUser } from '@/queries';
-import { macroAuth } from '@/macros';
+import { ErrorSchema, NoContentSchema, userSelectSchema, userUpdateSchema } from '@/common/schemas';
+import { updateCurrentUser, deleteCurrentUser } from './users.service';
+import { OpenApiTag } from '@/common/enums';
+import { authMacro } from '@/macros/auth';
+import { cookie } from '@/common/cookie';
 import { Elysia } from 'elysia';
 
-export const featureUsers = new Elysia({ name: 'feature:users', prefix: '/users' })
-    .guard({ as: 'scoped', cookie: cookieSchema })
-    .use(macroAuth)
+export const usersRoutes = new Elysia({ name: 'route:users', prefix: '/users' })
+    .guard({ as: 'scoped', cookie })
+    .use(authMacro)
     .get('/me', ({ user }) => user, {
         auth: true,
         response: {
@@ -22,10 +24,7 @@ export const featureUsers = new Elysia({ name: 'feature:users', prefix: '/users'
     .patch(
         '/me',
         async ({ user, body }) => {
-            const [updatedUser] = await updateUser(user.id, body);
-            if (!updatedUser) throw new InternalServerError();
-
-            return updatedUser;
+            return await updateCurrentUser(user.id, body);
         },
         {
             auth: true,
@@ -46,7 +45,7 @@ export const featureUsers = new Elysia({ name: 'feature:users', prefix: '/users'
     .delete(
         '/me',
         async ({ user, cookie, set }) => {
-            await deleteUser(user.id);
+            await deleteCurrentUser(user.id);
 
             cookie.session.value = undefined;
             cookie.session.expires = new Date(0);
@@ -57,7 +56,7 @@ export const featureUsers = new Elysia({ name: 'feature:users', prefix: '/users'
         {
             auth: true,
             response: {
-                204: VoidSchema,
+                204: NoContentSchema,
                 401: ErrorSchema,
                 500: ErrorSchema,
             },

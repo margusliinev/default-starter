@@ -1,4 +1,3 @@
-import { ARGON2_CONFIG } from '@/common';
 import { timingSafeEqual } from 'crypto';
 
 function generateToken() {
@@ -13,7 +12,11 @@ function hashToken(token: string) {
 }
 
 async function hashPassword(password: string) {
-    return await Bun.password.hash(password, ARGON2_CONFIG);
+    return await Bun.password.hash(password, {
+        algorithm: 'argon2id',
+        memoryCost: 19456,
+        timeCost: 2,
+    });
 }
 
 async function verifyPassword(password: string, hash: string) {
@@ -25,4 +28,28 @@ function secureCompare(a: string, b: string) {
     return timingSafeEqual(Buffer.from(a), Buffer.from(b));
 }
 
-export { generateToken, hashToken, hashPassword, verifyPassword, secureCompare };
+async function checkBreachedPassword(password: string) {
+    const hasher = new Bun.CryptoHasher('sha1');
+    hasher.update(password);
+    const hash = hasher.digest('hex').toUpperCase();
+    const prefix = hash.slice(0, 5);
+    const suffix = hash.slice(5);
+
+    const response = await fetch(`https://api.pwnedpasswords.com/range/${prefix}`, {
+        headers: { 'Add-Padding': 'true' },
+    });
+
+    if (!response.ok) return false;
+
+    const text = await response.text();
+    const lines = text.split('\n');
+
+    for (const line of lines) {
+        const [hashSuffix] = line.split(':');
+        if (hashSuffix === suffix) return true;
+    }
+
+    return false;
+}
+
+export { generateToken, hashToken, hashPassword, verifyPassword, secureCompare, checkBreachedPassword };

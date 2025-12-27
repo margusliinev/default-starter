@@ -2,10 +2,11 @@
 
 ## Critical Implementation Guidelines
 
-1. **No Any Types**: Strictly forbidden. Use `unknown` or specific types.
-2. **No Explicit Return Types**: Omit unless absolutely necessary for clarity.
-3. **No Default Exports**: Always use named exports, use default only if needed.
-4. **Concise Comments**: Only where logic is complex or not obvious, keep short.
+1. **No Explicit Return Types**: Omit unless absolutely necessary for clarity.
+2. **No Default Exports**: Always use named exports, use default only if needed.
+3. **No Any Types**: Strictly forbidden. Use `unknown` or specific types.
+4. **No Comments**: Add comments only when logic is complex or not obvious.
+5. **No CommonJS**: Write modern JavaScript/Typescript, using native ES modules.
 
 ## Naming Conventions
 
@@ -37,6 +38,7 @@
 ┌── migrations/
 ├── src/
 │   ├── common/
+│   ├── crons/
 │   ├── database/
 │   ├── features/
 │   ├── macros/
@@ -63,6 +65,7 @@
 | Folder          | Purpose          |
 | --------------- | ---------------- |
 | `src/common/`   | Shared utilities |
+| `src/crons/`    | Scheduled tasks  |
 | `src/database/` | Database schemas |
 | `src/features/` | Feature modules  |
 | `src/macros/`   | Elysia macros    |
@@ -104,150 +107,74 @@
 
 ### 1. Main Application (`src/index.ts`)
 
-- **Role**: Entry point, server configuration, feature registration.
-- **Contents**:
-    - Global middleware registration.
-    - Feature modules registration.
-    - Graceful shutdown setup.
+Entry point that configures the Elysia server, registers global middleware, feature modules, cron jobs, and handles graceful shutdown.
 
 ### 2. Common Utilities (`src/common/`)
 
-- **Role**: Shared resources used across the application.
-- **Contents**:
-    - `constants.ts`: Global constants.
-    - `cookie.ts`: Cookie configuration.
-    - `crypto.ts`: Crypto helpers.
-    - `enums.ts`: TypeScript enums.
-    - `env.ts`: Environment variables.
-    - `errors.ts`: Custom error classes.
-    - `schemas.ts`: TypeBox schemas for validation.
-    - `types.ts`: TypeScript interfaces and types.
-    - `index.ts`: Barrel file exporting all common resources.
+Shared resources used across the application:
 
-### 3. Database Layer (`src/database/`)
+| File           | Purpose                         |
+| -------------- | ------------------------------- |
+| `constants.ts` | Application-wide constants      |
+| `cookie.ts`    | Cookie configuration            |
+| `crypto.ts`    | Hashing and token generation    |
+| `enums.ts`     | Shared enumerations             |
+| `env.ts`       | Environment variable validation |
+| `errors.ts`    | Custom error classes            |
+| `schemas.ts`   | TypeBox schemas for validation  |
+| `types.ts`     | Shared TypeScript types         |
 
-- **Role**: Database configuration and definition.
-- **Contents**:
-    - `index.ts`: Drizzle client initialization and migration runner.
-    - `schema.ts`: Table definitions using Drizzle ORM.
-    - `relations.ts`: Relationship definitions between tables.
-- **Conventions**:
-    - Use snake_case for database columns.
-    - Use UUIDv7 for primary keys.
-
-### 4. Feature Modules (`src/features/`)
-
-- **Role**: Route handlers and business logic grouped by feature.
-- **Contents**:
-    - `auth.ts`: Authentication routes.
-    - `users.ts`: User management routes.
-    - `crons.ts`: Scheduled background tasks.
-    - `index.ts`: Barrel file exporting all features.
-- **Conventions**:
-    - Each feature is an Elysia plugin with its own prefix.
-    - Use macros for shared functionality.
-    - Business logic in route handlers.
-
-### 5. Macros (`src/macros/`)
-
-- **Role**: Reusable Elysia macros for route configuration.
-- **Contents**:
-    - `auth.ts`: Authentication macro for session validation.
-    - `index.ts`: Barrel file exporting all macros.
-- **Conventions**:
-    - Macros add functionality via `resolve` hooks.
-    - Used with `{ auth: true }` in route config.
-
-### 6. Data Access Layer (`src/queries/`)
-
-- **Role**: Pure functions to interact with the database.
-- **Contents**:
-    - `users.ts`: User-related queries.
-    - `accounts.ts`: Account-related queries.
-    - `sessions.ts`: Session-related queries.
-    - `index.ts`: Barrel file exporting all queries.
-- **Conventions**:
-    - **No Business Logic**: Only database queries without any extra code.
-    - **Datasource**: Optional `datasource` parameter as the last argument for transactions.
-    - **Usage**: Imported and used in `src/features/` route handlers.
-
-## Implementation Details
-
-### Response Format
-
-- **Success**: Data returned directly from handlers.
-- **Error**: Handled globally, returns `{ code: '...', message: '...', errors?: {...} }`.
+**Environment Variables:**
 
 ```typescript
-// Success Sample
-{ id: 1, name: 'Alice', email: 'alice@gmail.com', image: null };
-
-// Error Sample
-{ code: "VALIDATION", message: "Unprocessable Entity", errors: { email: "Email is invalid" } }
-```
-
-### Authentication
-
-- **Mechanism**: Session-based with signed HTTP-only cookies.
-- **Flows**: Credentials (Email/Password) and OAuth (Google, GitHub).
-- **Protection**: Use `{ auth: true }` in route config to enforce session validation.
-
-```typescript
-// Protected Route
-.get('/protected', handler, { auth: true })
-```
-
-### Validation
-
-- **Library**: TypeBox (via `elysia`).
-- **Location**: Define schemas in `src/common/schemas.ts`.
-- **Usage**: Pass to route config for `body`, `query`, `params`, or `response`.
-
-```typescript
-// UserSchema for Request/Response validation
-export const UserSchema = t.Object({ ... });
-.post('/route1', handler, { body: UserSchema })
-.post('/route2', handler, { response: { 200: Userschema } })
-```
-
-### Database & Migrations
-
-- **ORM**: Drizzle ORM.
-- **Workflow**:
-    1. Add/update schema `src/database/schema.ts`.
-    2. Add/update relations `src/database/relations.ts`
-    3. Run `bun run db:generate` to create SQL migration files.
-
-```typescript
-// Database Table Definition
-export const users = pgTable('users', {
-    id: uuid().primaryKey(),
-    name: text().notNull(),
-    email: text().notNull().unique(),
-});
-```
-
-### Environment Variables
-
-- **File**: `.env` (gitignored), `.env.example` (template).
-- **Validation**: Defined in `src/common/env.ts`.
-- **Usage**: Import `env` from `@/common/env`.
-
-```typescript
-// Validated env Object
 import { env } from '@/common/env';
-(env.PORT, env.NODE_ENV);
+env.PORT;
+env.NODE_ENV;
+env.DATABASE_URL;
 ```
 
-### Cron Jobs
+**Error Handling:**
 
-- **Plugin**: `@elysiajs/cron`.
-- **Location**: `src/features/crons.ts`.
-- **Setup**: Export as Elysia plugin and register in `src/index.ts`.
+Throw typed errors from `@/common/errors`. Global handler catches and formats the response.
 
 ```typescript
-// Cron Job with defined execution time
-export const featureCrons = new Elysia({ name: 'feature:crons' }).use(
+import { NotFoundError, UnauthorizedError } from '@/common/errors';
+throw new NotFoundError();
+throw new UnauthorizedError();
+```
+
+**Response Format:**
+
+```typescript
+// Success - data returned directly
+{ id: 1, name: 'Alice', email: 'alice@gmail.com', image: null }
+
+// Error - handled globally
+{ code: "CONFLICT", message: "Conflict", errors: { email: "Email is already in use" } }
+```
+
+**Validation Schemas:**
+
+Define TypeBox schemas in `src/common/schemas.ts` and use in route config.
+
+```typescript
+export const UserSchema = t.Object({
+    id: t.String(),
+    name: t.String(),
+    email: t.String({ format: 'email' }),
+});
+
+// Usage in routes
+.post('/users', handler, { body: UserSchema })
+.get('/users/:id', handler, { response: { 200: UserSchema } })
+```
+
+### 3. Cron Jobs (`src/crons/`)
+
+Scheduled tasks using `@elysiajs/cron`. Export as Elysia plugin and register in `src/index.ts`.
+
+```typescript
+export const cronjobs = new Elysia({ name: 'crons' }).use(
     cron({
         name: 'cleanup',
         pattern: Patterns.EVERY_DAY_AT_MIDNIGHT,
@@ -256,25 +183,128 @@ export const featureCrons = new Elysia({ name: 'feature:crons' }).use(
 );
 ```
 
-### Error Handling
+### 4. Database Layer (`src/database/`)
 
-- **Strategy**: Throw typed errors from `@/common/errors`.
-- **Global Handler**: Catches errors and formats the response.
+Drizzle ORM configuration, table definitions in `schema.ts`, and relationships in `relations.ts`. Use snake_case for columns and UUIDv7 for primary keys.
 
 ```typescript
-// Import and throw
-import { NotFoundError, UnauthorizedError } from '@/common/errors';
-throw new NotFoundError();
-throw new UnauthorizedError();
+export const users = pgTable('users', {
+    id: uuid().primaryKey(),
+    name: text().notNull(),
+    email: text().notNull().unique(),
+    created_at: timestamp().defaultNow().notNull(),
+});
 ```
 
-### Feature Workflow
+**Migration Workflow:**
 
-1.  **Database**: Add tables to `src/database/schema.ts` & relations to `src/database/relations.ts`.
-2.  **Queries**: Add queries to `src/queries/feature.ts` & make datasource optional last parameter.
-3.  **Schemas**: Add schemas to `src/common/schemas.ts` & inferred types to `src/common/types.ts`.
-4.  **Feature**: Create feature module at `src/features/feature.ts` with routes and business logic.
-5.  **Guards**: Use `macroAuth` in feature & apply `{ auth: true }` for protected routes.
-6.  **Register**: Import the feature and register with `.use()` in `src/index.ts`.
-7.  **Errors**: Throw errors from `@/common/errors` & let global error handlers deal with them.
-8.  **OpenAPI**: Add schemas to route config for Request/Response validation with details.
+1. Add/update schema in `src/database/schema.ts`
+2. Add/update relations in `src/database/relations.ts`
+3. Run `bun run db:generate` to create SQL migration files
+4. Run `bun run db:migrate` to apply migrations
+
+### 5. Feature Modules (`src/features/`)
+
+Route handlers and business logic grouped by feature. Each feature folder can contain:
+
+| File             | Purpose                    |
+| ---------------- | -------------------------- |
+| `*.routes.ts`    | Route handlers             |
+| `*.service.ts`   | Business logic             |
+| `*.constants.ts` | Feature specific constants |
+| `*.schemas.ts`   | Feature specific schemas   |
+| `*.types.ts`     | Feature specific types     |
+
+**Routes File Rules:**
+
+- Handles cookies (setting/clearing)
+- Sends final response (return ...)
+- Sets status (set.status = 201, default is 200)
+- Defines schemas (body, params, query, response, detail)
+- Calls service functions and handles their return values
+
+```typescript
+export const usersRoutes = new Elysia({ name: 'route:users', prefix: '/users' })
+    .guard({ as: 'scoped', cookie })
+    .use(authMacro)
+    .patch(
+        '/me',
+        async ({ user, body }) => {
+            return await updateCurrentUser(user.id, body);
+        },
+        {
+            auth: true,
+            body: userUpdateSchema,
+            response: { 200: userSelectSchema, 401: ErrorSchema, 422: ErrorSchema, 500: ErrorSchema },
+            detail: { tags: [OpenApiTag.USERS], summary: 'Update me', description: 'Updates the current user.' },
+        },
+    );
+```
+
+**Service File Rules:**
+
+- Contains business logic
+- Never touches cookies
+- Never sends responses directly
+- Can import `db` ONLY to start transactions
+- All database operations imported from `queries`
+
+```typescript
+async function login(params: Login) {
+    const normalizedEmail = params.email.toLowerCase().trim();
+
+    const [user] = await findUserByEmail(normalizedEmail);
+    if (!user) throw new UnauthorizedError();
+
+    const [account] = await findCredentialsAccount(user.id);
+    if (!account || !account.password) throw new UnauthorizedError();
+
+    const isValidPassword = await verifyPassword(params.password, account.password);
+    if (!isValidPassword) throw new UnauthorizedError();
+
+    const token = generateToken();
+    const hashedToken = hashToken(token);
+    const expiresAt = new Date(Date.now() + SESSION.DURATION_IN_MS);
+    const session = { user_id: user.id, token: hashedToken, expires_at: expiresAt };
+
+    await createSession(session);
+
+    return { token, expiresAt };
+}
+```
+
+### 6. Macros (`src/macros/`)
+
+Reusable Elysia macros. The `authMacro` validates sessions and provides `user` and `session` in route context.
+
+```typescript
+.use(authMacro)
+.get('/public', () => 'anyone can access')
+.get('/protected', ({ user }) => user, { auth: true })
+```
+
+### 7. Data Access Layer (`src/queries/`)
+
+Pure database query functions with no business logic. All functions accept an optional `datasource` parameter as the last argument for transaction support.
+
+```typescript
+export function findUserByEmail(email: string, datasource: Datasource = db) {
+    return datasource.select().from(schema.userTable).where(eq(schema.userTable.email, email));
+}
+
+export function insertUser(data: NewUser, datasource: Datasource = db) {
+    return datasource.insert(schema.userTable).values(data).returning();
+}
+```
+
+### 8. Adding a New Feature
+
+1. **Database**: Add tables to `src/database/schema.ts` & relations to `src/database/relations.ts`
+2. **Queries**: Add queries to `src/queries/feature.ts` with optional `datasource` parameter
+3. **Schemas**: Add schemas to `src/common/schemas.ts` & inferred types to `src/common/types.ts`
+4. **Routes**: Create `src/features/{feature}/{feature}.routes.ts` with route handlers
+5. **Service**: Create `src/features/{feature}/{feature}.service.ts` with business logic
+6. **Guards**: Utilize `authMacro` by configuring `{ auth: true }` for protected routes
+7. **Register**: Export routes from `src/features/index.ts` and register in `src/index.ts`
+8. **Errors**: Throw errors from `@/common/errors` when needed, avoid swallowing errors.
+9. **OpenAPI**: Add schemas to route config for documentation with appropriate status.

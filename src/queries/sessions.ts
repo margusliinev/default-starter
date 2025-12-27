@@ -1,4 +1,4 @@
-import type { Datasource, Session, CreateSession, UpdateSession } from '@/common';
+import type { Datasource, Session, CreateSession, UpdateSession } from '@/common/types';
 import { db, schema } from '@/database';
 import { eq, lt } from 'drizzle-orm';
 

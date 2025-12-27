@@ -1,8 +1,11 @@
-import { UnauthorizedError, cookieSchema, hashToken, SESSION } from '@/common';
-import { findSessionWithUser, deleteSession, updateSession } from '@/queries';
+import { findSessionWithUser, updateSession, deleteSession } from '@/queries/sessions';
+import { UnauthorizedError } from '@/common/errors';
+import { hashToken } from '@/common/crypto';
+import { SESSION } from '@/common/constants';
+import { cookie } from '@/common/cookie';
 import { Elysia } from 'elysia';
 
-export const macroAuth = new Elysia({ name: 'macro:auth' }).guard({ as: 'scoped', cookie: cookieSchema }).macro('auth', {
+export const authMacro = new Elysia({ name: 'macro:auth' }).guard({ as: 'scoped', cookie }).macro('auth', {
     resolve: async ({ cookie }) => {
         const plainSessionToken = cookie.session.value;
         if (!plainSessionToken) throw new UnauthorizedError();
@@ -26,9 +29,9 @@ export const macroAuth = new Elysia({ name: 'macro:auth' }).guard({ as: 'scoped'
             throw new UnauthorizedError();
         }
 
-        const isRenewable = Date.now() >= new Date(session.expires_at).getTime() - SESSION.DURATION_MS;
+        const isRenewable = Date.now() >= new Date(session.expires_at).getTime() - SESSION.RENEWAL_THRESHOLD_IN_MS;
         if (isRenewable) {
-            const expiresAt = new Date(Date.now() + SESSION.DURATION_MS);
+            const expiresAt = new Date(Date.now() + SESSION.DURATION_IN_MS);
             await updateSession(session.id, { expires_at: expiresAt });
             session.expires_at = expiresAt;
             cookie.session.expires = expiresAt;

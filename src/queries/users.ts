@@ -1,4 +1,4 @@
-import type { Datasource, User, CreateUser, UpdateUser } from '@/common';
+import type { Datasource, User, CreateUser, UpdateUser } from '@/common/types';
 import { db, schema } from '@/database';
 import { eq } from 'drizzle-orm';
 
