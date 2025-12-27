@@ -15,30 +15,13 @@ const sessionInsertSchema = createInsertSchema(sessionTable);
 const sessionUpdateSchema = createUpdateSchema(sessionTable);
 
 const ErrorSchema = t.Object({
-    code: t.String({ error: 'Code is invalid' }),
-    message: t.String({ error: 'Message is invalid' }),
-    errors: t.Optional(t.Record(t.String({ error: 'Field is invalid' }), t.String({ error: 'Error is invalid' }))),
+    code: t.String(),
+    message: t.String(),
+    issues: t.Optional(t.Record(t.String(), t.String())),
 });
-const MessageSchema = t.Object({
-    message: t.String({ error: 'Message is invalid' }),
-});
-const VoidSchema = t.Void({ error: 'Empty response is invalid' });
-
-const RegisterSchema = t.Object({
-    name: t.String({ minLength: 1, maxLength: 254, error: 'Name is missing or invalid' }),
-    email: t.String({ minLength: 1, maxLength: 254, error: 'Email is missing or invalid', format: 'email' }),
-    password: t.String({ minLength: 8, maxLength: 254, error: 'Password is missing or invalid' }),
-});
-const LoginSchema = t.Object({
-    email: t.String({ minLength: 1, maxLength: 254, error: 'Email is missing or invalid', format: 'email' }),
-    password: t.String({ minLength: 8, maxLength: 254, error: 'Password is missing or invalid' }),
-});
-const OAuthCallbackQuerySchema = t.Object({
-    code: t.Optional(t.String()),
-    state: t.Optional(t.String()),
-    error: t.Optional(t.String()),
-    error_description: t.Optional(t.String()),
-});
+const MessageSchema = t.Object({ message: t.String() });
+const RedirectSchema = t.Void();
+const NoContentSchema = t.Void();
 
 export {
     userSelectSchema,
@@ -52,8 +35,6 @@ export {
     sessionUpdateSchema,
     ErrorSchema,
     MessageSchema,
-    VoidSchema,
-    RegisterSchema,
-    LoginSchema,
-    OAuthCallbackQuerySchema,
+    RedirectSchema,
+    NoContentSchema,
 };

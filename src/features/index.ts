@@ -1,5 +1,4 @@
-import { featureAuth } from './auth';
-import { featureUsers } from './users';
-import { featureCrons } from './crons';
+import { authRoutes } from './auth/auth.routes';
+import { usersRoutes } from './users/users.routes';
 
-export { featureAuth, featureUsers, featureCrons };
+export { authRoutes, usersRoutes };

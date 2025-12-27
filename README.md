@@ -27,6 +27,7 @@ API Docs URL: `http://localhost:3000/api/docs`
 ┌── migrations/
 ├── src/
 │   ├── common/
+│   ├── crons/
 │   ├── database/
 │   ├── features/
 │   ├── macros/

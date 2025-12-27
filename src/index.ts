@@ -1,10 +1,13 @@
-import { ERROR_CLASSES, handleError, cookieOptions, OpenApiTag } from '@/common';
-import { featureAuth, featureUsers, featureCrons } from '@/features';
-import { client, migrateDatabase } from '@/database';
+import { ERROR_CLASSES, handleError } from '@/common/errors';
+import { authRoutes, usersRoutes } from '@/features';
+import { migrateDatabase } from '@/database';
+import { cookieOptions } from '@/common/cookie';
+import { OpenApiTag } from '@/common/enums';
 import { openapi } from '@elysiajs/openapi';
 import { cors } from '@elysiajs/cors';
-import { Elysia } from 'elysia';
 import { env } from '@/common/env';
+import { cronjobs } from '@/crons';
+import { Elysia } from 'elysia';
 
 const app = new Elysia({ name: 'app', prefix: '/api', strictPath: true, cookie: cookieOptions })
     .error(ERROR_CLASSES)
@@ -42,11 +45,10 @@ const app = new Elysia({ name: 'app', prefix: '/api', strictPath: true, cookie: 
             },
         }),
     )
-    .use(featureAuth)
-    .use(featureUsers)
-    .use(featureCrons)
+    .use(authRoutes)
+    .use(usersRoutes)
+    .use(cronjobs)
     .onStart(async () => await migrateDatabase())
-    .onStop(async () => await client.close())
     .listen({
         port: env.PORT,
         maxRequestBodySize: 1024 * 1024,

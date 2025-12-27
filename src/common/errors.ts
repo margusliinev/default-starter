@@ -17,22 +17,41 @@ const ELYSIA_ERRORS = {
     SERVICE_UNAVAILABLE: { status: 503, message: 'Service Unavailable' },
 } as const;
 
-const ParseError = createError('PARSE');
-const BadRequestError = createError('BAD_REQUEST');
-const InvalidCookieSignatureError = createError('INVALID_COOKIE_SIGNATURE');
-const UnauthorizedError = createError('UNAUTHORIZED');
-const PaymentRequiredError = createError('PAYMENT_REQUIRED');
-const ForbiddenError = createError('FORBIDDEN');
-const NotFoundError = createError('NOT_FOUND');
-const ConflictError = createError('CONFLICT');
-const GoneError = createError('GONE');
-const UnsupportedMediaTypeError = createError('UNSUPPORTED_MEDIA_TYPE');
-const InvalidFileError = createError('INVALID_FILE_TYPE');
-const ValidationError = createError('VALIDATION');
-const TooManyRequestsError = createError('TOO_MANY_REQUESTS');
-const InternalServerError = createError('INTERNAL_SERVER_ERROR');
-const UnknownError = createError('UNKNOWN');
-const ServiceUnavailableError = createError('SERVICE_UNAVAILABLE');
+type ElysiaErrorCode = keyof typeof ELYSIA_ERRORS;
+type ElysiaErrorIssues = Record<string, string> | undefined;
+
+function createElysiaError<T extends ElysiaErrorCode>(code: T) {
+    const { status, message } = ELYSIA_ERRORS[code];
+    return class extends Error {
+        readonly code = code;
+        readonly status = status;
+        readonly issues?: ElysiaErrorIssues;
+
+        constructor(issues?: ElysiaErrorIssues) {
+            super(message);
+            this.code = code;
+            this.status = status;
+            this.issues = issues;
+        }
+    };
+}
+
+const ParseError = createElysiaError('PARSE');
+const BadRequestError = createElysiaError('BAD_REQUEST');
+const InvalidCookieSignatureError = createElysiaError('INVALID_COOKIE_SIGNATURE');
+const UnauthorizedError = createElysiaError('UNAUTHORIZED');
+const PaymentRequiredError = createElysiaError('PAYMENT_REQUIRED');
+const ForbiddenError = createElysiaError('FORBIDDEN');
+const NotFoundError = createElysiaError('NOT_FOUND');
+const ConflictError = createElysiaError('CONFLICT');
+const GoneError = createElysiaError('GONE');
+const UnsupportedMediaTypeError = createElysiaError('UNSUPPORTED_MEDIA_TYPE');
+const InvalidFileError = createElysiaError('INVALID_FILE_TYPE');
+const ValidationError = createElysiaError('VALIDATION');
+const TooManyRequestsError = createElysiaError('TOO_MANY_REQUESTS');
+const InternalServerError = createElysiaError('INTERNAL_SERVER_ERROR');
+const UnknownError = createElysiaError('UNKNOWN');
+const ServiceUnavailableError = createElysiaError('SERVICE_UNAVAILABLE');
 
 const ERROR_CLASSES = {
     PARSE: ParseError,
@@ -53,21 +72,6 @@ const ERROR_CLASSES = {
     SERVICE_UNAVAILABLE: ServiceUnavailableError,
 } as const;
 
-function createError<T extends keyof typeof ELYSIA_ERRORS>(code: T) {
-    const { status, message } = ELYSIA_ERRORS[code];
-    return class extends Error {
-        readonly code = code;
-        readonly status = status;
-        readonly message = message;
-        readonly errors?: Record<string, string>;
-
-        constructor(errors?: Record<string, string>) {
-            super(message);
-            this.errors = errors;
-        }
-    };
-}
-
 function getErrorStatus(code: keyof typeof ELYSIA_ERRORS | number) {
     if (typeof code === 'number') return ELYSIA_ERRORS['UNKNOWN'].status;
     return ELYSIA_ERRORS[code].status;
@@ -78,23 +82,23 @@ function getErrorMessage(code: keyof typeof ELYSIA_ERRORS | number) {
     return ELYSIA_ERRORS[code].message;
 }
 
-function getErrorFields(error: unknown) {
+function getIssues(error: unknown) {
     if (!error || typeof error !== 'object') {
         return undefined;
     }
-    if ('errors' in error && error.errors) {
-        return error.errors as Record<string, string>;
+    if ('issues' in error && error.issues) {
+        return error.issues as ElysiaErrorIssues;
     }
     if ('all' in error && Array.isArray(error.all)) {
-        const errors: Record<string, string> = {};
+        const issues: ElysiaErrorIssues = {};
         for (const err of error.all) {
             if (!('path' in err)) continue;
             const { path, schema, message } = err;
             const field = path.slice(1);
             const customError = schema?.error?.toString();
-            errors[field] = customError || message;
+            issues[field] = customError || message;
         }
-        return Object.keys(errors).length > 0 ? errors : undefined;
+        return Object.keys(issues).length > 0 ? issues : undefined;
     }
 
     return undefined;
@@ -103,16 +107,17 @@ function getErrorFields(error: unknown) {
 function handleError(code: keyof typeof ELYSIA_ERRORS | number, error: unknown) {
     const status = getErrorStatus(code);
     const message = getErrorMessage(code);
-    const errors = getErrorFields(error);
+    const issues = getIssues(error);
 
     if (status >= 500) {
         console.error(error);
     }
 
-    return { code, message, errors };
+    return { code, message, issues };
 }
 
-export { handleError, ELYSIA_ERRORS, ERROR_CLASSES };
+export { handleError };
+export { ELYSIA_ERRORS, ERROR_CLASSES };
 export {
     ParseError,
     BadRequestError,

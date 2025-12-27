@@ -45,4 +45,4 @@ async function migrateDatabase() {
 }
 
 export { migrateDatabase };
-export { db, client, schema };
+export { db, schema };

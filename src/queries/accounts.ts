@@ -1,7 +1,7 @@
-import type { Datasource, Account, CreateAccount } from '@/common';
+import type { Datasource, Account, CreateAccount } from '@/common/types';
+import { Provider } from '@/common/enums';
 import { db, schema } from '@/database';
 import { and, eq } from 'drizzle-orm';
-import { Provider } from '@/common';
 
 export function findCredentialsAccount(userId: Account['user_id'], datasource: Datasource = db) {
     return datasource
