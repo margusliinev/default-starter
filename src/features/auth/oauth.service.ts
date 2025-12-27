@@ -223,10 +223,7 @@ export async function handleOAuthCallback(params: OAuthCallbackParams): Promise<
         if (existingUser) {
             return {
                 success: false,
-                redirectUrl: getErrorRedirectUrl(
-                    'account_exists',
-                    `Please login with your existing method and link your ${provider} account from settings`,
-                ),
+                redirectUrl: getErrorRedirectUrl('oauth_failed', `Please login with your existing method to link ${provider} account`),
             };
         }
 
