@@ -52,4 +52,21 @@ async function checkBreachedPassword(password: string) {
     return false;
 }
 
-export { generateToken, hashToken, hashPassword, verifyPassword, secureCompare, checkBreachedPassword };
+function normalizeEmail(email: string) {
+    const trimmed = email.toLowerCase().trim();
+    const atIndex = trimmed.indexOf('@');
+
+    if (atIndex === -1) return trimmed;
+
+    const local = trimmed.slice(0, atIndex);
+    const domain = trimmed.slice(atIndex + 1);
+
+    if (domain === 'gmail.com' || domain === 'googlemail.com') {
+        const normalized = local.replace(/\./g, '').split('+')[0];
+        return `${normalized}@gmail.com`;
+    }
+
+    return trimmed;
+}
+
+export { generateToken, hashToken, hashPassword, verifyPassword, secureCompare, checkBreachedPassword, normalizeEmail };

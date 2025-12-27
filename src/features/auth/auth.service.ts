@@ -1,6 +1,6 @@
 import type { Register, Login } from './auth.types';
 import type { Session } from '@/common/types';
-import { generateToken, hashToken, hashPassword, verifyPassword, checkBreachedPassword } from '@/common/crypto';
+import { generateToken, hashToken, hashPassword, verifyPassword, checkBreachedPassword, normalizeEmail } from '@/common/crypto';
 import { ConflictError, InternalServerError, UnauthorizedError, ValidationError } from '@/common/errors';
 import { createSession, deleteSession, deleteUserSessions } from '@/queries/sessions';
 import { findCredentialsAccount, createAccount } from '@/queries/accounts';
@@ -10,7 +10,7 @@ import { Provider } from '@/common/enums';
 import { db } from '@/database';
 
 async function register(register: Register) {
-    const normalizedEmail = register.email.toLowerCase().trim();
+    const normalizedEmail = normalizeEmail(register.email);
 
     const [existingUser] = await findUserByEmail(normalizedEmail);
     if (existingUser) throw new ConflictError({ email: 'An account with this email already exists' });
@@ -38,7 +38,7 @@ async function register(register: Register) {
 }
 
 async function login(params: Login) {
-    const normalizedEmail = params.email.toLowerCase().trim();
+    const normalizedEmail = normalizeEmail(params.email);
 
     const [user] = await findUserByEmail(normalizedEmail);
     if (!user) throw new UnauthorizedError();

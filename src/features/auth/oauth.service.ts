@@ -9,10 +9,11 @@ import type {
     GitHubUserInfo,
     GitHubEmail,
 } from './oauth.types';
-import { GOOGLE_OAUTH, GITHUB_OAUTH } from './oauth.constants';
-import { generateToken, hashToken, secureCompare } from '@/common/crypto';
-import { findUserByEmail, createUser, updateUser } from '@/queries/users';
+import { generateToken, hashToken, secureCompare, normalizeEmail } from '@/common/crypto';
 import { findOAuthAccount, createAccount } from '@/queries/accounts';
+import { GOOGLE_OAUTH, GITHUB_OAUTH } from './oauth.constants';
+import { findUserByEmail, createUser } from '@/queries/users';
+import { InternalServerError } from '@/common/errors';
 import { OAUTH, SESSION } from '@/common/constants';
 import { createSession } from '@/queries/sessions';
 import { Provider } from '@/common/enums';
@@ -98,7 +99,7 @@ async function getGoogleUserInfo(accessToken: string): Promise<OAuthUserInfo> {
     return {
         id: data.id,
         name: data.name,
-        email: data.email.toLowerCase().trim(),
+        email: normalizeEmail(data.email),
         image: data.picture || null,
     };
 }
@@ -127,7 +128,7 @@ async function getGitHubUserInfo(accessToken: string): Promise<OAuthUserInfo> {
     const emailsData = (await emailsResponse.json()) as GitHubEmail[];
 
     const primaryEmail = emailsData.find((e) => e.primary && e.verified);
-    const email = primaryEmail?.email || userData.email;
+    const email = primaryEmail?.email;
 
     if (!email) {
         throw new Error('No verified email found from GitHub');
@@ -136,7 +137,7 @@ async function getGitHubUserInfo(accessToken: string): Promise<OAuthUserInfo> {
     return {
         id: userData.id.toString(),
         name: userData.name || userData.login,
-        email: email.toLowerCase().trim(),
+        email: normalizeEmail(email),
         image: userData.avatar_url || null,
     };
 }
@@ -220,24 +221,18 @@ export async function handleOAuthCallback(params: OAuthCallbackParams): Promise<
 
         const [existingUser] = await findUserByEmail(userInfo.email);
         if (existingUser) {
-            await db.transaction(async (tx) => {
-                const account = { user_id: existingUser.id, provider, provider_id: userInfo.id };
-                const session = { user_id: existingUser.id, token: hashedToken, expires_at: expiresAt };
-
-                await createAccount(account, tx);
-                await createSession(session, tx);
-
-                if (!existingUser.image && userInfo.image) {
-                    await updateUser(existingUser.id, { image: userInfo.image }, tx);
-                }
-            });
-
-            return { success: true, token, expiresAt, redirectUrl: getSuccessRedirectUrl() };
+            return {
+                success: false,
+                redirectUrl: getErrorRedirectUrl(
+                    'account_exists',
+                    `Please login with your existing method and link your ${provider} account from settings`,
+                ),
+            };
         }
 
         await db.transaction(async (tx) => {
             const [newUser] = await createUser({ name: userInfo.name, email: userInfo.email, image: userInfo.image }, tx);
-            if (!newUser) throw new Error('Failed to create user during OAuth process');
+            if (!newUser) throw new InternalServerError();
 
             const account = { user_id: newUser.id, provider, provider_id: userInfo.id };
             const session = { user_id: newUser.id, token: hashedToken, expires_at: expiresAt };
