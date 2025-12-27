@@ -11,7 +11,6 @@ const app = new Elysia({ name: 'app', prefix: '/api', strictPath: true, cookie: 
     .onError(({ code, error }) => handleError(code, error))
     .onBeforeHandle({ as: 'global' }, ({ set, path }) => {
         if (path === '/api/docs') return;
-
         set.headers['content-security-policy'] = "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'";
         set.headers['strict-transport-security'] = 'max-age=31536000; includeSubDomains';
         set.headers['referrer-policy'] = 'no-referrer';
